@@ -1,15 +1,26 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import reportWebVitals from './reportWebVitals';
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import './index.css'
+import App from './App'
+import reportWebVitals from './reportWebVitals'
+import StorageProvider from './storage'
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+// https://dev.to/mandiwise/electron-apps-made-easy-with-create-react-app-and-electron-forge-560e
+
+function RootContainer () {
+  return (
+    <StorageProvider>
+      <App />
+    </StorageProvider>
+  )
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   <React.StrictMode>
-    <App />
+    <RootContainer />
   </React.StrictMode>
-);
+)
 
 // If you want to start measuring performance in your app, pass a function
 // to log results (for example: reportWebVitals(console.log))
