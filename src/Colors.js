@@ -1,8 +1,19 @@
 const Colors = {
-  foreground: '#DFE1E8',
+  foregroundLight: '#DFE1E8',
+  foregroundDark: '#50586E',
   backgroundLight: '#2B303B',
   backgroundDark: '#21252B',
-  border: '#65737E'
+  borderLight: '#65737E',
+  borderDark: '#1C2025',
+  success: '#9DBE8C',
+  error: '#B9616A',
+  accept: '#9DBE8C',
+  decline: '#B9616A',
+  control: '#8FA1B3',
+  link: '#9DBE8C',
+  common: '#DFE1E8',
+  uncommon: '#65737E',
+  rare: '#EBCB8B'
 }
 
 export default Colors

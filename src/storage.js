@@ -66,6 +66,10 @@ export default function StorageProvider ({ children }) {
     return storage?.[key]
   }
 
+  function getValues () {
+    return storage
+  }
+
   function setValue (key, value) {
     setStorage((prevState) => ({
       ...prevState,
@@ -105,7 +109,7 @@ export default function StorageProvider ({ children }) {
   }
 
   return (
-    <StorageContext.Provider value={{ getValue, setValue }}>
+    <StorageContext.Provider value={{ getValue, getValues, setValue }}>
       {children}
     </StorageContext.Provider>
   )
