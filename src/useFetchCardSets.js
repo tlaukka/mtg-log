@@ -3,8 +3,8 @@ import debounce from './debounce'
 
 const QUERY_CARD_SETS = 'https://api.scryfall.com/sets'
 
-function useCardSets () {
-  const [sets, setSets] = React.useState([])
+function useFetchCardSets () {
+  const [sets, setSets] = React.useState({})
   const [fetching, setFetching] = React.useState(false)
   const [error, setError] = React.useState()
 
@@ -48,4 +48,4 @@ function useCardSets () {
   }
 }
 
-export default useCardSets
+export default useFetchCardSets

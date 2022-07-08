@@ -49,6 +49,7 @@ const PopupContainer = styled('div')({
 const PopupContent = styled('div')({
   position: 'absolute',
   left: '100%',
+  zIndex: 100,
   marginLeft: 4,
   padding: 8,
   borderRadius: 3,

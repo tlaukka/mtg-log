@@ -8,7 +8,10 @@ const TextInput = styled('input')({
   border: 'none',
   outline: 'none',
   color: Colors.control,
-  backgroundColor: Colors.backgroundDark
+  backgroundColor: Colors.backgroundDark,
+  '::placeholder': {
+    color: Colors.foregroundDark
+  }
 })
 
 export default TextInput

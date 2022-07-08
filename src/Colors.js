@@ -11,8 +11,8 @@ const Colors = {
   decline: '#B9616A',
   control: '#8FA1B3',
   link: '#9DBE8C',
-  common: '#DFE1E8',
-  uncommon: '#65737E',
+  common: '#65737E',
+  uncommon: '#DFE1E8',
   rare: '#EBCB8B'
 }
 

@@ -5,17 +5,13 @@ html {
 
 body {
   font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
-  height: 100%;
   margin: 0;
   background-color: #2B303B;
 }
 
-#root {
-  height: 100%;
-}
-
 *::-webkit-scrollbar {
   width: 12px;
+  height: 12px;
 }
 
 *::-webkit-scrollbar-track {
@@ -32,6 +28,6 @@ body {
   background-color: #50586E;
 }
 
-/* *::-webkit-scrollbar-corner {
-  background-color: red;
-} */
+*::-webkit-scrollbar-corner {
+  background-color: #1C2025;
+}

@@ -5,15 +5,18 @@ import App from './App'
 import reportWebVitals from './reportWebVitals'
 import StorageProvider from './storage'
 import RouteProvider from './RouteProvider'
+import CardSetProvider from './CardSetProvider'
 
 // https://dev.to/mandiwise/electron-apps-made-easy-with-create-react-app-and-electron-forge-560e
 
 function RootContainer () {
   return (
     <StorageProvider>
-      <RouteProvider>
-        <App />
-      </RouteProvider>
+      <CardSetProvider>
+        <RouteProvider>
+          <App />
+        </RouteProvider>
+      </CardSetProvider>
     </StorageProvider>
   )
 }

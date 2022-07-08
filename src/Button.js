@@ -11,6 +11,11 @@ const Button = styled('button')({
   backgroundColor: Colors.backgroundDark,
   ':hover': {
     color: Colors.link
+  },
+  ':disabled': {
+    cursor: 'default',
+    color: Colors.control,
+    backgroundColor: Colors.foregroundDark
   }
 })
 
