@@ -43,7 +43,8 @@ function Popup ({ content, openOnHover = false, children }) {
 }
 
 const PopupContainer = styled('div')({
-  position: 'relative'
+  position: 'relative',
+  display: 'inline-block'
 })
 
 const PopupContent = styled('div')({

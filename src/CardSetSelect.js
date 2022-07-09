@@ -1,6 +1,6 @@
 import styled from '@emotion/styled'
 import React from 'react'
-import Select from './Select'
+import Select, { selectStyles } from './Select'
 
 function CardSetSelect ({ sets, onChange, ...rest }) {
   const options = React.useMemo(
@@ -28,6 +28,7 @@ function CardSetSelect ({ sets, onChange, ...rest }) {
     <Select
       {...rest}
       isMulti
+      styles={styles}
       options={options}
       placeholder={'Card set...'}
       components={{ Option: CardSetOption, MultiValue: CardSetMultiValue }}
@@ -56,6 +57,16 @@ function CardSetMultiValue (props) {
       {props.data.label}
     </Select.MultiValue>
   )
+}
+
+const styles = {
+  ...selectStyles,
+  container: (provided) => ({
+    ...provided,
+    flex: 1,
+    minWidth: 360,
+    maxWidth: 500
+  })
 }
 
 const Symbol = styled('i')({

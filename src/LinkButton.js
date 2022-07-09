@@ -1,5 +1,5 @@
 import styled from '@emotion/styled'
-import Button from './Button'
+import Button, { acceptStyles, dangerStyles } from './Button'
 import Colors from './Colors'
 
 const LinkButton = styled(Button)({
@@ -8,6 +8,14 @@ const LinkButton = styled(Button)({
     color: Colors.foregroundDark,
     backgroundColor: 'transparent'
   }
+})
+
+LinkButton.Danger = styled(LinkButton)({
+  ...dangerStyles
+})
+
+LinkButton.Accept = styled(LinkButton)({
+  ...acceptStyles
 })
 
 export default LinkButton

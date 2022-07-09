@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import Scroll, { animateScroll } from 'react-scroll'
+import { animateScroll } from 'react-scroll'
 import { useStorage } from './storage'
 import Button from './Button'
 import TextInput from './TextInput'
@@ -14,23 +14,20 @@ import { useCardSets } from './CardSetProvider'
 import CardSetSymbol from './CardSetSymbol'
 import CardSetSelect from './CardSetSelect'
 import useCardSearch from './useCardSearch'
-
+import constants from './constants'
+import Drawer from './Drawer'
 
 function SearchContainer () {
   // console.log('----- render -----')
-  const table = React.useRef()
-
   const [search, setSearch] = React.useState('')
   const [selectedSets, setSelectedSets] = React.useState([])
+
+  const [selectedCard, setSelectedCard] = React.useState(null)
+  const [drawerOpen, setDrawerOpen] = React.useState(false)
 
   const { sets } = useCardSets()
   const { setRoute } = useRoute()
   const { cards, meta, fetching, searchCards, next, previous } = useCardSearch()
-  console.log(cards.length)
-  // console.log({
-  //   next,
-  //   previous
-  // })
 
   // const storage = useStorage()
   // const storageData = storage.getValues()
@@ -66,74 +63,134 @@ function SearchContainer () {
     })
   }
 
+  function toggleDrawer () {
+    setDrawerOpen((value) => !value)
+  }
+
+  function openCardInfo (card) {
+    setSelectedCard(card)
+    setDrawerOpen(true)
+  }
+
+  function closeCardInfo () {
+    // setSelectedCard(null)
+    setDrawerOpen(false)
+  }
+
   return (
     <>
       <Header>
         <NavBar>
-          <LinkButton onClick={() => setRoute(Route.list)}>← Back to cards</LinkButton>
+          <Menu>
+            <MenuButton onClick={() => setRoute(Route.list)}>🞀 Back to cards</MenuButton>
+          </Menu>
         </NavBar>
         <InputBar onSubmit={getCards}>
           <CardSetSelect
             sets={sets}
             onChange={setSelectedSets}
           />
-          <TextInput
+          <Search
             value={search}
             placeholder={'Search...'}
             spellCheck={false}
             onChange={(e) => setSearch(e.target.value)}
           />
-          <Button type={'submit'}>Get cards!</Button>
+          <GetCardsButton type={'submit'}>Get cards!</GetCardsButton>
         </InputBar>
       </Header>
-      <TableContainer id={'table-container'} ref={table}>
+      <TableContainer id={'table-container'} drawerOpen={drawerOpen}>
         <CardTable>
           <thead>
             <tr>
               <th>Set</th>
-              <th>#</th>
+              <th>№</th>
+              <th>Res.</th>
               <th>Name</th>
-              <th>Reserved</th>
+              <th></th>
             </tr>
           </thead>
           <tbody>
             <tr className={'spacer'} />
             {cards.map((card) => (
-              <tr key={card.id} onClick={() => addCard(card)}>
-                <td><CardSet set={sets[card.set]} rarity={card.rarity} /></td>
-                <td>{card.collector_number}</td>
-                <td><CardPreview card={card} /></td>
-                <td><ReservedStatus reserved={card.reserved} /></td>
-              </tr>
+              <CardTableRow
+                key={card.id}
+                card={card}
+                sets={sets}
+                onNameClick={openCardInfo}
+              />
             ))}
           </tbody>
         </CardTable>
       </TableContainer>
       <Footer>
-        <FooterMenu>
-          {meta.totalCards && <FooterItem>{`Total cards: ${meta.totalCards}`}</FooterItem>}
-          {meta.page && <FooterItem>{`${meta.page} / ${meta.totalPages}`}</FooterItem>}
-          {cards && (
+        <Menu>
+          {(cards.length > 0) && (
             <>
-              <FooterButton disabled={!previous} onClick={() => onPageChange(previous)}>
-                &lsaquo; Previous
-              </FooterButton>
-              <FooterButton disabled={!next} onClick={() => onPageChange(next)}>
-                Next &rsaquo;
-              </FooterButton>
+              {meta.totalCards && <FooterItem>{`Total cards: ${meta.totalCards}`}</FooterItem>}
+              {meta.page && <FooterItem>{`${meta.page} / ${meta.totalPages}`}</FooterItem>}
+              <MenuButton disabled={!previous} onClick={() => onPageChange(previous)}>
+                🞀 Previous
+              </MenuButton>
+              <MenuButton disabled={!next} onClick={() => onPageChange(next)}>
+                Next 🞂
+              </MenuButton>
             </>
           )}
-        </FooterMenu>
-        <FooterMenu>
-          <FooterButton onClick={backToTop}>Back to top ↑</FooterButton>
+        </Menu>
+        <Menu>
+          <MenuButton onClick={toggleDrawer}>Drawer</MenuButton>
+          <MenuButton onClick={backToTop}>Back to top ⮥</MenuButton>
           <FooterLoaderContainer>
             {fetching && <Loader />}
           </FooterLoaderContainer>
-        </FooterMenu>
+        </Menu>
       </Footer>
+      <Drawer open={drawerOpen}>
+        {selectedCard && (
+          <>
+            <LinkButton onClick={closeCardInfo}>Close</LinkButton>
+            <div>{selectedCard.name}</div>
+            <img src={selectedCard.image_uris.normal} width={'100%'} />
+          </>
+        )}
+      </Drawer>
     </>
   )
 }
+
+function CardTableRow ({ card, sets, onNameClick = () => {} }) {
+  const [expanded, setExpanded] = React.useState(false)
+
+  function expand () {
+    setExpanded((value) => !value)
+  }
+
+  function handleNameClick () {
+    onNameClick(card)
+  }
+
+  return (
+    <>
+      <tr onClick={expand}>
+        <td><CardSet set={sets[card.set]} rarity={card.rarity} /></td>
+        <td>{card.collector_number}</td>
+        <td><ReservedStatus reserved={card.reserved} /></td>
+        {/* <td><CardPreview card={card} /></td> */}
+        <td><CardName onClick={handleNameClick}>{card.name}</CardName></td>
+        <td><LinkButton.Accept>Add</LinkButton.Accept></td>
+      </tr>
+      {/* <tr>
+        <ExpandedRowContainer colSpan={5}>
+          <ExpandedRowWrapper visible={expanded}>
+            <CardInfoContainer>asdasd</CardInfoContainer>
+          </ExpandedRowWrapper>
+        </ExpandedRowContainer>
+      </tr> */}
+    </>
+  )
+}
+
 
 function CardSet ({ set, rarity }) {
   return (
@@ -155,7 +212,10 @@ function CardPreview ({ card }) {
 
 const NavBar = styled('div')({
   display: 'flex',
-  margin: 12
+  justifyContent: 'space-between',
+  alignItems: 'stretch',
+  padding: '0 12px',
+  borderBottom: `1px solid ${Colors.backgroundDark}`
 })
 
 const Header = styled('div')({
@@ -166,19 +226,28 @@ const InputBar = styled('form')({
   display: 'flex',
   flex: 1,
   gap: 12,
-  margin: 12
-  // ':nth-child(1)': {
-  //   flex: 1
-  // },
-  // ':nth-child(2)': {
-  //   flex: 1
-  // }
+  padding: 12
+})
+
+const Search = styled(TextInput)({
+  flex: 1,
+  maxWidth: 500
+})
+
+const GetCardsButton = styled(Button)({
+  lineHeight: '38px'
 })
 
 const TableContainer = styled('div')({
   overflow: 'auto',
-  height: 'calc(100vh - 129px)'
-})
+  height: `calc(100vh - ${constants.HEADER_HEIGHT}px - ${constants.FOOTER_HEIGHT}px)`,
+  transition: 'margin-right 0.2s ease',
+  '&::-webkit-scrollbar-track': {
+    marginTop: 35
+  }
+}, ({ drawerOpen }) => ({
+  marginRight: drawerOpen ? 360 : 0
+}))
 
 const CardTable = styled('table')({
   borderCollapse: 'collapse',
@@ -189,65 +258,91 @@ const CardTable = styled('table')({
     fontSize: 16,
     color: Colors.control,
     tr: {
-      boxShadow: '0 -2px 14px rgba(0, 0, 0, 0.6)',
       position: 'sticky',
       zIndex: 2,
       top: 0,
+      boxShadow: '0px -2px 14px rgba(0, 0, 0, 0.6)',
+      clipPath: 'inset(0px 0px 12px 0px)'
     }
   },
   th: {
     padding: '8px 12px',
     backgroundColor: Colors.backgroundLight,
-    ':nth-child(1)': { // Set
+    ':nth-of-type(1)': { // Set
       width: 29,
       paddingLeft: 24
     },
-    ':nth-child(2)': { // Number
+    ':nth-of-type(2)': { // Number
       textAlign: 'right',
       width: 29
     },
-    ':nth-child(3)': { // Name
+    ':nth-of-type(3)': { // Reserved
+      width: 32
+    },
+    ':nth-of-type(4)': { // Name
       textAlign: 'left'
     },
-    ':nth-child(4)': { // Reserved
-      width: 100
+    ':nth-of-type(5)': { // Add
+      width: 48
     },
-    ':last-child': {
+    ':last-of-type': {
       paddingRight: 24
     }
   },
   tbody: {
     fontSize: 16,
     // tr: {
-    //   borderBottom: `1px solid ${Colors.backgroundDark}`
+    //   borderBottom: `1px solid ${Colors.backgroundDark}`,
     // },
-    'tr:nth-child(odd)': {
-      backgroundColor: '#303541'
+    'tr:nth-of-type(odd)': {
+      backgroundColor: Colors.backgroundAccent
     },
-    'tr:first-child': {
+    // 'tr:nth-of-type(4n)': {
+    //   backgroundColor: Colors.backgroundAccent
+    // },
+    'tr:first-of-type': {
       height: 12
     },
     // 'tr:hover': {
-    //   backgroundColor: '#303541'
+    //   backgroundColor:  Colors.backgroundAccent
     // }
   },
   td: {
-    // padding: '4px 12px',
-    padding: '12px 12px 6px',
-    ':nth-child(1)': { // Set
+    // padding: '12px 12px 6px',
+    padding: '8px 12px',
+    '&:nth-of-type(1)': { // Set
       paddingLeft: 24
     },
-    ':nth-child(2)': { // Number
+    '&:nth-of-type(2)': { // Number
       textAlign: 'right',
       color: Colors.control
     },
-    ':nth-child(4)': { // Reserved
+    '&:nth-of-type(3)': { // Reserved
       textAlign: 'center'
     },
-    ':last-child': {
+    '&:nth-of-type(5)': { // Add
+      textAlign: 'center'
+    },
+    '&:last-of-type': {
       paddingRight: 24
     }
   }
+})
+
+const ExpandedRowContainer = styled('td')({
+  padding: '0px !important'
+})
+
+const ExpandedRowWrapper = styled('div')({
+  overflow: 'hidden',
+  transition: 'max-height 0.2s ease'
+}, ({ visible }) => ({
+  maxHeight: visible ? 43 : 0
+}))
+
+const CardInfoContainer = styled('div')({
+  padding: 12,
+  backgroundColor: Colors.backgroundAccent
 })
 
 const Footer = styled('div')({
@@ -258,14 +353,14 @@ const Footer = styled('div')({
   left: 0,
   right: 0,
   bottom: 0,
-  height: 24,
+  height: constants.FOOTER_HEIGHT,
   fontSize: 12,
   padding: '0 12px',
   color: Colors.control,
   backgroundColor: Colors.backgroundDark
 })
 
-const FooterMenu = styled('div')({
+const Menu = styled('div')({
   display: 'flex',
   gap: 12
 })
@@ -275,7 +370,9 @@ const FooterItem = styled('div')({
   alignItems: 'center'
 })
 
-const FooterButton = styled(LinkButton)({
+const MenuButton = styled(LinkButton)({
+  fontSize: 12,
+  lineHeight: `${constants.FOOTER_HEIGHT}px`,
   padding: '0 6px'
 })
 
@@ -285,6 +382,7 @@ const FooterLoaderContainer = styled(FooterItem)({
 
 const CardName = styled('div')({
   cursor: 'pointer',
+  display: 'inline-block',
   ':hover': {
     color: Colors.link
   }

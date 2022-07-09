@@ -20,12 +20,7 @@ function App() {
 
 const MainContainer = styled('div')({
   position: 'relative',
-  // height: '100%',
   color: Colors.foregroundLight
-})
-
-const Card = styled('img')({
-  height: 456
 })
 
 export default App

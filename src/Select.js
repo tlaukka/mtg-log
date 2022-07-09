@@ -2,14 +2,14 @@ import React from 'react'
 import ReactSelect, { components, createFilter } from 'react-select'
 import Colors from './Colors'
 
-function Select(props) {
+function Select({ styles = selectStyles, ...rest }) {
   return (
     <ReactSelect
       classNamePrefix={'custom-select'}
-      styles={selectStyles}
+      styles={styles}
       components={{ Option, MultiValue }}
       filterOption={createFilter({ ignoreAccents: false })}
-      {...props}
+      {...rest}
     />
   )
 }
@@ -33,11 +33,7 @@ function MultiValue({ children, ...props }) {
   )
 }
 
-const selectStyles = {
-  container: (provided) => ({
-    ...provided,
-    minWidth: 360
-  }),
+export const selectStyles = {
   control: (provided) => ({
     ...provided,
     boxShadow: 'none',
