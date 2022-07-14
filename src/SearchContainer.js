@@ -14,27 +14,29 @@ import { useCardSets } from './CardSetProvider'
 import CardSetSymbol from './CardSetSymbol'
 import CardSetSelect from './CardSetSelect'
 import useCardSearch from './useCardSearch'
+import useCardCollection from './useCardCollection'
 import constants from './constants'
 import Drawer from './Drawer'
+import ColorSelect from './ColorSelect'
 
 function SearchContainer () {
   // console.log('----- render -----')
   const [search, setSearch] = React.useState('')
   const [selectedSets, setSelectedSets] = React.useState([])
-
+  const [selectedColors, setSelectedColors] = React.useState([])
   const [selectedCard, setSelectedCard] = React.useState(null)
+
   const [drawerOpen, setDrawerOpen] = React.useState(false)
+  const [detailsOpen, setDetailsOpen] = React.useState(true)
 
   const { sets } = useCardSets()
   const { setRoute } = useRoute()
   const { cards, meta, fetching, searchCards, next, previous } = useCardSearch()
 
+  const cardCollection = useCardCollection()
+
   // const storage = useStorage()
   // const storageData = storage.getValues()
-
-  function addCard (card) {
-    // storage.setValue(card.id, card.name)
-  }
 
   function getCards (e) {
     e.preventDefault()
@@ -48,6 +50,7 @@ function SearchContainer () {
 
     // searchCards(completeSearch)
     searchCards('set:alpha')
+    // searchCards('set:leg')
   }
 
   function onPageChange (fn) {
@@ -69,14 +72,15 @@ function SearchContainer () {
 
   function openCardInfo (card) {
     setSelectedCard(card)
-    setDrawerOpen(true)
+    // setDrawerOpen(true)
+    setDetailsOpen(true)
   }
 
   function closeCardInfo () {
     // setSelectedCard(null)
     setDrawerOpen(false)
   }
-
+console.log(cards.length)
   return (
     <>
       <Header>
@@ -87,6 +91,10 @@ function SearchContainer () {
         </NavBar>
         <InputBar onSubmit={getCards}>
           <CardSetSelect
+            sets={sets}
+            onChange={setSelectedColors}
+          />
+          <ColorSelect
             sets={sets}
             onChange={setSelectedSets}
           />
@@ -99,7 +107,7 @@ function SearchContainer () {
           <GetCardsButton type={'submit'}>Get cards!</GetCardsButton>
         </InputBar>
       </Header>
-      <TableContainer id={'table-container'} drawerOpen={drawerOpen}>
+      <TableContainer id={'table-container'} drawerOpen={drawerOpen} detailsOpen={detailsOpen}>
         <CardTable>
           <thead>
             <tr>
@@ -113,12 +121,24 @@ function SearchContainer () {
           <tbody>
             <tr className={'spacer'} />
             {cards.map((card) => (
-              <CardTableRow
-                key={card.id}
-                card={card}
-                sets={sets}
-                onNameClick={openCardInfo}
-              />
+              <tr key={card.id}>
+                <td><CardSet set={sets[card.set]} rarity={card.rarity} /></td>
+                <td>{card.collector_number}</td>
+                <td><ReservedStatus reserved={card.reserved} /></td>
+                {/* <td><CardPreview card={card} /></td> */}
+                <td><CardName onClick={() => openCardInfo(card)}>{card.name}</CardName></td>
+                <td>
+                  {cardCollection.has(card) ? (
+                    <LinkButton.Decline onClick={() => cardCollection.remove(card)}>
+                      &#10539;
+                    </LinkButton.Decline>
+                  ) : (
+                    <LinkButton.Accept onClick={() => cardCollection.add(card)}>
+                      🞣
+                    </LinkButton.Accept>
+                  )}
+                </td>
+              </tr>
             ))}
           </tbody>
         </CardTable>
@@ -139,58 +159,61 @@ function SearchContainer () {
           )}
         </Menu>
         <Menu>
-          <MenuButton onClick={toggleDrawer}>Drawer</MenuButton>
-          <MenuButton onClick={backToTop}>Back to top ⮥</MenuButton>
+          <MenuButton disabled={cards.length === 0} onClick={backToTop}>
+            Back to top ⮥
+          </MenuButton>
+          <MenuButton onClick={toggleDrawer}>
+            {`Card drawer [${cardCollection.size()}]`}
+          </MenuButton>
           <FooterLoaderContainer>
             {fetching && <Loader />}
           </FooterLoaderContainer>
         </Menu>
       </Footer>
+      <CardDetails
+        open={detailsOpen}
+        drawerOpen={drawerOpen}
+        card={selectedCard}
+        onClose={() => setDetailsOpen(false)}
+      />
       <Drawer open={drawerOpen}>
-        {selectedCard && (
-          <>
-            <LinkButton onClick={closeCardInfo}>Close</LinkButton>
-            <div>{selectedCard.name}</div>
-            <img src={selectedCard.image_uris.normal} width={'100%'} />
-          </>
-        )}
+        <Menu>
+          <CloseButton onClick={closeCardInfo} />
+        </Menu>
+        <CardDrawerContainer>
+          {cardCollection.toArray().map((card) => (
+            <CardDrawerRow key={card.id}>
+              <CardDrawerRemove onClick={() => cardCollection.remove(card)} />
+              <CardDrawerCardName>{card.name}</CardDrawerCardName>
+            </CardDrawerRow>
+          ))}
+        </CardDrawerContainer>
+        <CardDrawerFooter>
+          <SaveButton>Save!</SaveButton>
+        </CardDrawerFooter>
       </Drawer>
     </>
   )
 }
 
-function CardTableRow ({ card, sets, onNameClick = () => {} }) {
+function ExpandableTableRow ({ content, children }) {
   const [expanded, setExpanded] = React.useState(false)
-
-  function expand () {
-    setExpanded((value) => !value)
-  }
-
-  function handleNameClick () {
-    onNameClick(card)
-  }
 
   return (
     <>
-      <tr onClick={expand}>
-        <td><CardSet set={sets[card.set]} rarity={card.rarity} /></td>
-        <td>{card.collector_number}</td>
-        <td><ReservedStatus reserved={card.reserved} /></td>
-        {/* <td><CardPreview card={card} /></td> */}
-        <td><CardName onClick={handleNameClick}>{card.name}</CardName></td>
-        <td><LinkButton.Accept>Add</LinkButton.Accept></td>
+      <tr onClick={() => setExpanded((value) => !value)}>
+        {children}
       </tr>
-      {/* <tr>
+      <tr>
         <ExpandedRowContainer colSpan={5}>
           <ExpandedRowWrapper visible={expanded}>
-            <CardInfoContainer>asdasd</CardInfoContainer>
+            {content}
           </ExpandedRowWrapper>
         </ExpandedRowContainer>
-      </tr> */}
+      </tr>
     </>
   )
 }
-
 
 function CardSet ({ set, rarity }) {
   return (
@@ -209,6 +232,110 @@ function CardPreview ({ card }) {
     </Popup>
   )
 }
+
+function CardDetails ({ open, drawerOpen, card, onClose }) {
+  return (
+    <CardDetailsContainer open={open} drawerOpen={drawerOpen}>
+      {card && (
+        <>
+          <DetailsImage src={card.image_uris.normal} alt={card.name} setCode={card.set} />
+          <DetailsClose onClick={onClose} />
+        </>
+      )}
+    </CardDetailsContainer>
+  )
+}
+
+const CardDrawerContainer = styled('div')({
+  fontSize: 14,
+  lineHeight: '20px',
+  overflow: 'auto',
+  height: 'calc(100% - 120px)',
+  margin: '0 12px',
+  padding: 12,
+  borderRadius: 3,
+  backgroundColor: Colors.backgroundDark,
+  '::-webkit-scrollbar-track': {
+    borderTopRightRadius: 3,
+    borderBottomRightRadius: 3
+  }
+})
+
+const CardDrawerFooter = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  position: 'absolute',
+  left: 0,
+  right: 0,
+  bottom: 0,
+  height: 64
+})
+
+const CardDrawerRow = styled('div')({
+  display: 'flex',
+  minWidth: 0
+})
+
+const CardDrawerCardName = styled('div')({
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis'
+})
+
+const CardDrawerRemove = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  flex: '0 0 20px',
+  marginRight: 8,
+  color: Colors.decline,
+  ':hover': {
+    color: Colors.declineLight
+  },
+  ':after': {
+    content: '"\\292b"'
+  }
+})
+
+const SaveButton = styled(Button)({
+  width: 160
+})
+
+const CloseButton = styled(LinkButton.Decline)({
+  ':after': {
+    content: '"Close \\292b"'
+  }
+})
+
+const CardDetailsContainer = styled('div')({
+  boxSizing: 'border-box',
+  position: 'fixed',
+  zIndex: 5,
+  top: `${constants.HEADER_HEIGHT + 59}px`,
+  width: 300,
+  transition: 'all 0.2s ease',
+  backgroundColor: 'transparent'
+}, ({ open, drawerOpen }) => ({
+  opacity: open ? 1 : 0,
+  visibility: open ? 'visible' : 'hidden',
+  right: drawerOpen ? 384 : 24
+}))
+
+const DetailsImage = styled('img')({
+  width: '100%',
+  boxShadow: '0px 0px 12px rgba(0, 0, 0, 0.5)'
+}, ({ setCode }) => ({
+  borderRadius: (setCode === 'lea') ? 24 : 15
+}))
+
+const DetailsClose = styled(CloseButton)({
+  display: 'block',
+  fontSize: 12,
+  lineHeight: '24px',
+  width: 44,
+  margin: '0 auto',
+  padding: 0
+})
 
 const NavBar = styled('div')({
   display: 'flex',
@@ -241,12 +368,14 @@ const GetCardsButton = styled(Button)({
 const TableContainer = styled('div')({
   overflow: 'auto',
   height: `calc(100vh - ${constants.HEADER_HEIGHT}px - ${constants.FOOTER_HEIGHT}px)`,
-  transition: 'margin-right 0.2s ease',
+  transition: 'max-height 0.2s ease, margin-right 0.2s ease',
+  // transition: 'margin-right 0.2s ease',
   '&::-webkit-scrollbar-track': {
     marginTop: 35
   }
-}, ({ drawerOpen }) => ({
-  marginRight: drawerOpen ? 360 : 0
+}, ({ drawerOpen, detailsOpen }) => ({
+  marginRight: drawerOpen ? 360 : 0,
+  // maxHeight: detailsOpen ? `calc(100vh - ${constants.HEADER_HEIGHT}px - ${constants.FOOTER_HEIGHT}px - 200px)` : `calc(100vh - ${constants.HEADER_HEIGHT}px - ${constants.FOOTER_HEIGHT}px)`
 }))
 
 const CardTable = styled('table')({
@@ -261,8 +390,9 @@ const CardTable = styled('table')({
       position: 'sticky',
       zIndex: 2,
       top: 0,
-      boxShadow: '0px -2px 14px rgba(0, 0, 0, 0.6)',
-      clipPath: 'inset(0px 0px 12px 0px)'
+      overflow: 'hidden',
+      boxShadow: '0px -2px 14px rgba(0, 0, 0, 0.6)'
+      // clipPath: 'inset(0px 0px 12px 0px)'
     }
   },
   th: {
@@ -349,7 +479,9 @@ const Footer = styled('div')({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'stretch',
+  letterSpacing: 0.2,
   position: 'fixed',
+  zIndex: 10,
   left: 0,
   right: 0,
   bottom: 0,

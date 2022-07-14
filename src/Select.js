@@ -47,6 +47,10 @@ export const selectStyles = {
     fontSize: 13,
     color: Colors.control
   }),
+  valueContainer: (provided) => ({
+    ...provided,
+    flexWrap: 'nowrap'
+  }),
   placeholder: (provided) => ({
     ...provided,
     fontSize: 13,

@@ -5,6 +5,7 @@ const Button = styled('button')({
   cursor: 'pointer',
   whiteSpace: 'nowrap',
   lineHeight: '32px',
+  letterSpacing: 0.2,
   padding: '0px 12px',
   outline: 'none',
   border: 'none',
@@ -17,16 +18,12 @@ const Button = styled('button')({
   ':disabled': {
     cursor: 'default',
     color: Colors.control,
-    backgroundColor: Colors.foregroundDark
+    backgroundColor: Colors.foregroundDark,
+    ':hover': {
+      color: Colors.foregroundDark
+    }
   }
 })
-
-export const dangerStyles = {
-  color: Colors.decline,
-  ':hover': {
-    color: Colors.declineLight
-  }
-}
 
 export const acceptStyles = {
   color: Colors.accept,
@@ -35,12 +32,30 @@ export const acceptStyles = {
   }
 }
 
+export const dangerStyles = {
+  color: Colors.decline,
+  ':hover': {
+    color: Colors.declineLight
+  }
+}
+
+export const declineStyles = {
+  color: Colors.foregroundDark,
+  ':hover': {
+    color: Colors.decline
+  }
+}
+
+Button.Accept = styled(Button)({
+  ...acceptStyles
+})
+
 Button.Danger = styled(Button)({
   ...dangerStyles
 })
 
-Button.Accept = styled(Button)({
-  ...acceptStyles
+Button.Decline = styled(Button)({
+  ...declineStyles
 })
 
 export default Button

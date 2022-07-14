@@ -65,7 +65,7 @@ const styles = {
     ...provided,
     flex: 1,
     minWidth: 360,
-    maxWidth: 500
+    maxWidth: 600
   })
 }
 

@@ -21,11 +21,12 @@ const DrawerContainer = styled('div')({
   width: 360,
   borderTop: `1px solid ${Colors.backgroundDark}`,
   clipPath: 'inset(0px 0px 0px -10px)',
-  boxShadow: '0px 0px 8px rgba(0, 0, 0, 0.6)',
+  color: Colors.control,
   backgroundColor: Colors.backgroundLight,
   transition: 'right 0.2s ease'
 }, ({ open }) => ({
-  right: open ? 0 : -360
+  right: open ? 0 : -360,
+  boxShadow: open ? '0px 0px 8px rgba(0, 0, 0, 0.6)' : 'none'
 }))
 
 export default Drawer
