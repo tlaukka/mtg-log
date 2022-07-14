@@ -1,15 +1,17 @@
 import styled from '@emotion/styled'
 import React from 'react'
+import CardSymbols, { CardSymbol } from './CardSymbols'
+import Colors from './Colors'
 import Select, { selectStyles } from './Select'
 
 const colors = [
-  { value: 'c:red', label: 'Red' },
-  { value: 'c:green', label: 'Green' },
-  { value: 'c:Blue', label: 'Blue' },
-  { value: 'c:white', label: 'White' },
-  { value: 'c:black', label: 'Black' },
-  { value: 'c:multicolor', label: 'Multicolor' },
-  { value: 'c:colorless', label: 'Colorless' }
+  { value: 'c:green', label: 'Green', symbol: <CardSymbols.Forest /> },
+  { value: 'c:red', label: 'Red', symbol: <CardSymbols.Mountain /> },
+  { value: 'c:blue', label: 'Blue', symbol: <CardSymbols.Island /> },
+  { value: 'c:black', label: 'Black', symbol: <CardSymbols.Swamp /> },
+  { value: 'c:white', label: 'White', symbol: <CardSymbols.Plains /> },
+  { value: 'c:multicolor', label: 'Multicolor', symbol: <CardSymbols.Multicolor /> },
+  { value: 'c:colorless', label: 'Colorless', symbol: <CardSymbols.Colorless /> }
 ]
 
 function ColorSelect ({ onChange, ...rest }) {
@@ -28,46 +30,69 @@ function ColorSelect ({ onChange, ...rest }) {
       styles={styles}
       options={colors}
       placeholder={'Color...'}
-      // components={{ Option: CardSetOption, MultiValue: CardSetMultiValue }}
+      components={{ Option: ColorOption, MultiValue: ColorMultiValue }}
       onChange={onSelectChange}
     />
   )
 }
 
-// function CardSetOption (props) {
-//   return (
-//     <Select.Option {...props}>
-//       {props.data.code && (
-//         <Symbol className={`ss ss-${props.data.code}`} />
-//       )}
-//       {props.data.label}
-//     </Select.Option>
-//   )
-// }
+function ColorOption (props) {
+  return (
+    <Select.Option {...props}>
+      {props.data.symbol}
+      <OptionLabel>{props.data.label}</OptionLabel>
+    </Select.Option>
+  )
+}
 
-// function CardSetMultiValue (props) {
-//   return (
-//     <Select.MultiValue {...props}>
-//       {props.data.code && (
-//         <Symbol className={`ss ss-${props.data.code}`} />
-//       )}
-//       {props.data.label}
-//     </Select.MultiValue>
-//   )
-// }
+function ColorMultiValue (props) {
+  return (
+    <Select.MultiValue {...props}>
+      {props.data.symbol}
+    </Select.MultiValue>
+  )
+}
 
 const styles = {
   ...selectStyles,
   container: (provided) => ({
     ...provided,
     flex: 1,
-    // minWidth: 360,
-    maxWidth: 400
+    minWidth: 340,
+    maxWidth: 340
+  }),
+  multiValue: (provided) => ({
+    ...selectStyles.multiValue(provided),
+    position: 'relative'
+  }),
+  multiValueLabel: (provided) => ({
+    ...selectStyles.multiValueLabel(provided),
+    padding: 0,
+    paddingLeft: 0
+  }),
+  multiValueRemove: (provided) => ({
+    ...selectStyles.multiValueRemove(provided),
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    position: 'absolute',
+    top: 2,
+    left: 2,
+    width: 24,
+    height: 24,
+    padding: 0,
+    // borderRadius: 0,
+    color: Colors.foregroundLight,
+    backgroundColor: 'rgba(0, 0, 0, 0.6)',
+    opacity: 0,
+    ':hover': {
+      opacity: 1
+    }
   })
 }
 
-// const Symbol = styled('i')({
-//   marginRight: 8
-// })
+const OptionLabel = styled('span')({
+  marginLeft: 8
+})
 
 export default ColorSelect

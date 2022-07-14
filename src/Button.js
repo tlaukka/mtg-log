@@ -3,9 +3,10 @@ import Colors from './Colors'
 
 const Button = styled('button')({
   cursor: 'pointer',
-  whiteSpace: 'nowrap',
+  fontSize: 12,
   lineHeight: '32px',
-  letterSpacing: 0.2,
+  letterSpacing: 0.4,
+  whiteSpace: 'nowrap',
   padding: '0px 12px',
   outline: 'none',
   border: 'none',
@@ -17,11 +18,7 @@ const Button = styled('button')({
   },
   ':disabled': {
     cursor: 'default',
-    color: Colors.control,
-    backgroundColor: Colors.foregroundDark,
-    ':hover': {
-      color: Colors.foregroundDark
-    }
+    color: Colors.foregroundDark
   }
 })
 

@@ -108,6 +108,10 @@ export const selectStyles = {
     ':hover': {
       color: Colors.foregroundLight
     }
+  }),
+  noOptionsMessage: (provided) => ({
+    ...provided,
+    color: Colors.foregroundDark
   })
 }
 

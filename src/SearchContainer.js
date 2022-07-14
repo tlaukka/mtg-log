@@ -18,6 +18,7 @@ import useCardCollection from './useCardCollection'
 import constants from './constants'
 import Drawer from './Drawer'
 import ColorSelect from './ColorSelect'
+import CardSymbols from './CardSymbols'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -80,7 +81,7 @@ function SearchContainer () {
     // setSelectedCard(null)
     setDrawerOpen(false)
   }
-console.log(cards.length)
+
   return (
     <>
       <Header>
@@ -177,9 +178,14 @@ console.log(cards.length)
         onClose={() => setDetailsOpen(false)}
       />
       <Drawer open={drawerOpen}>
-        <Menu>
-          <CloseButton onClick={closeCardInfo} />
-        </Menu>
+        <CardDrawerHeader>
+          <Menu>
+            <CloseButton onClick={closeCardInfo} />
+          </Menu>
+          <Menu>
+            <LinkButton onClick={cardCollection.clear}>Clear</LinkButton>
+          </Menu>
+        </CardDrawerHeader>
         <CardDrawerContainer>
           {cardCollection.toArray().map((card) => (
             <CardDrawerRow key={card.id}>
@@ -189,7 +195,7 @@ console.log(cards.length)
           ))}
         </CardDrawerContainer>
         <CardDrawerFooter>
-          <SaveButton>Save!</SaveButton>
+          <SaveButton disabled={cardCollection.size() === 0}>Save!</SaveButton>
         </CardDrawerFooter>
       </Drawer>
     </>
@@ -245,6 +251,11 @@ function CardDetails ({ open, drawerOpen, card, onClose }) {
     </CardDetailsContainer>
   )
 }
+
+const CardDrawerHeader = styled('div')({
+  display: 'flex',
+  justifyContent: 'space-between'
+})
 
 const CardDrawerContainer = styled('div')({
   fontSize: 14,

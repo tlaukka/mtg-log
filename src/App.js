@@ -6,6 +6,7 @@ import CardContainer from './CardContainer'
 import { Route, useRoute } from './RouteProvider'
 
 import 'keyrune/css/keyrune.css'
+import 'mana-font/css/mana.css'
 
 function App() {
   const { route } = useRoute()

@@ -32,6 +32,10 @@ function useCardCollection () {
     return toArray().length
   }
 
+  function clear () {
+    setCards({})
+  }
+
   function toArray () {
     return Object.values(cards)
   }
@@ -43,6 +47,7 @@ function useCardCollection () {
     get,
     has,
     size,
+    clear,
     toArray
   }
 }
