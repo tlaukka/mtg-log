@@ -23,7 +23,7 @@ function useCardSearch () {
         setResult(json)
         onSuccess && onSuccess()
       } else {
-        queryStack.reset()
+        queryStack.clear()
         setError(response)
         onError && onError()
       }
@@ -36,6 +36,7 @@ function useCardSearch () {
   const searchCards = React.useCallback(
     (search) => {
       const url = `https://api.scryfall.com/cards/search?${qs.stringify({ q: search })}`
+      queryStack.clear()
       queryStack.push(url)
       fetchCards()
     },

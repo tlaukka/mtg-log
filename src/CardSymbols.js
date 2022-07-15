@@ -5,10 +5,6 @@ export function CardSymbol ({ symbol, ...rest }) {
   return <Symbol className={`ms ${symbol} ms-fw ms-cost ms-shadow`} {...rest} />
 }
 
-function MulticolorSymbol (props) {
-  return <Multicolor className={`ms ms-multicolor ms-duo-color ms-fw ms-cost ms-shadow`} {...props} />
-}
-
 const Symbol = styled('i')({
   fontSize: 15,
   lineHeight: '20px',
@@ -17,7 +13,21 @@ const Symbol = styled('i')({
 })
 
 const Multicolor = styled(Symbol)({
-  backgroundColor: '#D0B569'
+  display: 'inline-block',
+  borderRadius: '100%',
+  boxShadow: '-0.06em 0.07em 0 #111, 0 0.06em 0 #111',
+  backgroundColor: '#D0B569',
+  ':after': {
+    content: '"🞅"',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontStyle: 'normal',
+    fontSize: 19,
+    width: 20,
+    height: 20,
+    color: 'black'
+  }
 })
 
 function withSymbolData (symbol) {
@@ -34,7 +44,7 @@ const CardSymbols = {
   Island: withSymbolData('ms-u')(CardSymbol),
   Swamp: withSymbolData('ms-b')(CardSymbol),
   Plains: withSymbolData('ms-w')(CardSymbol),
-  Multicolor: withSymbolData('ms-multicolor ms-duo-color')(MulticolorSymbol),
+  Multicolor: withSymbolData('ms-multicolor ms-duo-color')(Multicolor),
   Colorless: withSymbolData('ms-c')(CardSymbol)
 }
 

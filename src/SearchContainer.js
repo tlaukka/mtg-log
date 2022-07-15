@@ -22,6 +22,8 @@ import CardSymbols from './CardSymbols'
 
 function SearchContainer () {
   // console.log('----- render -----')
+  const order = React.useRef('name')
+
   const [search, setSearch] = React.useState('')
   const [selectedSets, setSelectedSets] = React.useState([])
   const [selectedColors, setSelectedColors] = React.useState([])
@@ -39,19 +41,32 @@ function SearchContainer () {
   // const storage = useStorage()
   // const storageData = storage.getValues()
 
-  function getCards (e) {
+  function onSubmit (e) {
     e.preventDefault()
+    getCards()
+  }
 
+  function getCards () {
     const setRegExp = new RegExp(/set:\w+/gi)
     const setsInSearch = search.match(setRegExp) || []
-    const searchPhrase = search.replace(setRegExp, '').trim()
+
+    const colorRegExp = new RegExp(/c:\w+/gi)
+    const colorsInSearch = search.match(colorRegExp) || []
 
     const setParams = [...selectedSets, ...setsInSearch].join(' OR ')
-    const completeSearch = `${setParams} ${searchPhrase}`
+    const colorParams = [...selectedColors, ...colorsInSearch].join(' OR ')
+
+    const searchPhrase = search.replace(setRegExp, '').trim()
+    const completeSearch = `(${setParams}) (${colorParams}) ${searchPhrase}`
 
     // searchCards(completeSearch)
-    searchCards('set:alpha')
+    searchCards(`set:alpha order:${order.current}`)
     // searchCards('set:leg')
+  }
+
+  function orderCards (newOrder) {
+    order.current = newOrder
+    getCards()
   }
 
   function onPageChange (fn) {
@@ -90,7 +105,7 @@ function SearchContainer () {
             <MenuButton onClick={() => setRoute(Route.list)}>🞀 Back to cards</MenuButton>
           </Menu>
         </NavBar>
-        <InputBar onSubmit={getCards}>
+        <InputBar onSubmit={onSubmit}>
           <CardSetSelect
             sets={sets}
             onChange={setSelectedColors}
@@ -113,9 +128,9 @@ function SearchContainer () {
           <thead>
             <tr>
               <th>Set</th>
-              <th>№</th>
+              <TableSortingHeader onClick={() => orderCards('set')}>№</TableSortingHeader>
               <th>Res.</th>
-              <th>Name</th>
+              <TableSortingHeader onClick={() => orderCards('name')}>Name</TableSortingHeader>
               <th></th>
             </tr>
           </thead>
@@ -183,7 +198,9 @@ function SearchContainer () {
             <CloseButton onClick={closeCardInfo} />
           </Menu>
           <Menu>
-            <LinkButton onClick={cardCollection.clear}>Clear</LinkButton>
+            <LinkButton disabled={cardCollection.size() === 0} onClick={cardCollection.clear}>
+              Clear
+            </LinkButton>
           </Menu>
         </CardDrawerHeader>
         <CardDrawerContainer>
@@ -388,6 +405,17 @@ const TableContainer = styled('div')({
   marginRight: drawerOpen ? 360 : 0,
   // maxHeight: detailsOpen ? `calc(100vh - ${constants.HEADER_HEIGHT}px - ${constants.FOOTER_HEIGHT}px - 200px)` : `calc(100vh - ${constants.HEADER_HEIGHT}px - ${constants.FOOTER_HEIGHT}px)`
 }))
+
+const TableSortingHeader = styled('th')({
+  cursor: 'pointer',
+  ':hover': {
+    color: Colors.accept
+  }
+  // ':after': {
+  //   content: '"↑"',
+  //   marginLeft: 2
+  // }
+})
 
 const CardTable = styled('table')({
   borderCollapse: 'collapse',

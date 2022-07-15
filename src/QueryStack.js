@@ -13,16 +13,16 @@ class QueryStack {
     this.queries.pop()
   }
 
+  clear () {
+    this.queries = []
+  }
+
   get current () {
     return this.queries[this.queries.length - 1]
   }
 
   get size () {
     return this.queries.length
-  }
-
-  reset () {
-    this.queries = []
   }
 }
 
