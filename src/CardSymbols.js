@@ -1,8 +1,24 @@
 import styled from '@emotion/styled'
 import React from 'react'
+import { Icon } from './Icon'
 
 export function CardSymbol ({ symbol, ...rest }) {
   return <Symbol className={`ms ${symbol} ms-fw ms-cost ms-shadow`} {...rest} />
+}
+
+function Multicolor () {
+  return (
+    <MulticolorSymbol>
+      <Icon icon={'circle-o'} style={multicolorStyles} />
+    </MulticolorSymbol>
+  )
+}
+
+const multicolorStyles = {
+  fontSize: 18,
+  lineHeight: '20px',
+  width: 20,
+  height: 20
 }
 
 const Symbol = styled('i')({
@@ -12,22 +28,14 @@ const Symbol = styled('i')({
   height: 20
 })
 
-const Multicolor = styled(Symbol)({
+const MulticolorSymbol = styled('div')({
   display: 'inline-block',
+  width: 20,
+  height: 20,
   borderRadius: '100%',
   boxShadow: '-0.06em 0.07em 0 #111, 0 0.06em 0 #111',
-  backgroundColor: '#D0B569',
-  ':after': {
-    content: '"🞅"',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontStyle: 'normal',
-    fontSize: 19,
-    width: 20,
-    height: 20,
-    color: 'black'
-  }
+  color: 'black',
+  backgroundColor: '#D0B569'
 })
 
 function withSymbolData (symbol) {
@@ -44,7 +52,7 @@ const CardSymbols = {
   Island: withSymbolData('ms-u')(CardSymbol),
   Swamp: withSymbolData('ms-b')(CardSymbol),
   Plains: withSymbolData('ms-w')(CardSymbol),
-  Multicolor: withSymbolData('ms-multicolor ms-duo-color')(Multicolor),
+  Multicolor: () => <Multicolor />,
   Colorless: withSymbolData('ms-c')(CardSymbol)
 }
 

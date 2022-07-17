@@ -7,6 +7,7 @@ import { Route, useRoute } from './RouteProvider'
 
 import 'keyrune/css/keyrune.css'
 import 'mana-font/css/mana.css'
+import 'material-design-iconic-font/dist/css/material-design-iconic-font.min.css'
 
 function App() {
   const { route } = useRoute()

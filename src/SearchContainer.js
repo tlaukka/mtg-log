@@ -19,6 +19,8 @@ import constants from './constants'
 import Drawer from './Drawer'
 import ColorSelect from './ColorSelect'
 import CardSymbols from './CardSymbols'
+import ColorSelectArray from './ColorSelectArray'
+import Icons from './Icon'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -102,7 +104,9 @@ function SearchContainer () {
       <Header>
         <NavBar>
           <Menu>
-            <MenuButton onClick={() => setRoute(Route.list)}>🞀 Back to cards</MenuButton>
+            <MenuButton onClick={() => setRoute(Route.list)}>
+              <Icons.ArrowLeft />Back to cards
+            </MenuButton>
           </Menu>
         </NavBar>
         <InputBar onSubmit={onSubmit}>
@@ -110,10 +114,11 @@ function SearchContainer () {
             sets={sets}
             onChange={setSelectedColors}
           />
-          <ColorSelect
+          <ColorSelectArray onChange={setSelectedColors} />
+          {/* <ColorSelect
             sets={sets}
             onChange={setSelectedSets}
-          />
+          /> */}
           <Search
             value={search}
             placeholder={'Search...'}
@@ -146,11 +151,11 @@ function SearchContainer () {
                 <td>
                   {cardCollection.has(card) ? (
                     <LinkButton.Decline onClick={() => cardCollection.remove(card)}>
-                      &#10539;
+                      <Icons.Cross />
                     </LinkButton.Decline>
                   ) : (
                     <LinkButton.Accept onClick={() => cardCollection.add(card)}>
-                      🞣
+                      <Icons.Plus />
                     </LinkButton.Accept>
                   )}
                 </td>
@@ -166,17 +171,17 @@ function SearchContainer () {
               {meta.totalCards && <FooterItem>{`Total cards: ${meta.totalCards}`}</FooterItem>}
               {meta.page && <FooterItem>{`${meta.page} / ${meta.totalPages}`}</FooterItem>}
               <MenuButton disabled={!previous} onClick={() => onPageChange(previous)}>
-                🞀 Previous
+                <Icons.ChevronLeft />Previous
               </MenuButton>
               <MenuButton disabled={!next} onClick={() => onPageChange(next)}>
-                Next 🞂
+                Next<Icons.ChevronRight />
               </MenuButton>
             </>
           )}
         </Menu>
         <Menu>
           <MenuButton disabled={cards.length === 0} onClick={backToTop}>
-            Back to top ⮥
+            Back to top<Icons.ArrowUp />
           </MenuButton>
           <MenuButton onClick={toggleDrawer}>
             {`Card drawer [${cardCollection.size()}]`}
@@ -195,7 +200,7 @@ function SearchContainer () {
       <Drawer open={drawerOpen}>
         <CardDrawerHeader>
           <Menu>
-            <CloseButton onClick={closeCardInfo} />
+            <Close onClick={closeCardInfo} />
           </Menu>
           <Menu>
             <LinkButton disabled={cardCollection.size() === 0} onClick={cardCollection.clear}>
@@ -206,7 +211,9 @@ function SearchContainer () {
         <CardDrawerContainer>
           {cardCollection.toArray().map((card) => (
             <CardDrawerRow key={card.id}>
-              <CardDrawerRemove onClick={() => cardCollection.remove(card)} />
+              <CardDrawerRemove onClick={() => cardCollection.remove(card)}>
+                <Icons.Cross />
+              </CardDrawerRemove>
               <CardDrawerCardName>{card.name}</CardDrawerCardName>
             </CardDrawerRow>
           ))}
@@ -248,6 +255,12 @@ function CardSet ({ set, rarity }) {
   )
 }
 
+function ReservedStatus ({ reserved }) {
+  return reserved
+    ? <Icons.Check style={{ color: Colors.accept }} />
+    : <Icons.Cross style={{ color: Colors.error }}  />
+}
+
 function CardPreview ({ card }) {
   return (
     <Popup content={<CardPreviewImage src={card.image_uris.small} />}>
@@ -266,6 +279,14 @@ function CardDetails ({ open, drawerOpen, card, onClose }) {
         </>
       )}
     </CardDetailsContainer>
+  )
+}
+
+function Close (props) {
+  return (
+    <LinkButton.Danger {...props}>
+      Close<Icons.Cross />
+    </LinkButton.Danger>
   )
 }
 
@@ -314,25 +335,17 @@ const CardDrawerCardName = styled('div')({
 const CardDrawerRemove = styled('div')({
   display: 'flex',
   justifyContent: 'center',
+  alignItems: 'center',
   flex: '0 0 20px',
   marginRight: 8,
   color: Colors.decline,
   ':hover': {
     color: Colors.declineLight
-  },
-  ':after': {
-    content: '"\\292b"'
   }
 })
 
 const SaveButton = styled(Button)({
   width: 160
-})
-
-const CloseButton = styled(LinkButton.Decline)({
-  ':after': {
-    content: '"Close \\292b"'
-  }
 })
 
 const CardDetailsContainer = styled('div')({
@@ -356,7 +369,7 @@ const DetailsImage = styled('img')({
   borderRadius: (setCode === 'lea') ? 24 : 15
 }))
 
-const DetailsClose = styled(CloseButton)({
+const DetailsClose = styled(Close)({
   display: 'block',
   fontSize: 12,
   lineHeight: '24px',
@@ -411,10 +424,6 @@ const TableSortingHeader = styled('th')({
   ':hover': {
     color: Colors.accept
   }
-  // ':after': {
-  //   content: '"↑"',
-  //   marginLeft: 2
-  // }
 })
 
 const CardTable = styled('table')({
@@ -562,13 +571,6 @@ const CardName = styled('div')({
 const CardPreviewImage = styled('img')({
   borderRadius: 7
 })
-
-const ReservedStatus = styled('div')(({ reserved }) => ({
-  ':before': {
-    content: `"${reserved ? '✓' : '✗'}"`,
-    color: reserved ? Colors.success : Colors.error
-  }
-}))
 
 const CardSetContainer = styled('div')({
   position: 'relative',
