@@ -21,6 +21,7 @@ import ColorSelect from './ColorSelect'
 import CardSymbols from './CardSymbols'
 import ColorSelectArray from './ColorSelectArray'
 import Icons from './Icon'
+import DataTable from './DataTable'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -115,10 +116,6 @@ function SearchContainer () {
             onChange={setSelectedColors}
           />
           <ColorSelectArray onChange={setSelectedColors} />
-          {/* <ColorSelect
-            sets={sets}
-            onChange={setSelectedSets}
-          /> */}
           <Search
             value={search}
             placeholder={'Search...'}
@@ -129,40 +126,37 @@ function SearchContainer () {
         </InputBar>
       </Header>
       <TableContainer id={'table-container'} drawerOpen={drawerOpen} detailsOpen={detailsOpen}>
-        <CardTable>
-          <thead>
-            <tr>
-              <th>Set</th>
+        <CardTable
+          data={cards}
+          renderHeader={() => (
+            <>
+              <DataTable.Header>Set</DataTable.Header>
               <TableSortingHeader onClick={() => orderCards('set')}>№</TableSortingHeader>
-              <th>Res.</th>
+              <DataTable.Header>Res.</DataTable.Header>
               <TableSortingHeader onClick={() => orderCards('name')}>Name</TableSortingHeader>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr className={'spacer'} />
-            {cards.map((card) => (
-              <tr key={card.id}>
-                <td><CardSet set={sets[card.set]} rarity={card.rarity} /></td>
-                <td>{card.collector_number}</td>
-                <td><ReservedStatus reserved={card.reserved} /></td>
-                {/* <td><CardPreview card={card} /></td> */}
-                <td><CardName onClick={() => openCardInfo(card)}>{card.name}</CardName></td>
-                <td>
-                  {cardCollection.has(card) ? (
-                    <LinkButton.Decline onClick={() => cardCollection.remove(card)}>
-                      <Icons.Cross />
-                    </LinkButton.Decline>
-                  ) : (
-                    <LinkButton.Accept onClick={() => cardCollection.add(card)}>
-                      <Icons.Plus />
-                    </LinkButton.Accept>
-                  )}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </CardTable>
+              <DataTable.Header></DataTable.Header>
+            </>
+          )}
+          renderRow={(card) => (
+            <>
+              <DataTable.Data><CardSet set={sets[card.set]} rarity={card.rarity} /></DataTable.Data>
+              <DataTable.Data>{card.collector_number}</DataTable.Data>
+              <DataTable.Data><ReservedStatus reserved={card.reserved} /></DataTable.Data>
+              <DataTable.Data><CardName onClick={() => openCardInfo(card)}>{card.name}</CardName></DataTable.Data>
+              <DataTable.Data>
+                {cardCollection.has(card) ? (
+                  <LinkButton.Decline onClick={() => cardCollection.remove(card)}>
+                    <Icons.Cross />
+                  </LinkButton.Decline>
+                ) : (
+                  <LinkButton.Accept onClick={() => cardCollection.add(card)}>
+                    <Icons.Plus />
+                  </LinkButton.Accept>
+                )}
+              </DataTable.Data>
+            </>
+          )}
+        />
       </TableContainer>
       <Footer>
         <Menu>
@@ -419,33 +413,8 @@ const TableContainer = styled('div')({
   // maxHeight: detailsOpen ? `calc(100vh - ${constants.HEADER_HEIGHT}px - ${constants.FOOTER_HEIGHT}px - 200px)` : `calc(100vh - ${constants.HEADER_HEIGHT}px - ${constants.FOOTER_HEIGHT}px)`
 }))
 
-const TableSortingHeader = styled('th')({
-  cursor: 'pointer',
-  ':hover': {
-    color: Colors.accept
-  }
-})
-
-const CardTable = styled('table')({
-  borderCollapse: 'collapse',
-  width: '100%',
-  marginBottom: 24,
-  backgroundColor: Colors.backgroundLight,
-  thead: {
-    fontSize: 16,
-    color: Colors.control,
-    tr: {
-      position: 'sticky',
-      zIndex: 2,
-      top: 0,
-      overflow: 'hidden',
-      boxShadow: '0px -2px 14px rgba(0, 0, 0, 0.6)'
-      // clipPath: 'inset(0px 0px 12px 0px)'
-    }
-  },
+const CardTable = styled(DataTable)({
   th: {
-    padding: '8px 12px',
-    backgroundColor: Colors.backgroundLight,
     ':nth-of-type(1)': { // Set
       width: 29,
       paddingLeft: 24
@@ -469,25 +438,14 @@ const CardTable = styled('table')({
   },
   tbody: {
     fontSize: 16,
-    // tr: {
-    //   borderBottom: `1px solid ${Colors.backgroundDark}`,
-    // },
     'tr:nth-of-type(odd)': {
       backgroundColor: Colors.backgroundAccent
     },
-    // 'tr:nth-of-type(4n)': {
-    //   backgroundColor: Colors.backgroundAccent
-    // },
     'tr:first-of-type': {
-      height: 12
-    },
-    // 'tr:hover': {
-    //   backgroundColor:  Colors.backgroundAccent
-    // }
+      height: 12,
+    }
   },
   td: {
-    // padding: '12px 12px 6px',
-    padding: '8px 12px',
     '&:nth-of-type(1)': { // Set
       paddingLeft: 24
     },
@@ -504,6 +462,13 @@ const CardTable = styled('table')({
     '&:last-of-type': {
       paddingRight: 24
     }
+  }
+})
+
+const TableSortingHeader = styled(DataTable.Header)({
+  cursor: 'pointer',
+  ':hover': {
+    color: Colors.accept
   }
 })
 

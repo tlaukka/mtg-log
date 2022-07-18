@@ -72,10 +72,10 @@ const Symbol = styled('div')({
   height: 30,
   borderRadius: 3,
   ':hover': {
-    border: `1px solid ${Colors.borderLight}`
+    border: `1px solid ${Colors.backgroundAccent}`
   }
 }, ({ selected }) => ({
-  border: selected ? `1px solid ${Colors.foregroundDark}` : 'none',
+  border: selected ? `1px solid ${Colors.backgroundAccent}` : 'none',
   backgroundColor: selected ? Colors.backgroundLight : Colors.backgroundDark
 }))
 
