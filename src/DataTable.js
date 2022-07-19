@@ -22,6 +22,25 @@ function DataTable ({ data = [], renderHeader, renderRow, ...rest }) {
   )
 }
 
+function ExpandableRow ({ content, children }) {
+  const [expanded, setExpanded] = React.useState(false)
+
+  return (
+    <>
+      <tr onClick={() => setExpanded((value) => !value)}>
+        {children}
+      </tr>
+      <tr>
+        <ExpandedRowContainer colSpan={5}>
+          <ExpandedRowWrapper visible={expanded}>
+            {content}
+          </ExpandedRowWrapper>
+        </ExpandedRowContainer>
+      </tr>
+    </>
+  )
+}
+
 const Table = styled('table')({
   borderCollapse: 'collapse',
   width: '100%',
@@ -55,6 +74,17 @@ const Table = styled('table')({
     padding: '8px 12px'
   }
 })
+
+const ExpandedRowContainer = styled('td')({
+  padding: '0px !important'
+})
+
+const ExpandedRowWrapper = styled('div')({
+  overflow: 'hidden',
+  transition: 'max-height 0.2s ease'
+}, ({ visible }) => ({
+  maxHeight: visible ? 43 : 0
+}))
 
 DataTable.Header = styled('th')()
 DataTable.Data = styled('td')()

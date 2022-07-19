@@ -22,6 +22,7 @@ import CardSymbols from './CardSymbols'
 import ColorSelectArray from './ColorSelectArray'
 import Icons from './Icon'
 import DataTable from './DataTable'
+import CardDetailsModal from './CardDetailsModal'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -63,7 +64,7 @@ function SearchContainer () {
     const completeSearch = `(${setParams}) (${colorParams}) ${searchPhrase}`
 
     // searchCards(completeSearch)
-    searchCards(`set:alpha order:${order.current}`)
+    searchCards(`set:beta order:${order.current}`)
     // searchCards('set:leg')
   }
 
@@ -185,12 +186,12 @@ function SearchContainer () {
           </FooterLoaderContainer>
         </Menu>
       </Footer>
-      <CardDetails
+      {/* <CardDetails
         open={detailsOpen}
         drawerOpen={drawerOpen}
         card={selectedCard}
         onClose={() => setDetailsOpen(false)}
-      />
+      /> */}
       <Drawer open={drawerOpen}>
         <CardDrawerHeader>
           <Menu>
@@ -216,25 +217,11 @@ function SearchContainer () {
           <SaveButton disabled={cardCollection.size() === 0}>Save!</SaveButton>
         </CardDrawerFooter>
       </Drawer>
-    </>
-  )
-}
-
-function ExpandableTableRow ({ content, children }) {
-  const [expanded, setExpanded] = React.useState(false)
-
-  return (
-    <>
-      <tr onClick={() => setExpanded((value) => !value)}>
-        {children}
-      </tr>
-      <tr>
-        <ExpandedRowContainer colSpan={5}>
-          <ExpandedRowWrapper visible={expanded}>
-            {content}
-          </ExpandedRowWrapper>
-        </ExpandedRowContainer>
-      </tr>
+      <CardDetailsModal
+        visible={detailsOpen}
+        card={selectedCard}
+        onClose={() => setDetailsOpen(false)}
+      />
     </>
   )
 }
@@ -470,22 +457,6 @@ const TableSortingHeader = styled(DataTable.Header)({
   ':hover': {
     color: Colors.accept
   }
-})
-
-const ExpandedRowContainer = styled('td')({
-  padding: '0px !important'
-})
-
-const ExpandedRowWrapper = styled('div')({
-  overflow: 'hidden',
-  transition: 'max-height 0.2s ease'
-}, ({ visible }) => ({
-  maxHeight: visible ? 43 : 0
-}))
-
-const CardInfoContainer = styled('div')({
-  padding: 12,
-  backgroundColor: Colors.backgroundAccent
 })
 
 const Footer = styled('div')({
