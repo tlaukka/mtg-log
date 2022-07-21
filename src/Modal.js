@@ -11,7 +11,7 @@ function Modal ({ visible, onClose, children }) {
   }
 
   return ReactDOM.createPortal(
-    <Backdrop onClick={onClose}>
+    <Backdrop>
       <ModalClose onClick={onClose}><Icons.Cross /></ModalClose>
       <ModalContainer>
         {children}

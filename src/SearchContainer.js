@@ -23,6 +23,7 @@ import ColorSelectArray from './ColorSelectArray'
 import Icons from './Icon'
 import DataTable from './DataTable'
 import CardDetailsModal from './CardDetailsModal'
+import GradeSelect, { InlineGradeSelect } from './GradeSelect'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -31,6 +32,9 @@ function SearchContainer () {
   const [search, setSearch] = React.useState('')
   const [selectedSets, setSelectedSets] = React.useState([])
   const [selectedColors, setSelectedColors] = React.useState([])
+
+  const [selectedGrade, setSelectedGrade] = React.useState('nm')
+
   const [selectedCard, setSelectedCard] = React.useState(null)
 
   const [drawerOpen, setDrawerOpen] = React.useState(false)
@@ -116,7 +120,9 @@ function SearchContainer () {
             sets={sets}
             onChange={setSelectedColors}
           />
-          <ColorSelectArray onChange={setSelectedColors} />
+          {/* <GradeSelect onChange={setSelectedGrade} /> */}
+          <InlineGradeSelect />
+          {/* <ColorSelectArray onChange={setSelectedColors} /> */}
           <Search
             value={search}
             placeholder={'Search...'}

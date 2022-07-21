@@ -25,6 +25,14 @@ function Option({ children, ...props }) {
   )
 }
 
+function SingleValue({ children, ...props }) {
+  return (
+    <components.SingleValue {...props}>
+      {children}
+    </components.SingleValue>
+  )
+}
+
 function MultiValue({ children, ...props }) {
   return (
     <components.MultiValue {...props}>
@@ -116,6 +124,7 @@ export const selectStyles = {
 }
 
 Select.Option = Option
+Select.SingleValue = SingleValue
 Select.MultiValue = MultiValue
 
 export default Select
