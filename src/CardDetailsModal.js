@@ -24,32 +24,43 @@ function CardDetailsModal ({ card, ...rest }) {
         </CardImageContainer>
         <CardInfo>
           <Table>
+            <thead><tr><th /><th /></tr>
+            </thead>
             <tbody>
               <tr>
-                <td><h1><span>№ {card.collector_number}/<span>{set.card_count}</span></span></h1></td>
+                <td>
+                  <h1><span>№ {card.collector_number}/<span>{set.card_count}</span></span></h1>
+                </td>
                 <td><h1>{card.name}</h1></td>
               </tr>
-              <tr />
+              <TableRowSpacer />
               <tr>
-                <td><InfoText>Set:</InfoText></td>
-                <td><InfoText><CardSetSymbol code={set.code} /> {set.name}</InfoText></td>
+                <td rowSpan={2}>
+                  <InfoText><CardSetSymbol code={set.code} size={42} fixedWidth={false} /></InfoText>
+                </td>
+                <td><InfoText>{set.name}</InfoText></td>
               </tr>
+              <tr>
+                <td><InfoText>Released - {new Date(set.released_at).getFullYear()}</InfoText></td>
+              </tr>
+              <TableRowSpacer />
               <tr>
                 <td><InfoText>Rarity:</InfoText></td>
-                <td><InfoText><Rarity rarity={card.rarity}>{card.rarity.toUpperCase()}</Rarity></InfoText></td>
-              </tr>
-              <tr>
-                <td><InfoText>Released:</InfoText></td>
-                <td><InfoText>{new Date(set.released_at).getFullYear()}</InfoText></td>
+                <td>
+                  <InfoText><Rarity rarity={card.rarity}>{card.rarity.toUpperCase()}</Rarity></InfoText>
+                </td>
               </tr>
               <tr>
                 <td><InfoText>Reserved:</InfoText></td>
-                <td><InfoText><ReservedStatus>{card.reserved ? 'YES' : 'NO'}</ReservedStatus></InfoText></td>
+                <td>
+                  <InfoText>
+                    <ReservedStatus reserved={card.reserved}>{card.reserved ? 'YES' : 'NO'}</ReservedStatus>
+                  </InfoText>
+                </td>
               </tr>
               <tr>
                 <td><InfoText>Grade:</InfoText></td>
                 <td><GradeSelect.Inline.Sm /></td>
-                {/* <td><GradeSelect.Form /></td> */}
               </tr>
             </tbody>
           </Table>
@@ -129,15 +140,24 @@ const CardInfo = styled('div')({
 const Table = styled('table')({
   width: '100%',
   borderCollapse: 'collapse',
-  'tr:first-of-type': {
-    borderBottom: `1px solid ${Colors.backgroundAccent}`
+  th: {
+    padding: 0,
+    ':nth-of-type(1)': {
+      width: 120
+    }
   },
-  'tr:nth-of-type(2)': {
-    height: 12
-  },
-  td: {
-    paddingBottom: 4
+  tbody: {
+    'tr:first-of-type': {
+      borderBottom: `1px solid ${Colors.backgroundAccent}`
+    },
+    td: {
+      paddingBottom: 4
+    }
   }
+})
+
+const TableRowSpacer = styled('tr')({
+  height: 12
 })
 
 const InfoText = styled('div')({

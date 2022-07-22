@@ -41,7 +41,7 @@ function CardSetOption (props) {
   return (
     <Select.Option {...props}>
       {props.data.code && (
-        <Symbol className={`ss ss-${props.data.code}`} />
+        <Symbol className={`ss ss-${props.data.code} ss-fw`} />
       )}
       {props.data.label}
     </Select.Option>
@@ -52,7 +52,7 @@ function CardSetMultiValue (props) {
   return (
     <Select.MultiValue {...props}>
       {props.data.code && (
-        <Symbol className={`ss ss-${props.data.code}`} />
+        <Symbol className={`ss ss-${props.data.code} ss-fw`} />
       )}
       {props.data.label}
     </Select.MultiValue>

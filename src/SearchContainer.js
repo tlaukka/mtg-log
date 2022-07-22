@@ -120,8 +120,6 @@ function SearchContainer () {
             sets={sets}
             onChange={setSelectedColors}
           />
-          <GradeSelect.Form />
-          {/* <GradeSelect onChange={setSelectedGrade} /> */}
           {/* <ColorSelectArray onChange={setSelectedColors} /> */}
           <Search
             value={search}
