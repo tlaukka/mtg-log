@@ -23,7 +23,7 @@ import ColorSelectArray from './ColorSelectArray'
 import Icons from './Icon'
 import DataTable from './DataTable'
 import CardDetailsModal from './CardDetailsModal'
-import GradeSelect, { InlineGradeSelect } from './GradeSelect'
+import GradeSelect from './GradeSelect'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -120,8 +120,8 @@ function SearchContainer () {
             sets={sets}
             onChange={setSelectedColors}
           />
+          <GradeSelect.Form />
           {/* <GradeSelect onChange={setSelectedGrade} /> */}
-          <InlineGradeSelect />
           {/* <ColorSelectArray onChange={setSelectedColors} /> */}
           <Search
             value={search}
@@ -192,12 +192,6 @@ function SearchContainer () {
           </FooterLoaderContainer>
         </Menu>
       </Footer>
-      {/* <CardDetails
-        open={detailsOpen}
-        drawerOpen={drawerOpen}
-        card={selectedCard}
-        onClose={() => setDetailsOpen(false)}
-      /> */}
       <Drawer open={drawerOpen}>
         <CardDrawerHeader>
           <Menu>
@@ -253,19 +247,6 @@ function CardPreview ({ card }) {
     <Popup content={<CardPreviewImage src={card.image_uris.small} />}>
       <CardName>{card.name}</CardName>
     </Popup>
-  )
-}
-
-function CardDetails ({ open, drawerOpen, card, onClose }) {
-  return (
-    <CardDetailsContainer open={open} drawerOpen={drawerOpen}>
-      {card && (
-        <>
-          <DetailsImage src={card.image_uris.normal} alt={card.name} setCode={card.set} />
-          <DetailsClose onClick={onClose} />
-        </>
-      )}
-    </CardDetailsContainer>
   )
 }
 
@@ -333,36 +314,6 @@ const CardDrawerRemove = styled('div')({
 
 const SaveButton = styled(Button)({
   width: 160
-})
-
-const CardDetailsContainer = styled('div')({
-  boxSizing: 'border-box',
-  position: 'fixed',
-  zIndex: 5,
-  top: `${constants.HEADER_HEIGHT + 59}px`,
-  width: 300,
-  transition: 'all 0.2s ease',
-  backgroundColor: 'transparent'
-}, ({ open, drawerOpen }) => ({
-  opacity: open ? 1 : 0,
-  visibility: open ? 'visible' : 'hidden',
-  right: drawerOpen ? 384 : 24
-}))
-
-const DetailsImage = styled('img')({
-  width: '100%',
-  boxShadow: '0px 0px 12px rgba(0, 0, 0, 0.5)'
-}, ({ setCode }) => ({
-  borderRadius: (setCode === 'lea') ? 24 : 15
-}))
-
-const DetailsClose = styled(Close)({
-  display: 'block',
-  fontSize: 12,
-  lineHeight: '24px',
-  width: 44,
-  margin: '0 auto',
-  padding: 0
 })
 
 const NavBar = styled('div')({

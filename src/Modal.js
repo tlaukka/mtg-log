@@ -6,18 +6,23 @@ import Icons from './Icon'
 import LinkButton from './LinkButton'
 
 function Modal ({ visible, onClose, children }) {
+  function handleClose (e) {
+    e.stopPropagation()
+    onClose()
+  }
+
   if (!visible) {
     return false
   }
 
   return ReactDOM.createPortal(
-    <Backdrop>
-      <ModalClose onClick={onClose}><Icons.Cross /></ModalClose>
-      <ModalContainer>
-        {children}
-      </ModalContainer>
+    <Backdrop onClick={handleClose}>
+      <ModalClose onClick={handleClose}><Icons.Cross /></ModalClose>
+        <ModalContainer onClick={(e) => e.stopPropagation()}>
+          {children}
+        </ModalContainer>
     </Backdrop>,
-    document.body
+    document.getElementById('root')
   )
 }
 
@@ -32,6 +37,12 @@ const Backdrop = styled('div')({
 })
 
 const ModalContainer = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  position: 'relative',
+  width: '60%',
+  minWidth: 480,
+  margin: '10% auto',
   color: Colors.foregroundLight
 })
 

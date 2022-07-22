@@ -112,7 +112,6 @@ export const selectStyles = {
     cursor: 'pointer',
     padding: '4px 8px',
     color: Colors.control,
-    backgroundColor: Colors.backgroundDark,
     ':hover': {
       color: Colors.foregroundLight
     }

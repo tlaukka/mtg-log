@@ -23,10 +23,10 @@ const options = [
   { value: 'dmg', label: 'DMG' }
 ]
 
-function GradeSelect ({ onChange, ...rest }) {
+function GradeSelect ({ styles = formStyles, size = sizes.md, onChange, ...rest }) {
   const onSelectChange = React.useCallback(
     (data) => {
-      onChange(data.value)
+      onChange && onChange(data.value)
     },
     [onChange]
   )
@@ -36,6 +36,7 @@ function GradeSelect ({ onChange, ...rest }) {
       {...rest}
       isSearchable={false}
       styles={styles}
+      size={size}
       defaultValue={options[1]}
       options={options}
       placeholder={null}
@@ -45,61 +46,12 @@ function GradeSelect ({ onChange, ...rest }) {
   )
 }
 
-export function InlineGradeSelect ({ onSelect }) {
-  const [optionsVisible, setOptionsVisible] = React.useState(false)
-  const [selected, setSelected] = React.useState(options[1])
-
-  React.useEffect(
-    () => {
-      function click () {
-        setOptionsVisible(false)
-      }
-
-      document.body.addEventListener('click', click)
-
-      return () => {
-        document.body.removeEventListener('click', click)
-      }
-    },
-    []
-  )
-
-  function toggleOptions (e) {
-    e.stopPropagation()
-    setOptionsVisible(!optionsVisible)
-  }
-
-  function handleSelect (e, option) {
-    e.stopPropagation()
-
-    setSelected(option)
-    setOptionsVisible(false)
-
-    onSelect && onSelect(option)
-  }
-
-  return (
-    <GradeTagContainer>
-      <GradeTag grade={selected.value} onClick={toggleOptions}>
-        {selected.label}
-      </GradeTag>
-      {optionsVisible && (
-        <OptionsContainer>
-          {options.map((option) => (
-            <GradeTag key={option.value} grade={option.value} onClick={(e) => handleSelect(e, option)}>
-              {option.label}
-            </GradeTag>
-          ))}
-        </OptionsContainer>
-      )}
-    </GradeTagContainer>
-  )
-}
-
 function GradeOption (props) {
   return (
     <Select.Option {...props}>
-      <GradeTag grade={props.data.value}>{props.data.label}</GradeTag>
+      <GradeTag grade={props.data.value} size={props.selectProps.size}>
+        {props.data.label}
+      </GradeTag>
     </Select.Option>
   )
 }
@@ -107,46 +59,14 @@ function GradeOption (props) {
 function GradeSingleValue (props) {
   return (
     <Select.SingleValue {...props}>
-      <GradeTag grade={props.data.value}>{props.data.label}</GradeTag>
+      <GradeTag grade={props.data.value} size={props.selectProps.size}>
+        {props.data.label}
+      </GradeTag>
     </Select.SingleValue>
   )
 }
 
-const GradeTagContainer = styled('div')({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  position: 'relative',
-  width: 46,
-  padding: 8,
-  borderRadius: 3,
-  backgroundColor: Colors.backgroundDark
-})
-
-const OptionsContainer = styled('div')({
-  display: 'flex',
-  flexDirection: 'column',
-  gap: 8,
-  position: 'absolute',
-  zIndex: 10,
-  top: 'calc(100% + 8px)',
-  width: 46,
-  padding: 8,
-  borderRadius: 4,
-  backgroundColor: Colors.backgroundDark,
-  ':before': {
-    content: '""',
-    position: 'absolute',
-    left: 'calc(50% - 3px)',
-    top: -6,
-    transform: 'translateY(-50%)',
-    marginLeft: -5,
-    border: `6px solid ${Colors.backgroundDark}`,
-    borderColor: `transparent transparent ${Colors.backgroundDark} transparent`
-  }
-})
-
-const GradeTag = styled('div')({
+export const GradeTag = styled('div')({
   cursor: 'pointer',
   fontSize: 14,
   fontWeight: 'bold',
@@ -154,24 +74,28 @@ const GradeTag = styled('div')({
   justifyContent: 'center',
   alignItems: 'center',
   flex: 1,
-  padding: '4px 8px',
   borderRadius: 3,
   color: Colors.backgroundDark,
   ':hover': {
     filter: 'brightness(1.1)'
   }
-}, ({ grade }) => ({
-  backgroundColor: colors[grade]
-}))
+}, ({ grade, size }) => {
+  return {
+    fontSize: size.fontSize,
+    width: size.width,
+    height: size.height,
+    backgroundColor: colors[grade]
+  }
+})
 
-const styles = {
+const formStyles = {
   ...selectStyles,
   container: (provided) => ({
     ...provided,
     width: 106
   }),
-  valueContainer: () => ({
-    ...selectStyles.valueContainer(),
+  valueContainer: (provided) => ({
+    ...selectStyles.valueContainer(provided),
     display: 'flex',
     flex: 1,
     padding: '2px 8px'
@@ -180,9 +104,85 @@ const styles = {
     flex: 1,
     overflow: 'visible'
   }),
-  option: () => ({
-    ...selectStyles.option()
+  option: (provided) => ({
+    ...selectStyles.option(provided),
+    '& div': {
+      width: '100%'
+    }
   })
+}
+
+const inlineStyles = {
+  ...selectStyles,
+  control: () => ({
+    display: 'contents',
+    backgroundColor: 'red'
+  }),
+  dropdownIndicator: () => ({
+    display: 'none'
+  }),
+  indicatorSeparator: () => ({
+    display: 'none'
+  }),
+  valueContainer: (provided) => ({
+    ...selectStyles.valueContainer(provided),
+    display: 'flex',
+    flex: 1,
+    padding: 0
+  }),
+  singleValue: () => ({
+    flex: 1,
+    overflow: 'visible',
+    width: 46
+  }),
+  menu: (provided) => ({
+    ...selectStyles.menu(provided),
+    left: -8,
+    width: 'auto',
+    ':before': {
+      content: '""',
+      position: 'absolute',
+      left: 'calc(50% - 6px)',
+      top: -6,
+      transform: 'translateY(-50%)',
+      border: `6px solid ${Colors.backgroundDark}`,
+      borderColor: `transparent transparent ${Colors.backgroundDark} transparent`
+    }
+  })
+}
+
+const sizes = {
+  sm: {
+    fontSize: 12,
+    width: 36,
+    height: 16
+  },
+  md: {
+    fontSize: 14,
+    width: 46,
+    height: 24
+  },
+  lg: {
+    fontSize: 16,
+    width: 56,
+    height: 32
+  }
+}
+
+function withStyles (styles, size) {
+  return function (WrappedComponent) {
+    return function (props) {
+      return <WrappedComponent {...props} styles={styles} size={size} />
+    }
+  }
+}
+
+GradeSelect.Form = GradeSelect
+
+GradeSelect.Inline = {
+  Sm: withStyles(inlineStyles, sizes.sm)(GradeSelect),
+  Md: withStyles(inlineStyles, sizes.md)(GradeSelect),
+  Lg: withStyles(inlineStyles, sizes.lg)(GradeSelect)
 }
 
 export default GradeSelect

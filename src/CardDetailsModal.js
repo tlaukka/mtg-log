@@ -46,9 +46,13 @@ function CardDetailsModal ({ card, ...rest }) {
                 <td><InfoText>Reserved:</InfoText></td>
                 <td><InfoText><ReservedStatus>{card.reserved ? 'YES' : 'NO'}</ReservedStatus></InfoText></td>
               </tr>
+              <tr>
+                <td><InfoText>Grade:</InfoText></td>
+                <td><GradeSelect.Inline.Sm /></td>
+                {/* <td><GradeSelect.Form /></td> */}
+              </tr>
             </tbody>
           </Table>
-          <GradeSelect />
           <AddContainer>
             <LinkButton.Accept>Add</LinkButton.Accept>
             <LinkButton.Danger>Remove</LinkButton.Danger>
@@ -69,12 +73,9 @@ const stripes = `repeating-linear-gradient(
 
 const Container = styled('div')({
   display: 'flex',
+  flex: 1,
   justifyContent: 'center',
-  gap: 18,
-  position: 'relative',
-  width: '60%',
-  minWidth: 480,
-  margin: '10% auto'
+  gap: 18
 })
 
 const CardImageContainer = styled('div')({
