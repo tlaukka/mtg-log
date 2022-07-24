@@ -9,7 +9,7 @@ import { Route, useRoute } from './RouteProvider'
 import Colors from './Colors'
 import Tooltip from './Tooltip'
 import LinkButton from './LinkButton'
-import Popup from './Popup'
+import Popup, { withPopupPosition } from './Popup'
 import { useCardSets } from './CardSetProvider'
 import CardSetSymbol from './CardSetSymbol'
 import CardSetSelect from './CardSetSelect'
@@ -23,7 +23,7 @@ import ColorSelectArray from './ColorSelectArray'
 import Icons from './Icon'
 import DataTable from './DataTable'
 import CardDetailsModal from './CardDetailsModal'
-import GradeSelect from './GradeSelect'
+import GradeSelect, { Grade, gradeOptions } from './GradeSelect'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -69,7 +69,7 @@ function SearchContainer () {
 
     // searchCards(completeSearch)
     searchCards(`set:beta order:${order.current}`)
-    // searchCards('set:leg')
+    // searchCards(`jedit ojanen order:${order.current}`)
   }
 
   function orderCards (newOrder) {
@@ -96,12 +96,10 @@ function SearchContainer () {
 
   function openCardInfo (card) {
     setSelectedCard(card)
-    // setDrawerOpen(true)
     setDetailsOpen(true)
   }
 
   function closeCardInfo () {
-    // setSelectedCard(null)
     setDrawerOpen(false)
   }
 
@@ -120,7 +118,8 @@ function SearchContainer () {
             sets={sets}
             onChange={setSelectedColors}
           />
-          {/* <ColorSelectArray onChange={setSelectedColors} /> */}
+          <ColorSelectArray onChange={setSelectedColors} />
+          {/* <ColorSelect onChange={setSelectedColors} /> */}
           <Search
             value={search}
             placeholder={'Search...'}
@@ -138,6 +137,7 @@ function SearchContainer () {
               <DataTable.Header>Set</DataTable.Header>
               <TableSortingHeader onClick={() => orderCards('set')}>№</TableSortingHeader>
               <DataTable.Header>Res.</DataTable.Header>
+              <DataTable.Header></DataTable.Header>
               <TableSortingHeader onClick={() => orderCards('name')}>Name</TableSortingHeader>
               <DataTable.Header></DataTable.Header>
             </>
@@ -147,6 +147,7 @@ function SearchContainer () {
               <DataTable.Data><CardSet set={sets[card.set]} rarity={card.rarity} /></DataTable.Data>
               <DataTable.Data>{card.collector_number}</DataTable.Data>
               <DataTable.Data><ReservedStatus reserved={card.reserved} /></DataTable.Data>
+              <DataTable.Data><CardPreview card={card} /></DataTable.Data>
               <DataTable.Data><CardName onClick={() => openCardInfo(card)}>{card.name}</CardName></DataTable.Data>
               <DataTable.Data>
                 {cardCollection.has(card) ? (
@@ -154,7 +155,7 @@ function SearchContainer () {
                     <Icons.Cross />
                   </LinkButton.Decline>
                 ) : (
-                  <LinkButton.Accept onClick={() => cardCollection.add(card)}>
+                  <LinkButton.Accept onClick={() => cardCollection.add(card, { grade: Grade.nm })}>
                     <Icons.Plus />
                   </LinkButton.Accept>
                 )}
@@ -196,23 +197,27 @@ function SearchContainer () {
             <Close onClick={closeCardInfo} />
           </Menu>
           <Menu>
-            <LinkButton disabled={cardCollection.size() === 0} onClick={cardCollection.clear}>
+            <LinkButton disabled={cardCollection.empty()} onClick={cardCollection.clear}>
               Clear
             </LinkButton>
           </Menu>
         </CardDrawerHeader>
         <CardDrawerContainer>
-          {cardCollection.toArray().map((card) => (
+          {cardCollection.toArray().map(({ card, meta }) => (
             <CardDrawerRow key={card.id}>
               <CardDrawerRemove onClick={() => cardCollection.remove(card)}>
                 <Icons.Cross />
               </CardDrawerRemove>
-              <CardDrawerCardName>{card.name}</CardDrawerCardName>
+              <GradeSelect.Inline.Sm
+                value={gradeOptions[meta.grade]}
+                onChange={(data) => cardCollection.update(card.id, {}, { grade: data.value })}
+              />
+              <CardDrawerCardName onClick={() => openCardInfo(card)}>{card.name}</CardDrawerCardName>
             </CardDrawerRow>
           ))}
         </CardDrawerContainer>
         <CardDrawerFooter>
-          <SaveButton disabled={cardCollection.size() === 0}>Save!</SaveButton>
+          <SaveButton disabled={cardCollection.empty()}>Save!</SaveButton>
         </CardDrawerFooter>
       </Drawer>
       <CardDetailsModal
@@ -242,8 +247,8 @@ function ReservedStatus ({ reserved }) {
 
 function CardPreview ({ card }) {
   return (
-    <Popup content={<CardPreviewImage src={card.image_uris.small} />}>
-      <CardName>{card.name}</CardName>
+    <Popup content={<CardPreviewImage src={card.image_uris.small} alt={card.name} set={card.set} />}>
+      <CardPreviewButton><Icons.Camera /></CardPreviewButton>
     </Popup>
   )
 }
@@ -289,21 +294,28 @@ const CardDrawerFooter = styled('div')({
 
 const CardDrawerRow = styled('div')({
   display: 'flex',
-  minWidth: 0
+  alignItems: 'center',
+  gap: 8,
+  minWidth: 0,
+  marginBottom: 2
 })
 
 const CardDrawerCardName = styled('div')({
+  cursor: 'pointer',
   overflow: 'hidden',
   whiteSpace: 'nowrap',
-  textOverflow: 'ellipsis'
+  textOverflow: 'ellipsis',
+  ':hover': {
+    color: Colors.accept
+  }
 })
 
 const CardDrawerRemove = styled('div')({
+  cursor: 'pointer',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
   flex: '0 0 20px',
-  marginRight: 8,
   color: Colors.decline,
   ':hover': {
     color: Colors.declineLight
@@ -345,14 +357,12 @@ const GetCardsButton = styled(Button)({
 const TableContainer = styled('div')({
   overflow: 'auto',
   height: `calc(100vh - ${constants.HEADER_HEIGHT}px - ${constants.FOOTER_HEIGHT}px)`,
-  transition: 'max-height 0.2s ease, margin-right 0.2s ease',
-  // transition: 'margin-right 0.2s ease',
+  transition: 'margin-right 0.2s ease',
   '&::-webkit-scrollbar-track': {
     marginTop: 35
   }
-}, ({ drawerOpen, detailsOpen }) => ({
-  marginRight: drawerOpen ? 360 : 0,
-  // maxHeight: detailsOpen ? `calc(100vh - ${constants.HEADER_HEIGHT}px - ${constants.FOOTER_HEIGHT}px - 200px)` : `calc(100vh - ${constants.HEADER_HEIGHT}px - ${constants.FOOTER_HEIGHT}px)`
+}, ({ drawerOpen }) => ({
+  marginRight: drawerOpen ? 360 : 0
 }))
 
 const CardTable = styled(DataTable)({
@@ -368,10 +378,13 @@ const CardTable = styled(DataTable)({
     ':nth-of-type(3)': { // Reserved
       width: 32
     },
-    ':nth-of-type(4)': { // Name
+    ':nth-of-type(4)': { // Image
+      width: 20
+    },
+    ':nth-of-type(5)': { // Name
       textAlign: 'left'
     },
-    ':nth-of-type(5)': { // Add
+    ':nth-of-type(6)': { // Add
       width: 48
     },
     ':last-of-type': {
@@ -388,20 +401,24 @@ const CardTable = styled(DataTable)({
     }
   },
   td: {
-    '&:nth-of-type(1)': { // Set
+    ':nth-of-type(1)': { // Set
       paddingLeft: 24
     },
-    '&:nth-of-type(2)': { // Number
+    ':nth-of-type(2)': { // Number
       textAlign: 'right',
       color: Colors.control
     },
-    '&:nth-of-type(3)': { // Reserved
+    ':nth-of-type(3)': { // Reserved
       textAlign: 'center'
     },
-    '&:nth-of-type(5)': { // Add
+    ':nth-of-type(4)': { // Image
+      padding: 0,
+      color: Colors.control
+    },
+    ':nth-of-type(6)': { // Add
       textAlign: 'center'
     },
-    '&:last-of-type': {
+    ':last-of-type': {
       paddingRight: 24
     }
   }
@@ -459,9 +476,30 @@ const CardName = styled('div')({
   }
 })
 
-const CardPreviewImage = styled('img')({
-  borderRadius: 7
+const CardPreviewButton = styled(LinkButton)({
+  fontSize: 16
 })
+
+const CardPreviewImage = withPopupPosition(styled('img')({
+  aspectRatio: '488 / 680',
+  width: 130
+}, ({ set, position }) => {
+  const styles = {
+    borderRadius: (set === 'lea') ? 10 : 7
+  }
+
+  if (position === 'top') {
+    return {
+      ...styles,
+      bottom: 0
+    }
+  } else {
+    return {
+      ...styles,
+      top: 0
+    }
+  }
+}))
 
 const CardSetContainer = styled('div')({
   position: 'relative',

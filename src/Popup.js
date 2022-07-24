@@ -2,15 +2,10 @@ import styled from '@emotion/styled'
 import React from 'react'
 import Colors from './Colors'
 
-function Popup ({ content, openOnHover = false, children }) {
+function Popup ({ content, openOnHover = true, children }) {
   const [visible, setVisible] = React.useState(false)
 
-  function onClick (e) {
-    e.stopPropagation()
-    setVisible((value) => !value)
-  }
-
-  function onMouseOver () {
+  function onMouseEnter () {
     if (openOnHover) {
       setVisible(true)
     }
@@ -28,33 +23,52 @@ function Popup ({ content, openOnHover = false, children }) {
 
   return (
     <PopupContainer
-      onClick={onClick}
-      onMouseOver={onMouseOver}
+      onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      {visible && (
-        <PopupContent>
-          {React.cloneElement(content, { onClick })}
-        </PopupContent>
-      )}
+      {visible && React.cloneElement(content)}
       {children}
     </PopupContainer>
   )
 }
 
-const PopupContainer = styled('div')({
-  position: 'relative',
-  display: 'inline-block'
-})
+export function withPopupPosition (WrappedComponent) {
+  return function (props) {
+    const container = React.useRef()
 
-const PopupContent = styled('div')({
+    const [position, setPosition] = React.useState('bottom')
+
+    React.useEffect(
+      () => {
+        const rect = container.current.getBoundingClientRect()
+        const pos = ((rect.y + rect.height) > window.innerHeight) ? 'top' : 'bottom'
+
+        setPosition(pos)
+      },
+      []
+    )
+
+    return (
+      <WrappedComponent
+        ref={container}
+        style={popupStyles}
+        position={position}
+        {...props}
+      />
+    )
+  }
+}
+
+const popupStyles = {
   position: 'absolute',
   left: '100%',
   zIndex: 100,
-  marginLeft: 4,
-  padding: 8,
-  borderRadius: 3,
-  backgroundColor: Colors.borderLight
+  marginLeft: 4
+}
+
+const PopupContainer = styled('div')({
+  position: 'relative',
+  display: 'inline-block'
 })
 
 export default Popup

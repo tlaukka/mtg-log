@@ -28,7 +28,7 @@ function Modal ({ visible, onClose, children }) {
 
 const Backdrop = styled('div')({
   position: 'fixed',
-  zIndex: 1000,
+  zIndex: 10000,
   top: 0,
   width: '100vw',
   height: '100vh',

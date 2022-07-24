@@ -3,25 +3,32 @@ import styled from '@emotion/styled'
 import Colors from './Colors'
 import Select, { selectStyles } from './Select'
 
-const colors = {
-  m: '#17A2B8',
-  nm: '#57BB8A',
-  ex: '#ABC978',
-  gd: '#FFD666',
-  lp: '#F3A96D',
-  pl: '#FB5555',
-  dmg: '#858585'
+export const Grade = {
+  m: 'm',
+  nm: 'nm',
+  ex: 'ex',
+  gd: 'gd',
+  lp: 'lp',
+  pl: 'pl',
+  dmg: 'dmg'
 }
 
-const options = [
-  { value: 'm', label: 'M' },
-  { value: 'nm', label: 'NM' },
-  { value: 'ex', label: 'EX' },
-  { value: 'gd', label: 'GD' },
-  { value: 'lp', label: 'LP' },
-  { value: 'pl', label: 'PL' },
-  { value: 'dmg', label: 'DMG' }
-]
+const colors = {
+  [Grade.m]: '#17A2B8',
+  [Grade.nm]: '#57BB8A',
+  [Grade.ex]: '#ABC978',
+  [Grade.gd]: '#FFD666',
+  [Grade.lp]: '#F3A96D',
+  [Grade.pl]: '#FB5555',
+  [Grade.dmg]: '#858585'
+}
+
+export const gradeOptions = Object.entries(Grade).reduce((result, [key, value]) => {
+  result[key] = { value, label: value.toUpperCase() }
+  return result
+}, {})
+
+const options = Object.values(gradeOptions)
 
 function GradeSelect ({ styles = formStyles, size = sizes.md, onChange, ...rest }) {
   const onSelectChange = React.useCallback(
@@ -114,9 +121,12 @@ const formStyles = {
 
 const inlineStyles = {
   ...selectStyles,
+  container: (provided, state) => ({
+    ...provided,
+    width: state.selectProps.size.width
+  }),
   control: () => ({
-    display: 'contents',
-    backgroundColor: 'red'
+    display: 'contents'
   }),
   dropdownIndicator: () => ({
     display: 'none'

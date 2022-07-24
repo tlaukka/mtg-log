@@ -22,7 +22,8 @@ const Icons = {
  Check: withIconData('check')(Icon),
  Cross: withIconData('close')(Icon),
  Plus: withIconData('plus')(Icon),
- Minus: withIconData('minus')(Icon)
+ Minus: withIconData('minus')(Icon),
+ Camera: withIconData('camera')(Icon)
 }
 
 export default Icons

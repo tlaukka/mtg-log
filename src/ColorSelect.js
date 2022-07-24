@@ -18,7 +18,7 @@ function ColorSelect ({ onChange, ...rest }) {
   const onSelectChange = React.useCallback(
     (data) => {
       const value = data.map((entry) => entry.value)
-      onChange(value)
+      onChange && onChange(value)
     },
     [onChange]
   )
@@ -27,6 +27,7 @@ function ColorSelect ({ onChange, ...rest }) {
     <Select
       {...rest}
       isMulti
+      isSearchable={false}
       styles={styles}
       options={colors}
       placeholder={'Color...'}
@@ -58,8 +59,8 @@ const styles = {
   container: (provided) => ({
     ...provided,
     flex: 1,
-    minWidth: 340,
-    maxWidth: 340
+    minWidth: 314,
+    maxWidth: 314
   }),
   multiValue: (provided) => ({
     ...selectStyles.multiValue(provided),
