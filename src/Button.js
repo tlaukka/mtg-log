@@ -13,7 +13,7 @@ const Button = styled('button')({
   borderRadius: 3,
   color: Colors.control,
   backgroundColor: Colors.backgroundDark,
-  ':hover': {
+  ':hover:enabled': {
     color: Colors.link
   },
   ':disabled': {
@@ -24,21 +24,21 @@ const Button = styled('button')({
 
 export const acceptStyles = {
   color: Colors.accept,
-  ':hover': {
+  ':hover:enabled': {
     color: Colors.acceptLight
   }
 }
 
 export const dangerStyles = {
   color: Colors.decline,
-  ':hover': {
+  ':hover:enabled': {
     color: Colors.declineLight
   }
 }
 
 export const declineStyles = {
   color: Colors.foregroundDark,
-  ':hover': {
+  ':hover:enabled': {
     color: Colors.decline
   }
 }

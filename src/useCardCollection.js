@@ -21,7 +21,7 @@ function useCardCollection () {
   )
 
   const update = React.useCallback(
-    (id, data = {}, meta = {}) => {
+    (id, { data = {}, meta = {} }) => {
       const objectToUpdate = cards[id]
 
       if (objectToUpdate) {
@@ -43,6 +43,20 @@ function useCardCollection () {
       }
     },
     [cards]
+  )
+
+  const updateGrade = React.useCallback(
+    (id, grade) => {
+      update(id, { meta: { grade } })
+    },
+    [update]
+  )
+
+  const updatePrice = React.useCallback(
+    (id, price) => {
+      update(id, { meta: { price } })
+    },
+    [update]
   )
 
   function get (id) {
@@ -74,6 +88,7 @@ function useCardCollection () {
     add,
     remove,
     update,
+    updateGrade,
     get,
     has,
     size,

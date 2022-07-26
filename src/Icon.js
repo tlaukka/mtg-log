@@ -19,6 +19,7 @@ const Icons = {
  ChevronRight: withIconData('chevron-right')(Icon),
  ArrowUp: withIconData('long-arrow-up')(Icon),
  ArrowLeft: withIconData('arrow-left')(Icon),
+ ArrowRight: withIconData('arrow-right')(Icon),
  Check: withIconData('check')(Icon),
  Cross: withIconData('close')(Icon),
  Plus: withIconData('plus')(Icon),

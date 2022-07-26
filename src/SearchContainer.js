@@ -24,6 +24,7 @@ import Icons from './Icon'
 import DataTable from './DataTable'
 import CardDetailsModal from './CardDetailsModal'
 import GradeSelect, { Grade, gradeOptions } from './GradeSelect'
+import { useCardDrawer } from './CardDrawerProvider'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -44,7 +45,8 @@ function SearchContainer () {
   const { setRoute } = useRoute()
   const { cards, meta, fetching, searchCards, next, previous } = useCardSearch()
 
-  const cardCollection = useCardCollection()
+  // const cardDrawer = useCardCollection()
+  const cardDrawer = useCardDrawer()
 
   // const storage = useStorage()
   // const storageData = storage.getValues()
@@ -134,28 +136,32 @@ function SearchContainer () {
           data={cards}
           renderHeader={() => (
             <>
-              <DataTable.Header>Set</DataTable.Header>
-              <TableSortingHeader onClick={() => orderCards('set')}>№</TableSortingHeader>
-              <DataTable.Header>Res.</DataTable.Header>
-              <DataTable.Header></DataTable.Header>
-              <TableSortingHeader onClick={() => orderCards('name')}>Name</TableSortingHeader>
-              <DataTable.Header></DataTable.Header>
+              <DataTable.Header className={'th-set'}>Set</DataTable.Header>
+              <TableSortingHeader className={'th-number'} onClick={() => orderCards('set')}>№</TableSortingHeader>
+              <DataTable.Header className={'th-reserved'}>Res.</DataTable.Header>
+              <DataTable.Header className={'th-image'}></DataTable.Header>
+              <TableSortingHeader className={'th-name'} onClick={() => orderCards('name')}>Name</TableSortingHeader>
+              <DataTable.Header className={'th-add'}></DataTable.Header>
             </>
           )}
           renderRow={(card) => (
             <>
-              <DataTable.Data><CardSet set={sets[card.set]} rarity={card.rarity} /></DataTable.Data>
-              <DataTable.Data>{card.collector_number}</DataTable.Data>
-              <DataTable.Data><ReservedStatus reserved={card.reserved} /></DataTable.Data>
-              <DataTable.Data><CardPreview card={card} /></DataTable.Data>
-              <DataTable.Data><CardName onClick={() => openCardInfo(card)}>{card.name}</CardName></DataTable.Data>
-              <DataTable.Data>
-                {cardCollection.has(card) ? (
-                  <LinkButton.Decline onClick={() => cardCollection.remove(card)}>
+              <DataTable.Data className={'td-set'}>
+                <CardSet set={sets[card.set]} rarity={card.rarity} />
+              </DataTable.Data>
+              <DataTable.Data className={'td-number'}>{card.collector_number}</DataTable.Data>
+              <DataTable.Data className={'td-reserved'}><ReservedStatus reserved={card.reserved} /></DataTable.Data>
+              <DataTable.Data className={'td-image'}><CardPreview card={card} /></DataTable.Data>
+              <DataTable.Data className={'td-name'}>
+                <CardName onClick={() => openCardInfo(card)}>{card.name}</CardName>
+              </DataTable.Data>
+              <DataTable.Data className={'td-add'}>
+                {cardDrawer.has(card) ? (
+                  <LinkButton.Decline onClick={() => cardDrawer.remove(card)}>
                     <Icons.Cross />
                   </LinkButton.Decline>
                 ) : (
-                  <LinkButton.Accept onClick={() => cardCollection.add(card, { grade: Grade.nm })}>
+                  <LinkButton.Accept onClick={() => cardDrawer.add(card, { grade: Grade.nm })}>
                     <Icons.Plus />
                   </LinkButton.Accept>
                 )}
@@ -184,7 +190,7 @@ function SearchContainer () {
             Back to top<Icons.ArrowUp />
           </MenuButton>
           <MenuButton onClick={toggleDrawer}>
-            {`Card drawer [${cardCollection.size()}]`}
+            {`Card drawer [${cardDrawer.size()}]`}
           </MenuButton>
           <FooterLoaderContainer>
             {fetching && <Loader />}
@@ -197,32 +203,33 @@ function SearchContainer () {
             <Close onClick={closeCardInfo} />
           </Menu>
           <Menu>
-            <LinkButton disabled={cardCollection.empty()} onClick={cardCollection.clear}>
+            <LinkButton disabled={cardDrawer.empty()} onClick={cardDrawer.clear}>
               Clear
             </LinkButton>
           </Menu>
         </CardDrawerHeader>
         <CardDrawerContainer>
-          {cardCollection.toArray().map(({ card, meta }) => (
+          {cardDrawer.toArray().map(({ card, meta }) => (
             <CardDrawerRow key={card.id}>
-              <CardDrawerRemove onClick={() => cardCollection.remove(card)}>
+              <CardDrawerRemove onClick={() => cardDrawer.remove(card)}>
                 <Icons.Cross />
               </CardDrawerRemove>
               <GradeSelect.Inline.Sm
                 value={gradeOptions[meta.grade]}
-                onChange={(data) => cardCollection.update(card.id, {}, { grade: data.value })}
+                onChange={(data) => cardDrawer.updateGrade(card.id, data)}
               />
               <CardDrawerCardName onClick={() => openCardInfo(card)}>{card.name}</CardDrawerCardName>
             </CardDrawerRow>
           ))}
         </CardDrawerContainer>
         <CardDrawerFooter>
-          <SaveButton disabled={cardCollection.empty()}>Save!</SaveButton>
+          <SaveButton disabled={cardDrawer.empty()}>Save!</SaveButton>
         </CardDrawerFooter>
       </Drawer>
       <CardDetailsModal
         visible={detailsOpen}
         card={selectedCard}
+        cardCollection={cardDrawer}
         onClose={() => setDetailsOpen(false)}
       />
     </>
@@ -367,24 +374,24 @@ const TableContainer = styled('div')({
 
 const CardTable = styled(DataTable)({
   th: {
-    ':nth-of-type(1)': { // Set
+    '&.th-set': {
       width: 29,
       paddingLeft: 24
     },
-    ':nth-of-type(2)': { // Number
+    '&.th-number': {
       textAlign: 'right',
       width: 29
     },
-    ':nth-of-type(3)': { // Reserved
+    '&.th-reserved': {
       width: 32
     },
-    ':nth-of-type(4)': { // Image
+    '&.th-image': {
       width: 20
     },
-    ':nth-of-type(5)': { // Name
+    '&.th-name': {
       textAlign: 'left'
     },
-    ':nth-of-type(6)': { // Add
+    '&.th-add': {
       width: 48
     },
     ':last-of-type': {
@@ -401,21 +408,21 @@ const CardTable = styled(DataTable)({
     }
   },
   td: {
-    ':nth-of-type(1)': { // Set
+    '&.td-set': {
       paddingLeft: 24
     },
-    ':nth-of-type(2)': { // Number
+    '&.td-number': {
       textAlign: 'right',
       color: Colors.control
     },
-    ':nth-of-type(3)': { // Reserved
+    '&.td-reserved': {
       textAlign: 'center'
     },
-    ':nth-of-type(4)': { // Image
+    '&.td-image': {
       padding: 0,
       color: Colors.control
     },
-    ':nth-of-type(6)': { // Add
+    '&.td-add': {
       textAlign: 'center'
     },
     ':last-of-type': {

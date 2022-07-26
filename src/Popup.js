@@ -41,7 +41,7 @@ export function withPopupPosition (WrappedComponent) {
     React.useEffect(
       () => {
         const rect = container.current.getBoundingClientRect()
-        const pos = ((rect.y + rect.height) > window.innerHeight) ? 'top' : 'bottom'
+        const pos = ((rect.y + rect.height) > (window.innerHeight - 32)) ? 'top' : 'bottom'
 
         setPosition(pos)
       },

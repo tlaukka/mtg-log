@@ -1,20 +1,46 @@
 import styled from '@emotion/styled'
 import React from 'react'
+import { useCardDrawer } from './CardDrawerProvider'
 import { useCardSets } from './CardSetProvider'
 import CardSetSymbol from './CardSetSymbol'
 import Colors from './Colors'
-import GradeSelect from './GradeSelect'
+import GradeSelect, { Grade, gradeOptions } from './GradeSelect'
 import LinkButton from './LinkButton'
 import Modal from './Modal'
+import PriceInput from './PriceInput'
 
 function CardDetailsModal ({ card, ...rest }) {
+  const [selectedGrade, setSelectedGrade] = React.useState(Grade.nm)
+  const [selectedPrice, setSelectedPrice] = React.useState('')
+
   const { sets } = useCardSets()
+  const cardDrawer = useCardDrawer()
 
   if (!card) {
     return null
   }
 
   const set = sets[card.set] || {}
+  const isInCollection = cardDrawer.has(card)
+
+  const grade = isInCollection ? cardDrawer.get(card.id).meta.grade : selectedGrade
+  const price = isInCollection ? cardDrawer.get(card.id).meta.price : selectedPrice
+
+  function onChangeGrade (grade) {
+    if (isInCollection) {
+      cardDrawer.updateGrade(card.id, grade)
+    } else {
+      setSelectedGrade(grade)
+    }
+  }
+
+  function onChangePrice (price) {
+    if (isInCollection) {
+      cardDrawer.updatePrice(card.id, price)
+    } else {
+      setSelectedPrice(price)
+    }
+  }
 
   return (
     <Modal {...rest}>
@@ -60,13 +86,34 @@ function CardDetailsModal ({ card, ...rest }) {
               </tr>
               <tr>
                 <td><InfoText>Grade:</InfoText></td>
-                <td><GradeSelect.Inline.Sm /></td>
+                <td>
+                    <GradeSelect.Inline.Sm
+                      value={gradeOptions[grade]}
+                      onChange={onChangeGrade}
+                    />
+                </td>
+              </tr>
+              <tr>
+                <td><InfoText>Price (€):</InfoText></td>
+                <td>
+                  <PriceInput value={price} onChange={onChangePrice} />
+                </td>
               </tr>
             </tbody>
           </Table>
           <AddContainer>
-            <LinkButton.Accept>Add</LinkButton.Accept>
-            <LinkButton.Danger>Remove</LinkButton.Danger>
+            <LinkButton.Accept
+              disabled={isInCollection}
+              onClick={() => cardDrawer.add(card, { grade })}
+            >
+              Add
+            </LinkButton.Accept>
+            <LinkButton.Danger
+              disabled={!isInCollection}
+              onClick={() => cardDrawer.remove(card)}
+            >
+              Remove
+            </LinkButton.Danger>
           </AddContainer>
         </CardInfo>
       </Container>
@@ -160,7 +207,7 @@ const TableRowSpacer = styled('tr')({
   height: 12
 })
 
-const InfoText = styled('div')({
+const InfoText = styled('span')({
   color: Colors.control
 })
 

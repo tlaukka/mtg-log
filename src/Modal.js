@@ -6,9 +6,12 @@ import Icons from './Icon'
 import LinkButton from './LinkButton'
 
 function Modal ({ visible, onClose, children }) {
-  function handleClose (e) {
-    e.stopPropagation()
-    onClose()
+  const backdrop = React.useRef()
+
+  function onBackdropClick (e) {
+    if (e.target === backdrop.current) {
+      onClose()
+    }
   }
 
   if (!visible) {
@@ -16,9 +19,9 @@ function Modal ({ visible, onClose, children }) {
   }
 
   return ReactDOM.createPortal(
-    <Backdrop onClick={handleClose}>
-      <ModalClose onClick={handleClose}><Icons.Cross /></ModalClose>
-        <ModalContainer onClick={(e) => e.stopPropagation()}>
+    <Backdrop ref={backdrop} onClick={onBackdropClick}>
+      <ModalClose onClick={onClose}><Icons.Cross /></ModalClose>
+        <ModalContainer>
           {children}
         </ModalContainer>
     </Backdrop>,
