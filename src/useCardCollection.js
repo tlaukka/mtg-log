@@ -89,6 +89,7 @@ function useCardCollection () {
     remove,
     update,
     updateGrade,
+    updatePrice,
     get,
     has,
     size,

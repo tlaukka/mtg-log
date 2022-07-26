@@ -38,8 +38,10 @@ function PriceInput ({ value = '', onChange, ...rest }) {
     [declineChange]
   )
 
-  function onClick () {
-    setInputVisible(!inputVisible)
+  function onKeyDown (e) {
+    if (e.key === 'Enter') {
+      acceptChange()
+    }
   }
 
   function handleChange (e) {
@@ -48,19 +50,41 @@ function PriceInput ({ value = '', onChange, ...rest }) {
     }
   }
 
-  function acceptChange (e) {
+  function handleAccept (e) {
     e.stopPropagation()
-    onChange && onChange(internalValue)
+    acceptChange()
+  }
+
+  function acceptChange () {
+    let finalValue = internalValue
+
+    if ((internalValue === '.') || (internalValue === '') || (internalValue.match(/^0+$/))) {
+      finalValue = `0${internalValue}00`
+    } else if (internalValue.startsWith('.')) {
+      finalValue = `0${internalValue}`
+    } else if (internalValue.endsWith('.')) {
+      finalValue = `${internalValue}00`
+    } else if (!internalValue.includes('.')) {
+      finalValue = `${internalValue}.00`
+    } else if (!internalValue.match(/(\.[0-9]{2})$/)) {
+      finalValue = `${internalValue}0`
+    }
+
+    finalValue = finalValue.replace(/^0*/, '')
+
+    onChange && onChange(finalValue)
+    setInternalValue(finalValue)
     setInputVisible(false)
   }
 
   return (
     <PriceInputContainer ref={container} {...rest}>
+      {/* <span style={{ fontSize: 12, fontFamily: 'Consolas' }}>.</span> */}
       <PriceInputTrigger
         readOnly
         value={value}
         placeholder={'0.00'}
-        onClick={onClick}
+        onClick={() => setInputVisible(!inputVisible)}
       />
       {inputVisible && (
         <PriceInputPopupContainer>
@@ -68,9 +92,11 @@ function PriceInput ({ value = '', onChange, ...rest }) {
           <PriceInputPopupInput
             autoFocus
             value={internalValue}
+            onFocus={(e) => e.target.select()}
+            onKeyDown={onKeyDown}
             onChange={handleChange}
           />
-          <LinkButton.Accept onClick={acceptChange}><Icons.Check /></LinkButton.Accept>
+          <LinkButton.Accept onClick={handleAccept}><Icons.Check /></LinkButton.Accept>
           <LinkButton.Danger onClick={declineChange}><Icons.Cross /></LinkButton.Danger>
         </PriceInputPopupContainer>
       )}
@@ -83,14 +109,16 @@ const PriceInputContainer = styled('div')({
 })
 
 const PriceInputTrigger = styled('input')({
+  fontFamily: 'Consolas',
   cursor: 'pointer',
   boxSizing: 'border-box',
   fontSize: 12,
+  textAlign: 'center',
   position: 'relative',
-  width: 62,
+  minWidth: 36,
   height: 16,
   margin: 0,
-  padding: '0 4px',
+  padding: 0,
   outline: 'none',
   borderTop: 'none',
   borderRight: 'none',
@@ -101,7 +129,9 @@ const PriceInputTrigger = styled('input')({
   ':hover': {
     borderColor: Colors.backgroundAccent
   }
-})
+}, ({ value }) => ({
+  width: value.length * 6.61
+}))
 
 const PriceInputPopupContainer = styled('div')({
   boxSizing: 'border-box',

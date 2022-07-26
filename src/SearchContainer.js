@@ -25,6 +25,7 @@ import DataTable from './DataTable'
 import CardDetailsModal from './CardDetailsModal'
 import GradeSelect, { Grade, gradeOptions } from './GradeSelect'
 import { useCardDrawer } from './CardDrawerProvider'
+import PriceInput from './PriceInput'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -216,7 +217,11 @@ function SearchContainer () {
               </CardDrawerRemove>
               <GradeSelect.Inline.Sm
                 value={gradeOptions[meta.grade]}
-                onChange={(data) => cardDrawer.updateGrade(card.id, data)}
+                onChange={(grade) => cardDrawer.updateGrade(card.id, grade)}
+              />
+              <PriceInput
+                value={meta.price}
+                onChange={(price) => cardDrawer.updatePrice(card.id, price)}
               />
               <CardDrawerCardName onClick={() => openCardInfo(card)}>{card.name}</CardDrawerCardName>
             </CardDrawerRow>
