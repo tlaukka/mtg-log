@@ -220,6 +220,7 @@ function SearchContainer () {
                 onChange={(grade) => cardDrawer.updateGrade(card.id, grade)}
               />
               <PriceInput
+                editInline
                 value={meta.price}
                 onChange={(price) => cardDrawer.updatePrice(card.id, price)}
               />

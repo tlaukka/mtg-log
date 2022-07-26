@@ -7,7 +7,7 @@ import TextInput from './TextInput'
 
 const priceInputRegExp = new RegExp(/^([0-9]*)(\.?[0-9]{0,2})$/)
 
-function PriceInput ({ value = '', onChange, ...rest }) {
+function PriceInput ({ value = '', editInline, onChange, ...rest }) {
   const container = React.useRef()
 
   const [inputVisible, setInputVisible] = React.useState(false)
@@ -77,29 +77,46 @@ function PriceInput ({ value = '', onChange, ...rest }) {
     setInputVisible(false)
   }
 
+  function renderEditInput () {
+    if (editInline) {
+      return (
+        <InlineEditInput
+          autoFocus
+          value={internalValue}
+          valueLength={value.length}
+          onFocus={(e) => e.target.select()}
+          onBlur={() => acceptChange()}
+          onKeyDown={onKeyDown}
+          onChange={handleChange}
+        />
+      )
+    }
+
+    return (
+      <PriceInputPopupContainer>
+        <CurrencySymbol>€</CurrencySymbol>
+        <PriceInputPopupInput
+          autoFocus
+          value={internalValue}
+          onFocus={(e) => e.target.select()}
+          onKeyDown={onKeyDown}
+          onChange={handleChange}
+        />
+        <LinkButton.Accept onClick={handleAccept}><Icons.Check /></LinkButton.Accept>
+        <LinkButton.Danger onClick={declineChange}><Icons.Cross /></LinkButton.Danger>
+      </PriceInputPopupContainer>
+    )
+  }
+
   return (
     <PriceInputContainer ref={container} {...rest}>
-      {/* <span style={{ fontSize: 12, fontFamily: 'Consolas' }}>.</span> */}
       <PriceInputTrigger
         readOnly
         value={value}
         placeholder={'0.00'}
         onClick={() => setInputVisible(!inputVisible)}
       />
-      {inputVisible && (
-        <PriceInputPopupContainer>
-          <CurrencySymbol>€</CurrencySymbol>
-          <PriceInputPopupInput
-            autoFocus
-            value={internalValue}
-            onFocus={(e) => e.target.select()}
-            onKeyDown={onKeyDown}
-            onChange={handleChange}
-          />
-          <LinkButton.Accept onClick={handleAccept}><Icons.Check /></LinkButton.Accept>
-          <LinkButton.Danger onClick={declineChange}><Icons.Cross /></LinkButton.Danger>
-        </PriceInputPopupContainer>
-      )}
+      {inputVisible && renderEditInput()}
     </PriceInputContainer>
   )
 }
@@ -109,7 +126,7 @@ const PriceInputContainer = styled('div')({
 })
 
 const PriceInputTrigger = styled('input')({
-  fontFamily: 'Consolas',
+  fontFamily: 'Lucida Console',
   cursor: 'pointer',
   boxSizing: 'border-box',
   fontSize: 12,
@@ -129,8 +146,19 @@ const PriceInputTrigger = styled('input')({
   ':hover': {
     borderColor: Colors.backgroundAccent
   }
-}, ({ value }) => ({
-  width: value.length * 6.61
+}, ({ value = '' }) => ({
+  width: value.length * 7.23
+}))
+
+const InlineEditInput = styled(PriceInputTrigger)({
+  cursor: 'text',
+  textAlign: 'left',
+  position: 'absolute',
+  top: 4,
+  left: 0,
+  backgroundColor: 'black'
+}, ({ valueLength }) => ({
+  width: valueLength * 7.23
 }))
 
 const PriceInputPopupContainer = styled('div')({
@@ -139,7 +167,7 @@ const PriceInputPopupContainer = styled('div')({
   fontSize: 12,
   position: 'absolute',
   top: -36,
-  left: -22,
+  left: 0,
   margin: 0,
   padding: 4,
   borderRadius: 3,
@@ -153,7 +181,7 @@ const PriceInputPopupContainer = styled('div')({
   ':before': {
     content: '""',
     position: 'absolute',
-    left: 44,
+    left: 4,
     bottom: -12,
     border: `6px solid ${Colors.borderLight}`,
     borderColor: `${Colors.backgroundLight} transparent transparent transparent`

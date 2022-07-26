@@ -9,9 +9,9 @@ import LinkButton from './LinkButton'
 import Modal from './Modal'
 import PriceInput from './PriceInput'
 
-function CardDetailsModal ({ card, ...rest }) {
+function CardDetailsModal ({ card, onClose, ...rest }) {
   const [selectedGrade, setSelectedGrade] = React.useState(Grade.nm)
-  const [selectedPrice, setSelectedPrice] = React.useState('')
+  const [selectedPrice, setSelectedPrice] = React.useState()
 
   const { sets } = useCardSets()
   const cardDrawer = useCardDrawer()
@@ -42,8 +42,14 @@ function CardDetailsModal ({ card, ...rest }) {
     }
   }
 
+  function handleClose () {
+    setSelectedPrice('')
+    setSelectedGrade(Grade.nm)
+    onClose && onClose()
+  }
+
   return (
-    <Modal {...rest}>
+    <Modal onClose={handleClose} {...rest}>
       <Container>
         <CardImageContainer set={set.code}>
           <CardImage src={card.image_uris.normal} alt={card.name} set={set.code} />
@@ -104,7 +110,7 @@ function CardDetailsModal ({ card, ...rest }) {
           <AddContainer>
             <LinkButton.Accept
               disabled={isInCollection}
-              onClick={() => cardDrawer.add(card, { grade })}
+              onClick={() => cardDrawer.add(card, { grade, price })}
             >
               Add
             </LinkButton.Accept>
