@@ -101,9 +101,9 @@ function CardDetailsModal ({ card, onClose, ...rest }) {
               </tr>
               <tr>
                 <td><InfoText>Price (€):</InfoText></td>
-                <td>
+                <PriceTableData>
                   <PriceInput value={price} onChange={onChangePrice} />
-                </td>
+                </PriceTableData>
               </tr>
             </tbody>
           </Table>
@@ -207,6 +207,10 @@ const Table = styled('table')({
       paddingBottom: 4
     }
   }
+})
+
+const PriceTableData = styled('td')({
+  display: 'flex'
 })
 
 const TableRowSpacer = styled('tr')({

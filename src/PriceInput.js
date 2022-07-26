@@ -42,6 +42,10 @@ function PriceInput ({ value = '', editInline, onChange, ...rest }) {
     if (e.key === 'Enter') {
       acceptChange()
     }
+
+    if (e.key === 'Escape') {
+      declineChange()
+    }
   }
 
   function handleChange (e) {
@@ -122,7 +126,18 @@ function PriceInput ({ value = '', editInline, onChange, ...rest }) {
 }
 
 const PriceInputContainer = styled('div')({
-  position: 'relative'
+  display: 'flex',
+  justifyContent: 'right',
+  alignItems: 'center',
+  position: 'relative',
+  ':after': {
+    content: '"€"',
+    fontFamily: 'Lucida Console',
+    fontSize: 12,
+    display: 'inline',
+    margin: '0 4px',
+    color: Colors.control
+  }
 })
 
 const PriceInputTrigger = styled('input')({
@@ -132,7 +147,7 @@ const PriceInputTrigger = styled('input')({
   fontSize: 12,
   textAlign: 'center',
   position: 'relative',
-  minWidth: 36,
+  minWidth: 4 * 7.23,
   height: 16,
   margin: 0,
   padding: 0,
@@ -140,11 +155,11 @@ const PriceInputTrigger = styled('input')({
   borderTop: 'none',
   borderRight: 'none',
   borderLeft: 'none',
-  borderBottom: `1px solid ${Colors.borderDark}`,
+  borderBottom: `1px solid ${Colors.borderLight}`,
   color: Colors.control,
   backgroundColor: 'transparent',
   ':hover': {
-    borderColor: Colors.backgroundAccent
+    borderColor: Colors.control
   }
 }, ({ value = '' }) => ({
   width: value.length * 7.23
@@ -154,7 +169,6 @@ const InlineEditInput = styled(PriceInputTrigger)({
   cursor: 'text',
   textAlign: 'left',
   position: 'absolute',
-  top: 4,
   left: 0,
   backgroundColor: 'black'
 }, ({ valueLength }) => ({
@@ -166,7 +180,7 @@ const PriceInputPopupContainer = styled('div')({
   display: 'flex',
   fontSize: 12,
   position: 'absolute',
-  top: -36,
+  top: -38,
   left: 0,
   margin: 0,
   padding: 4,

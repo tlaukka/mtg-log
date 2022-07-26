@@ -22,7 +22,7 @@ function DataTable ({ data = [], renderHeader, renderRow, ...rest }) {
   )
 }
 
-function ExpandableRow ({ content, children }) {
+export function ExpandableRow ({ content, children }) {
   const [expanded, setExpanded] = React.useState(false)
 
   return (

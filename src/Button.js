@@ -37,7 +37,6 @@ export const dangerStyles = {
 }
 
 export const declineStyles = {
-  color: Colors.foregroundDark,
   ':hover:enabled': {
     color: Colors.decline
   }

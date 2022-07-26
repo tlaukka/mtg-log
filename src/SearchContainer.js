@@ -14,18 +14,14 @@ import { useCardSets } from './CardSetProvider'
 import CardSetSymbol from './CardSetSymbol'
 import CardSetSelect from './CardSetSelect'
 import useCardSearch from './useCardSearch'
-import useCardCollection from './useCardCollection'
 import constants from './constants'
-import Drawer from './Drawer'
-import ColorSelect from './ColorSelect'
-import CardSymbols from './CardSymbols'
 import ColorSelectArray from './ColorSelectArray'
 import Icons from './Icon'
 import DataTable from './DataTable'
 import CardDetailsModal from './CardDetailsModal'
-import GradeSelect, { Grade, gradeOptions } from './GradeSelect'
+import { Grade } from './GradeSelect'
 import { useCardDrawer } from './CardDrawerProvider'
-import PriceInput from './PriceInput'
+import CardDrawer from './CardDrawer'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -102,7 +98,7 @@ function SearchContainer () {
     setDetailsOpen(true)
   }
 
-  function closeCardInfo () {
+  function closeCardDrawer () {
     setDrawerOpen(false)
   }
 
@@ -119,7 +115,7 @@ function SearchContainer () {
         <InputBar onSubmit={onSubmit}>
           <CardSetSelect
             sets={sets}
-            onChange={setSelectedColors}
+            onChange={setSelectedSets}
           />
           <ColorSelectArray onChange={setSelectedColors} />
           {/* <ColorSelect onChange={setSelectedColors} /> */}
@@ -132,7 +128,7 @@ function SearchContainer () {
           <GetCardsButton type={'submit'}>Get cards!</GetCardsButton>
         </InputBar>
       </Header>
-      <TableContainer id={'table-container'} drawerOpen={drawerOpen} detailsOpen={detailsOpen}>
+      <TableContainer id={'table-container'} drawerOpen={drawerOpen}>
         <CardTable
           data={cards}
           renderHeader={() => (
@@ -158,9 +154,9 @@ function SearchContainer () {
               </DataTable.Data>
               <DataTable.Data className={'td-add'}>
                 {cardDrawer.has(card) ? (
-                  <LinkButton.Decline onClick={() => cardDrawer.remove(card)}>
+                  <LinkButton.Danger onClick={() => cardDrawer.remove(card)}>
                     <Icons.Cross />
-                  </LinkButton.Decline>
+                  </LinkButton.Danger>
                 ) : (
                   <LinkButton.Accept onClick={() => cardDrawer.add(card, { grade: Grade.nm })}>
                     <Icons.Plus />
@@ -198,40 +194,11 @@ function SearchContainer () {
           </FooterLoaderContainer>
         </Menu>
       </Footer>
-      <Drawer open={drawerOpen}>
-        <CardDrawerHeader>
-          <Menu>
-            <Close onClick={closeCardInfo} />
-          </Menu>
-          <Menu>
-            <LinkButton disabled={cardDrawer.empty()} onClick={cardDrawer.clear}>
-              Clear
-            </LinkButton>
-          </Menu>
-        </CardDrawerHeader>
-        <CardDrawerContainer>
-          {cardDrawer.toArray().map(({ card, meta }) => (
-            <CardDrawerRow key={card.id}>
-              <CardDrawerRemove onClick={() => cardDrawer.remove(card)}>
-                <Icons.Cross />
-              </CardDrawerRemove>
-              <GradeSelect.Inline.Sm
-                value={gradeOptions[meta.grade]}
-                onChange={(grade) => cardDrawer.updateGrade(card.id, grade)}
-              />
-              <PriceInput
-                editInline
-                value={meta.price}
-                onChange={(price) => cardDrawer.updatePrice(card.id, price)}
-              />
-              <CardDrawerCardName onClick={() => openCardInfo(card)}>{card.name}</CardDrawerCardName>
-            </CardDrawerRow>
-          ))}
-        </CardDrawerContainer>
-        <CardDrawerFooter>
-          <SaveButton disabled={cardDrawer.empty()}>Save!</SaveButton>
-        </CardDrawerFooter>
-      </Drawer>
+      <CardDrawer
+        open={drawerOpen}
+        openCardInfo={openCardInfo}
+        onClose={closeCardDrawer}
+      />
       <CardDetailsModal
         visible={detailsOpen}
         card={selectedCard}
@@ -265,79 +232,6 @@ function CardPreview ({ card }) {
     </Popup>
   )
 }
-
-function Close (props) {
-  return (
-    <LinkButton.Danger {...props}>
-      Close<Icons.Cross />
-    </LinkButton.Danger>
-  )
-}
-
-const CardDrawerHeader = styled('div')({
-  display: 'flex',
-  justifyContent: 'space-between'
-})
-
-const CardDrawerContainer = styled('div')({
-  fontSize: 14,
-  lineHeight: '20px',
-  overflow: 'auto',
-  height: 'calc(100% - 120px)',
-  margin: '0 12px',
-  padding: 12,
-  borderRadius: 3,
-  backgroundColor: Colors.backgroundDark,
-  '::-webkit-scrollbar-track': {
-    borderTopRightRadius: 3,
-    borderBottomRightRadius: 3
-  }
-})
-
-const CardDrawerFooter = styled('div')({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  position: 'absolute',
-  left: 0,
-  right: 0,
-  bottom: 0,
-  height: 64
-})
-
-const CardDrawerRow = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  minWidth: 0,
-  marginBottom: 2
-})
-
-const CardDrawerCardName = styled('div')({
-  cursor: 'pointer',
-  overflow: 'hidden',
-  whiteSpace: 'nowrap',
-  textOverflow: 'ellipsis',
-  ':hover': {
-    color: Colors.accept
-  }
-})
-
-const CardDrawerRemove = styled('div')({
-  cursor: 'pointer',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  flex: '0 0 20px',
-  color: Colors.decline,
-  ':hover': {
-    color: Colors.declineLight
-  }
-})
-
-const SaveButton = styled(Button)({
-  width: 160
-})
 
 const NavBar = styled('div')({
   display: 'flex',
@@ -381,24 +275,29 @@ const TableContainer = styled('div')({
 const CardTable = styled(DataTable)({
   th: {
     '&.th-set': {
-      width: 29,
+      width: '1%',
+      whiteSpace: 'nowrap',
       paddingLeft: 24
     },
     '&.th-number': {
       textAlign: 'right',
-      width: 29
+      width: '1%',
+      whiteSpace: 'nowrap'
     },
     '&.th-reserved': {
-      width: 32
+      width: '1%',
+      whiteSpace: 'nowrap'
     },
     '&.th-image': {
-      width: 20
+      width: '1%',
+      whiteSpace: 'nowrap'
     },
     '&.th-name': {
       textAlign: 'left'
     },
     '&.th-add': {
-      width: 48
+      width: '1%',
+      whiteSpace: 'nowrap'
     },
     ':last-of-type': {
       paddingRight: 24
