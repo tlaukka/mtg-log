@@ -3,6 +3,7 @@ import Button, { acceptStyles, dangerStyles, declineStyles } from './Button'
 import Colors from './Colors'
 
 const LinkButton = styled(Button)({
+  borderRadius: 0,
   backgroundColor: 'transparent',
   ':disabled': {
     color: Colors.foregroundDark,

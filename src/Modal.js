@@ -46,7 +46,7 @@ const ModalContainer = styled('div')({
   position: 'relative',
   width: '60%',
   minWidth: 480,
-  margin: '10% auto',
+  margin: '0 auto',
   color: Colors.foregroundLight
 })
 

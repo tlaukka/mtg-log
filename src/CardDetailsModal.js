@@ -5,16 +5,25 @@ import { useCardSets } from './CardSetProvider'
 import CardSetSymbol from './CardSetSymbol'
 import Colors from './Colors'
 import GradeSelect, { Grade, gradeOptions } from './GradeSelect'
+import Icons from './Icon'
 import LinkButton from './LinkButton'
 import Modal from './Modal'
 import PriceInput from './PriceInput'
 
-function CardDetailsModal ({ card, onClose, ...rest }) {
+function CardDetailsModal ({ initialCard, onClose, ...rest }) {
+  const [card, setCard] = React.useState()
   const [selectedGrade, setSelectedGrade] = React.useState(Grade.nm)
   const [selectedPrice, setSelectedPrice] = React.useState()
 
   const { sets } = useCardSets()
   const cardDrawer = useCardDrawer()
+
+  React.useEffect(
+    () => {
+      setCard(initialCard)
+    },
+    [initialCard]
+  )
 
   if (!card) {
     return null
@@ -45,84 +54,95 @@ function CardDetailsModal ({ card, onClose, ...rest }) {
   function handleClose () {
     setSelectedPrice('')
     setSelectedGrade(Grade.nm)
+    setCard(null)
+
     onClose && onClose()
   }
 
   return (
     <Modal onClose={handleClose} {...rest}>
-      <Container>
-        <CardImageContainer set={set.code}>
-          <CardImage src={card.image_uris.normal} alt={card.name} set={set.code} />
-        </CardImageContainer>
-        <CardInfo>
-          <Table>
-            <thead><tr><th /><th /></tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>
-                  <h1><span>№ {card.collector_number}/<span>{set.card_count}</span></span></h1>
-                </td>
-                <td><h1>{card.name}</h1></td>
-              </tr>
-              <TableRowSpacer />
-              <tr>
-                <td rowSpan={2}>
-                  <InfoText><CardSetSymbol code={set.code} size={42} fixedWidth={false} /></InfoText>
-                </td>
-                <td><InfoText>{set.name}</InfoText></td>
-              </tr>
-              <tr>
-                <td><InfoText>Released - {new Date(set.released_at).getFullYear()}</InfoText></td>
-              </tr>
-              <TableRowSpacer />
-              <tr>
-                <td><InfoText>Rarity:</InfoText></td>
-                <td>
-                  <InfoText><Rarity rarity={card.rarity}>{card.rarity.toUpperCase()}</Rarity></InfoText>
-                </td>
-              </tr>
-              <tr>
-                <td><InfoText>Reserved:</InfoText></td>
-                <td>
-                  <InfoText>
-                    <ReservedStatus reserved={card.reserved}>{card.reserved ? 'YES' : 'NO'}</ReservedStatus>
-                  </InfoText>
-                </td>
-              </tr>
-              <tr>
-                <td><InfoText>Grade:</InfoText></td>
-                <td>
-                    <GradeSelect.Inline.Sm
-                      value={gradeOptions[grade]}
-                      onChange={onChangeGrade}
-                    />
-                </td>
-              </tr>
-              <tr>
-                <td><InfoText>Price (€):</InfoText></td>
-                <PriceTableData>
-                  <PriceInput value={price} onChange={onChangePrice} />
-                </PriceTableData>
-              </tr>
-            </tbody>
-          </Table>
-          <AddContainer>
-            <LinkButton.Accept
-              disabled={isInCollection}
-              onClick={() => cardDrawer.add(card, { grade, price })}
-            >
-              Add
-            </LinkButton.Accept>
-            <LinkButton.Danger
-              disabled={!isInCollection}
-              onClick={() => cardDrawer.remove(card)}
-            >
-              Remove
-            </LinkButton.Danger>
-          </AddContainer>
-        </CardInfo>
-      </Container>
+      <Wrapper>
+        <CardDetailsSearchContainer>
+          <CardDetailsSearch
+            spellCheck={false}
+            placeholder={'Search...'}
+          />
+          <SearchButton><Icons.ArrowRight /></SearchButton>
+        </CardDetailsSearchContainer>
+        <Container>
+          <CardImageContainer set={set.code}>
+            <CardImage src={card.image_uris.normal} alt={card.name} set={set.code} />
+          </CardImageContainer>
+          <CardInfo>
+            <Table>
+              <thead><tr><th /><th /></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <h1><span>№ {card.collector_number}/<span>{set.card_count}</span></span></h1>
+                  </td>
+                  <td><h1>{card.name}</h1></td>
+                </tr>
+                <TableRowSpacer />
+                <tr>
+                  <td rowSpan={2}>
+                    <InfoText><CardSetSymbol code={set.code} size={42} fixedWidth={false} /></InfoText>
+                  </td>
+                  <td><InfoText>{set.name}</InfoText></td>
+                </tr>
+                <tr>
+                  <td><InfoText>Released - {new Date(set.released_at).getFullYear()}</InfoText></td>
+                </tr>
+                <TableRowSpacer />
+                <tr>
+                  <td><InfoText>Rarity:</InfoText></td>
+                  <td>
+                    <InfoText><Rarity rarity={card.rarity}>{card.rarity.toUpperCase()}</Rarity></InfoText>
+                  </td>
+                </tr>
+                <tr>
+                  <td><InfoText>Reserved:</InfoText></td>
+                  <td>
+                    <InfoText>
+                      <ReservedStatus reserved={card.reserved}>{card.reserved ? 'YES' : 'NO'}</ReservedStatus>
+                    </InfoText>
+                  </td>
+                </tr>
+                <tr>
+                  <td><InfoText>Grade:</InfoText></td>
+                  <td>
+                      <GradeSelect.Inline.Sm
+                        value={gradeOptions[grade]}
+                        onChange={onChangeGrade}
+                      />
+                  </td>
+                </tr>
+                <tr>
+                  <td><InfoText>Price (€):</InfoText></td>
+                  <PriceTableData>
+                    <PriceInput value={price} onChange={onChangePrice} />
+                  </PriceTableData>
+                </tr>
+              </tbody>
+            </Table>
+            <AddContainer>
+              <LinkButton.Accept
+                disabled={isInCollection}
+                onClick={() => cardDrawer.add(card, { grade, price })}
+              >
+                Add
+              </LinkButton.Accept>
+              <LinkButton.Danger
+                disabled={!isInCollection}
+                onClick={() => cardDrawer.remove(card)}
+              >
+                Remove
+              </LinkButton.Danger>
+            </AddContainer>
+          </CardInfo>
+        </Container>
+      </Wrapper>
     </Modal>
   )
 }
@@ -134,6 +154,41 @@ const stripes = `repeating-linear-gradient(
   ${Colors.backgroundLight} 10px,
   ${Colors.backgroundLight} 20px
 )`
+
+const Wrapper = styled('div')({
+  width: '100%',
+  marginTop: '8%',
+  marginBottom: 32
+})
+
+const CardDetailsSearchContainer = styled('div')({
+  display: 'flex',
+  flex: 1,
+  justifyContent: 'center',
+  maxWidth: 818,
+  margin: '0 auto',
+  marginBottom: 48
+})
+
+const CardDetailsSearch = styled('input')({
+  fontSize: 42,
+  flex: 1,
+  outline: 'none',
+  borderTop: 'none',
+  borderRight: 'none',
+  borderLeft: 'none',
+  borderBottom: `2px solid ${Colors.backgroundAccent}`,
+  color: Colors.control,
+  backgroundColor: 'transparent',
+  '::placeholder': {
+    color: Colors.backgroundDark
+  }
+})
+
+const SearchButton = styled(LinkButton)({
+  fontSize: 42,
+  borderBottom: `2px solid ${Colors.backgroundAccent}`
+})
 
 const Container = styled('div')({
   display: 'flex',

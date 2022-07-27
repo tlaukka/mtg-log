@@ -26,12 +26,9 @@ import CardDrawer from './CardDrawer'
 function SearchContainer () {
   // console.log('----- render -----')
   const order = React.useRef('name')
-
-  const [search, setSearch] = React.useState('')
-  const [selectedSets, setSelectedSets] = React.useState([])
-  const [selectedColors, setSelectedColors] = React.useState([])
-
-  const [selectedGrade, setSelectedGrade] = React.useState('nm')
+  const search = React.useRef('')
+  const selectedSets = React.useRef([])
+  const selectedColors = React.useRef([])
 
   const [selectedCard, setSelectedCard] = React.useState(null)
 
@@ -42,7 +39,6 @@ function SearchContainer () {
   const { setRoute } = useRoute()
   const { cards, meta, fetching, searchCards, next, previous } = useCardSearch()
 
-  // const cardDrawer = useCardCollection()
   const cardDrawer = useCardDrawer()
 
   // const storage = useStorage()
@@ -55,15 +51,15 @@ function SearchContainer () {
 
   function getCards () {
     const setRegExp = new RegExp(/set:\w+/gi)
-    const setsInSearch = search.match(setRegExp) || []
+    const setsInSearch = search.current.match(setRegExp) || []
 
     const colorRegExp = new RegExp(/c:\w+/gi)
-    const colorsInSearch = search.match(colorRegExp) || []
+    const colorsInSearch = search.current.match(colorRegExp) || []
 
-    const setParams = [...selectedSets, ...setsInSearch].join(' OR ')
-    const colorParams = [...selectedColors, ...colorsInSearch].join(' OR ')
+    const setParams = [...selectedSets.current, ...setsInSearch].join(' OR ')
+    const colorParams = [...selectedColors.current, ...colorsInSearch].join(' OR ')
 
-    const searchPhrase = search.replace(setRegExp, '').trim()
+    const searchPhrase = search.current.replace(setRegExp, '').trim()
     const completeSearch = `(${setParams}) (${colorParams}) ${searchPhrase}`
 
     // searchCards(completeSearch)
@@ -115,15 +111,14 @@ function SearchContainer () {
         <InputBar onSubmit={onSubmit}>
           <CardSetSelect
             sets={sets}
-            onChange={setSelectedSets}
+            onChange={(value) => selectedSets.current = value}
           />
-          <ColorSelectArray onChange={setSelectedColors} />
-          {/* <ColorSelect onChange={setSelectedColors} /> */}
+          <ColorSelectArray onChange={(value) => selectedColors.current = value} />
+          {/* <ColorSelect onChange={(value) => selectedColors.current = value} /> */}
           <Search
-            value={search}
-            placeholder={'Search...'}
             spellCheck={false}
-            onChange={(e) => setSearch(e.target.value)}
+            placeholder={'Search...'}
+            onChange={(e) => search.current = e.target.value}
           />
           <GetCardsButton type={'submit'}>Get cards!</GetCardsButton>
         </InputBar>
@@ -201,8 +196,8 @@ function SearchContainer () {
       />
       <CardDetailsModal
         visible={detailsOpen}
+        initialCard={selectedCard}
         card={selectedCard}
-        cardCollection={cardDrawer}
         onClose={() => setDetailsOpen(false)}
       />
     </>

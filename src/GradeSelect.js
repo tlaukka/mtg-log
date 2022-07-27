@@ -149,14 +149,15 @@ const inlineStyles = {
     ...selectStyles.menu(provided),
     left: -8,
     width: 'auto',
+    backgroundColor: Colors.backgroundLight,
     ':before': {
       content: '""',
       position: 'absolute',
       left: 'calc(50% - 6px)',
       top: -6,
       transform: 'translateY(-50%)',
-      border: `6px solid ${Colors.backgroundDark}`,
-      borderColor: `transparent transparent ${Colors.backgroundDark} transparent`
+      border: `6px solid ${Colors.backgroundLight}`,
+      borderColor: `transparent transparent ${Colors.backgroundLight} transparent`
     }
   })
 }

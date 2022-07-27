@@ -16,9 +16,11 @@ function CardDrawer ({ open, openCardInfo, onClose }) {
     <Drawer open={open}>
       <CardDrawerHeader>
         <Menu>
-          <LinkButton.Decline disabled={cardDrawer.empty()} onClick={cardDrawer.clear}>
-            Clear<Icons.Cross />
-          </LinkButton.Decline>
+          {!cardDrawer.empty() && (
+            <LinkButton.Decline onClick={cardDrawer.clear}>
+              Clear<Icons.Cross />
+            </LinkButton.Decline>
+          )}
         </Menu>
         <Menu>
           <LinkButton onClick={onClose}>Close<Icons.ArrowRight /></LinkButton>
