@@ -4,7 +4,7 @@ import debounce from './debounce'
 const QUERY_CARD_SETS = 'https://api.scryfall.com/sets'
 
 function useFetchCardSets () {
-  const [sets, setSets] = React.useState({})
+  const [sets, setSets] = React.useState()
   const [fetching, setFetching] = React.useState(false)
   const [error, setError] = React.useState()
 
