@@ -128,19 +128,12 @@ const CardDrawerFooter = styled('div')({
   height: 64
 })
 
-const CardDrawerRow = styled('div')({
-  display: 'flex',
-  alignItems: 'center',
-  gap: 8,
-  minWidth: 0,
-  marginBottom: 2
-})
-
 const CardDrawerCardName = styled('div')({
   cursor: 'pointer',
   overflow: 'hidden',
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
+  color: Colors.foregroundLight,
   ':hover': {
     color: Colors.accept
   }

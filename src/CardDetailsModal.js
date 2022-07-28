@@ -48,6 +48,7 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
   function onSearchSuccess (card) {
     search.current = ''
     searchInput.current.value = ''
+    searchInput.current.blur()
     setSearchedCard(card)
   }
 
@@ -75,6 +76,7 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
   function handleClose () {
     search.current = ''
 
+    setSearchActive(false)
     setSelectedPrice('')
     setSelectedGrade(Grade.nm)
     setSearchedCard(null)
