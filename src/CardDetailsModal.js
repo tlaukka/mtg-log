@@ -7,33 +7,54 @@ import Colors from './Colors'
 import GradeSelect, { Grade, gradeOptions } from './GradeSelect'
 import Icons from './Icon'
 import LinkButton from './LinkButton'
+import Spinner from './Spinner'
 import Modal from './Modal'
 import PriceInput from './PriceInput'
+import useCardNameSearch from './useCardNameSearch'
 
 function CardDetailsModal ({ initialCard, onClose, ...rest }) {
-  const [card, setCard] = React.useState()
+  const search = React.useRef('')
+  const searchInput = React.useRef()
+
+  const [searchedCard, setSearchedCard] = React.useState()
+  const [error, setError] = React.useState()
+  const [searchActive, setSearchActive] = React.useState(false)
   const [selectedGrade, setSelectedGrade] = React.useState(Grade.nm)
   const [selectedPrice, setSelectedPrice] = React.useState()
 
   const { sets } = useCardSets()
   const cardDrawer = useCardDrawer()
 
-  React.useEffect(
-    () => {
-      setCard(initialCard)
-    },
-    [initialCard]
-  )
+  const { searchCard, fetching } = useCardNameSearch()
 
-  if (!card) {
-    return null
-  }
-
-  const set = sets[card.set] || {}
-  const isInCollection = cardDrawer.has(card)
+  const card = searchedCard || initialCard
+  const set = sets[card?.set] || {}
+  const isInCollection = cardDrawer.has(card || {})
 
   const grade = isInCollection ? cardDrawer.get(card.id).meta.grade : selectedGrade
   const price = isInCollection ? cardDrawer.get(card.id).meta.price : selectedPrice
+
+  function onSearchKeyDown (e) {
+    if (e.key === 'Enter') {
+      onSearch()
+    }
+  }
+
+  function onSearch () {
+    searchCard(search.current, { onSuccess: onSearchSuccess, onError: onSearchError })
+    setError(null)
+  }
+
+  function onSearchSuccess (card) {
+    search.current = ''
+    searchInput.current.value = ''
+    setSearchedCard(card)
+  }
+
+  function onSearchError (error) {
+    searchInput.current.select()
+    setError(error)
+  }
 
   function onChangeGrade (grade) {
     if (isInCollection) {
@@ -52,9 +73,11 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
   }
 
   function handleClose () {
+    search.current = ''
+
     setSelectedPrice('')
     setSelectedGrade(Grade.nm)
-    setCard(null)
+    setSearchedCard(null)
 
     onClose && onClose()
   }
@@ -64,14 +87,35 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
       <Wrapper>
         <CardDetailsSearchContainer>
           <CardDetailsSearch
+            ref={searchInput}
             spellCheck={false}
             placeholder={'Search...'}
+            onKeyDown={onSearchKeyDown}
+            onFocus={() => setSearchActive(true)}
+            onBlur={() => setSearchActive(false)}
+            onChange={(e) => search.current = e.target.value}
           />
-          <SearchButton><Icons.ArrowRight /></SearchButton>
+          {fetching ? (
+            <SearchSpinner />
+          ) : (
+            <SearchButton active={searchActive} onClick={onSearch}>
+              <Icons.ArrowRight />
+            </SearchButton>
+          )}
+          {error && (
+            <SearchErrorContainer>
+              <LinkButton.Danger onClick={() => setError(null)}>
+                <Icons.Cross />
+              </LinkButton.Danger>
+              {error.details}
+            </SearchErrorContainer>
+          )}
         </CardDetailsSearchContainer>
-        <Container>
+        <CardDetailsContainer>
           <CardImageContainer set={set.code}>
-            <CardImage src={card.image_uris.normal} alt={card.name} set={set.code} />
+            {card && (
+              <CardImage src={card.image_uris.normal} alt={card.name} set={set.code} />
+            )}
           </CardImageContainer>
           <CardInfo>
             <Table>
@@ -80,32 +124,48 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
               <tbody>
                 <tr>
                   <td>
-                    <h1><span>№ {card.collector_number}/<span>{set.card_count}</span></span></h1>
+                    <h1><span>№ {card?.collector_number || '-'}/<span>{set.card_count || '-'}</span></span></h1>
                   </td>
-                  <td><h1>{card.name}</h1></td>
+                  <td><h1>{card?.name || '[Card name]'}</h1></td>
                 </tr>
                 <TableRowSpacer />
                 <tr>
                   <td rowSpan={2}>
                     <InfoText><CardSetSymbol code={set.code} size={42} fixedWidth={false} /></InfoText>
                   </td>
-                  <td><InfoText>{set.name}</InfoText></td>
+                  <td><InfoText>{set.name || '[Card set]'}</InfoText></td>
                 </tr>
                 <tr>
-                  <td><InfoText>Released - {new Date(set.released_at).getFullYear()}</InfoText></td>
+                  <td>
+                    <InfoText>
+                      {card ? (
+                        <InfoText>Released - {new Date(set.released_at).getFullYear()}</InfoText>
+                      ) : (
+                        <InfoText>[Release year]</InfoText>
+                      )}
+                    </InfoText>
+                  </td>
                 </tr>
                 <TableRowSpacer />
                 <tr>
                   <td><InfoText>Rarity:</InfoText></td>
                   <td>
-                    <InfoText><Rarity rarity={card.rarity}>{card.rarity.toUpperCase()}</Rarity></InfoText>
+                    <InfoText>
+                      <Rarity rarity={card?.rarity}>{card?.rarity?.toUpperCase() || '-'}</Rarity>
+                    </InfoText>
                   </td>
                 </tr>
                 <tr>
                   <td><InfoText>Reserved:</InfoText></td>
                   <td>
                     <InfoText>
-                      <ReservedStatus reserved={card.reserved}>{card.reserved ? 'YES' : 'NO'}</ReservedStatus>
+                      <ReservedStatus reserved={card?.reserved || '-'}>
+                        {card ? (
+                          card.reserved ? 'YES' : 'NO'
+                        ) : (
+                          '-'
+                        )}
+                      </ReservedStatus>
                     </InfoText>
                   </td>
                 </tr>
@@ -113,6 +173,7 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
                   <td><InfoText>Grade:</InfoText></td>
                   <td>
                       <GradeSelect.Inline.Sm
+                        isDisabled={!card}
                         value={gradeOptions[grade]}
                         onChange={onChangeGrade}
                       />
@@ -121,27 +182,31 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
                 <tr>
                   <td><InfoText>Price (€):</InfoText></td>
                   <PriceTableData>
-                    <PriceInput value={price} onChange={onChangePrice} />
+                    <PriceInput disabled={!card} value={price} onChange={onChangePrice} />
                   </PriceTableData>
                 </tr>
               </tbody>
             </Table>
             <AddContainer>
-              <LinkButton.Accept
-                disabled={isInCollection}
-                onClick={() => cardDrawer.add(card, { grade, price })}
-              >
-                Add
-              </LinkButton.Accept>
-              <LinkButton.Danger
-                disabled={!isInCollection}
-                onClick={() => cardDrawer.remove(card)}
-              >
-                Remove
-              </LinkButton.Danger>
+              {isInCollection && (
+                <LinkButton.Danger
+                  disabled={!isInCollection}
+                  onClick={() => cardDrawer.remove(card)}
+                >
+                  Remove
+                </LinkButton.Danger>
+              )}
+              {!isInCollection && (
+                <LinkButton.Accept
+                  disabled={!card}
+                  onClick={() => cardDrawer.add(card, { grade, price })}
+                >
+                  Add
+                </LinkButton.Accept>
+              )}
             </AddContainer>
           </CardInfo>
-        </Container>
+        </CardDetailsContainer>
       </Wrapper>
     </Modal>
   )
@@ -165,19 +230,37 @@ const CardDetailsSearchContainer = styled('div')({
   display: 'flex',
   flex: 1,
   justifyContent: 'center',
+  position: 'relative',
   maxWidth: 818,
   margin: '0 auto',
-  marginBottom: 48
+  marginBottom: 48,
+  borderBottom: `2px solid ${Colors.backgroundAccent}`
+})
+
+const SearchErrorContainer = styled('div')({
+  fontSize: 14,
+  lineHeight: '28px',
+  position: 'absolute',
+  bottom: -28,
+  width: '100%',
+  height: 28,
+  overflow: 'hidden',
+  whiteSpace: 'nowrap',
+  textOverflow: 'ellipsis',
+  color: Colors.error,
+  backgroundColor: 'transparent',
+  button: {
+    lineHeight: '28px',
+    height: 28,
+    padding: '0 4px'
+  }
 })
 
 const CardDetailsSearch = styled('input')({
   fontSize: 42,
   flex: 1,
   outline: 'none',
-  borderTop: 'none',
-  borderRight: 'none',
-  borderLeft: 'none',
-  borderBottom: `2px solid ${Colors.backgroundAccent}`,
+  border: 'none',
   color: Colors.control,
   backgroundColor: 'transparent',
   '::placeholder': {
@@ -187,10 +270,16 @@ const CardDetailsSearch = styled('input')({
 
 const SearchButton = styled(LinkButton)({
   fontSize: 42,
-  borderBottom: `2px solid ${Colors.backgroundAccent}`
+  padding: 0
+}, ({ active }) => ({
+  color: active ? Colors.control : Colors.backgroundAccent
+}))
+
+const SearchSpinner = styled(Spinner)({
+  margin: '10px 13px'
 })
 
-const Container = styled('div')({
+const CardDetailsContainer = styled('div')({
   display: 'flex',
   flex: 1,
   justifyContent: 'center',
@@ -278,9 +367,15 @@ const InfoText = styled('span')({
 
 const ReservedStatus = styled('span')({
   fontWeight: 'bold'
-}, ({ reserved }) => ({
-  color: reserved ? Colors.accept : Colors.error
-}))
+}, ({ reserved }) => {
+  if (reserved === '-') {
+    return Colors.control
+  }
+
+  return {
+    color: reserved ? Colors.accept : Colors.error
+  }
+})
 
 const Rarity = styled('span')({
   fontWeight: 'bold'

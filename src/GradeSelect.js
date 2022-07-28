@@ -67,7 +67,7 @@ function GradeSingleValue (props) {
   return (
     <Select.SingleValue {...props}>
       <GradeTag grade={props.data.value} size={props.selectProps.size}>
-        {props.data.label}
+        {props.isDisabled ? '-' : props.data.label}
       </GradeTag>
     </Select.SingleValue>
   )
@@ -140,10 +140,11 @@ const inlineStyles = {
     flex: 1,
     padding: 0
   }),
-  singleValue: () => ({
+  singleValue: (_, state) => ({
     flex: 1,
     overflow: 'visible',
-    width: 46
+    width: 46,
+    filter: `grayscale(${state.isDisabled ? 1 : 0})`
   }),
   menu: (provided) => ({
     ...selectStyles.menu(provided),

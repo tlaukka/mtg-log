@@ -7,7 +7,7 @@ import TextInput from './TextInput'
 
 const priceInputRegExp = new RegExp(/^([0-9]*)(\.?[0-9]{0,2})$/)
 
-function PriceInput ({ value = '', editInline, onChange, ...rest }) {
+function PriceInput ({ value = '', disabled, editInline, onChange, ...rest }) {
   const container = React.useRef()
 
   const [inputVisible, setInputVisible] = React.useState(false)
@@ -113,11 +113,12 @@ function PriceInput ({ value = '', editInline, onChange, ...rest }) {
   }
 
   return (
-    <PriceInputContainer ref={container} {...rest}>
+    <PriceInputContainer ref={container} disabled={disabled} {...rest}>
       <PriceInputTrigger
         readOnly
+        disabled={disabled}
         value={value}
-        placeholder={'0.00'}
+        placeholder={disabled ? '-.--' : '0.00'}
         onClick={() => setInputVisible(!inputVisible)}
       />
       {inputVisible && renderEditInput()}
@@ -129,20 +130,20 @@ const PriceInputContainer = styled('div')({
   display: 'flex',
   justifyContent: 'right',
   alignItems: 'center',
-  position: 'relative',
+  position: 'relative'
+}, ({ disabled }) => ({
   ':after': {
     content: '"€"',
     fontFamily: 'Lucida Console',
     fontSize: 12,
     display: 'inline',
     margin: '0 4px',
-    color: Colors.control
+    color: disabled ? Colors.borderLight : Colors.control
   }
-})
+}))
 
 const PriceInputTrigger = styled('input')({
   fontFamily: 'Lucida Console',
-  cursor: 'pointer',
   boxSizing: 'border-box',
   fontSize: 12,
   textAlign: 'center',
@@ -157,12 +158,13 @@ const PriceInputTrigger = styled('input')({
   borderLeft: 'none',
   borderBottom: `1px solid ${Colors.borderLight}`,
   color: Colors.control,
-  backgroundColor: 'transparent',
+  backgroundColor: 'transparent'
+}, ({ value = '', disabled }) => ({
+  cursor: disabled ? 'default' : 'pointer',
+  width: value.length * 7.23,
   ':hover': {
-    borderColor: Colors.control
+    borderColor: disabled ? Colors.borderLight : Colors.control
   }
-}, ({ value = '' }) => ({
-  width: value.length * 7.23
 }))
 
 const InlineEditInput = styled(PriceInputTrigger)({

@@ -24,7 +24,8 @@ const Icons = {
  Cross: withIconData('close')(Icon),
  Plus: withIconData('plus')(Icon),
  Minus: withIconData('minus')(Icon),
- Camera: withIconData('camera')(Icon)
+ Camera: withIconData('camera')(Icon),
+ HourGlass: withIconData('hourglass-alt')(Icon)
 }
 
 export default Icons
