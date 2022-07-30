@@ -1,18 +1,17 @@
 import styled from '@emotion/styled'
 import React from 'react'
-import { useCardDrawer } from './CardDrawerProvider'
 import { useCardSets } from './CardSetProvider'
 import CardSetSymbol from './CardSetSymbol'
 import Colors from './Colors'
 import ReservedStatus from './ReservedStatus'
 
-function CardDetailsTable ({ card, openCardInfo }) {
+function CardDetailsTable ({ card, openCardInfo, ...rest }) {
   const { sets } = useCardSets()
 
   const onNameClick = openCardInfo ? () => openCardInfo(card) : null
 
   return (
-    <CardDetailsDataTable>
+    <CardDetailsDataTable {...rest}>
       <thead>
         <tr><th /><th /></tr>
       </thead>
@@ -85,7 +84,7 @@ export const CardDetailsDataTable = styled('table')({
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
-        paddingBottom: 4
+        padding: '0 0 4px 0'
       }
     }
   }

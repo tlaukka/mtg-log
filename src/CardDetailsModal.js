@@ -42,7 +42,18 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
   }
 
   function onSearch () {
-    searchCard(search.current, { onSuccess: onSearchSuccess, onError: onSearchError })
+    const setRegExp = new RegExp(/set:\w+/i)
+    const setInSearch = search.current.match(setRegExp)?.[0] || ''
+
+    const set = setInSearch.replace('set:', '')
+    const fuzzy = search.current.replace(setRegExp, '').trim()
+
+    const params = {
+      fuzzy,
+      set
+    }
+
+    searchCard(params, { onSuccess: onSearchSuccess, onError: onSearchError })
     setError(null)
   }
 
@@ -121,8 +132,8 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
             )}
           </CardImageContainer>
           <CardDetailsTableContainer>
-            <CardDetailsTable card={card} />
-            <Table>
+            <CardDataTable card={card} />
+            <MetaDataTable>
               <thead>
                 <tr><th /><th /></tr>
               </thead>
@@ -139,12 +150,14 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
                 </tr>
                 <tr>
                   <td><InfoText>Price (€):</InfoText></td>
-                  <PriceTableData>
-                    <PriceInput disabled={!card} value={price} onChange={onChangePrice} />
-                  </PriceTableData>
+                  <td>
+                    <PriceInputContainer>
+                      <PriceInput disabled={!card} value={price} onChange={onChangePrice} />
+                    </PriceInputContainer>
+                  </td>
                 </tr>
               </tbody>
-            </Table>
+            </MetaDataTable>
             <DetailsMenu>
               {isInCollection && (
                 <RemoveButton
@@ -284,40 +297,32 @@ const CardDetailsTableContainer = styled('div')({
   display: 'flex',
   flexDirection: 'column',
   flex: 1,
-  justifyContent: 'space-between',
   gap: 16,
   width: '100%',
-  // height: '100%',
   maxWidth: 500
 })
 
-const CardInfo = styled('div')({
-  flex: 1,
-  maxWidth: 500,
-  h1: {
-    fontSize: 20,
-    margin: 0,
-    span: {
-      marginRight: 8,
-      color: Colors.control,
-      span: {
-        fontSize: 12
-      }
+const CardDataTable = styled(CardDetailsTable)({
+  '> tbody': {
+    '> tr:first-of-type': {
+      borderBottom: `1px solid ${Colors.backgroundAccent}`
     }
   }
 })
 
-const Table = styled(CardDetailsDataTable)({
+const MetaDataTable = styled(CardDetailsDataTable)({
   '> tbody': {
     '> tr': {
       '> td': {
-        overflow: 'visible'
+        overflow: 'visible',
+        maxWidth: 'none',
+        padding: '0 0 4px 0'
       }
     }
   }
 })
 
-const PriceTableData = styled('td')({
+const PriceInputContainer = styled('div')({
   display: 'flex'
 })
 
@@ -327,10 +332,8 @@ const InfoText = styled('span')({
 
 const DetailsMenu = styled('div')({
   display: 'flex',
-  flex: 1,
-  alignItems: 'flex-end',
   gap: 8,
-  marginBottom: 8
+  padding: '4px 0'
 })
 
 const AddButton = styled(Button.Accept)({

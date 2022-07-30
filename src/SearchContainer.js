@@ -55,8 +55,17 @@ function SearchContainer () {
     const setParams = [...selectedSets.current, ...setsInSearch].join(' OR ')
     const colorParams = [...selectedColors.current, ...colorsInSearch].join(' OR ')
 
-    const searchPhrase = search.current.replace(setRegExp, '').trim()
-    const completeSearch = `(${setParams}) (${colorParams}) ${searchPhrase}`
+    const searchPhrase = search.current
+      .replace(setRegExp, '')
+      .replace(colorRegExp, '')
+      .trim()
+
+    const completeSearch = [
+      (setParams !== '') ? `(${setParams})` : '',
+      (colorParams !== '') ? `(${colorParams})` : '',
+      `order:${order.current}`,
+      searchPhrase
+    ].join(' ')
 
     // searchCards(completeSearch)
     searchCards(`set:mirage order:${order.current}`)

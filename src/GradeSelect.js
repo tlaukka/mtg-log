@@ -86,14 +86,12 @@ export const GradeTag = styled('div')({
   ':hover': {
     filter: 'brightness(1.1)'
   }
-}, ({ grade, size }) => {
-  return {
-    fontSize: size.fontSize,
-    width: size.width,
-    height: size.height,
-    backgroundColor: colors[grade]
-  }
-})
+}, ({ grade, size }) => ({
+  fontSize: size.fontSize,
+  width: size.width,
+  height: size.height,
+  backgroundColor: colors[grade]
+}))
 
 const formStyles = {
   ...selectStyles,

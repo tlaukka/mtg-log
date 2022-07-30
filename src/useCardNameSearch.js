@@ -10,7 +10,7 @@ function useCardNameSearch () {
     async (search, { onSuccess, onError } = {}) => {
       setFetching(true)
 
-      const response = await fetch(`https://api.scryfall.com/cards/named?${qs.stringify({ fuzzy: search })}`)
+      const response = await fetch(`https://api.scryfall.com/cards/named?${qs.stringify(search)}`)
       const json = await response.json()
       console.log(json)
 

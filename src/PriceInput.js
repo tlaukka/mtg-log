@@ -7,7 +7,7 @@ import TextInput from './TextInput'
 
 const priceInputRegExp = new RegExp(/^([0-9]*)(\.?[0-9]{0,2})$/)
 
-function PriceInput ({ value = '', disabled, editInline, onChange, ...rest }) {
+function PriceInput ({ value = '', disabled, readOnly, editInline, onChange, ...rest }) {
   const container = React.useRef()
 
   const [inputVisible, setInputVisible] = React.useState(false)
@@ -45,6 +45,12 @@ function PriceInput ({ value = '', disabled, editInline, onChange, ...rest }) {
 
     if (e.key === 'Escape') {
       declineChange()
+    }
+  }
+
+  function onTriggerClick () {
+    if (!readOnly) {
+      setInputVisible(!inputVisible)
     }
   }
 
@@ -116,10 +122,11 @@ function PriceInput ({ value = '', disabled, editInline, onChange, ...rest }) {
     <PriceInputContainer ref={container} disabled={disabled} {...rest}>
       <PriceInputTrigger
         readOnly
+        isReadOnly={readOnly}
         disabled={disabled}
         value={value}
         placeholder={disabled ? '-.--' : '0.00'}
-        onClick={() => setInputVisible(!inputVisible)}
+        onClick={onTriggerClick}
       />
       {inputVisible && renderEditInput()}
     </PriceInputContainer>
@@ -159,11 +166,11 @@ const PriceInputTrigger = styled('input')({
   borderBottom: `1px solid ${Colors.borderLight}`,
   color: Colors.control,
   backgroundColor: 'transparent'
-}, ({ value = '', disabled }) => ({
-  cursor: disabled ? 'default' : 'pointer',
+}, ({ value = '', isReadOnly, disabled }) => ({
+  cursor: disabled ? 'default' : isReadOnly ? 'text' : 'pointer',
   width: value.length * 7.23,
   ':hover': {
-    borderColor: disabled ? Colors.borderLight : Colors.control
+    borderColor: (disabled || isReadOnly) ? Colors.borderLight : Colors.control
   }
 }))
 
