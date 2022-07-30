@@ -2,7 +2,6 @@ import styled from '@emotion/styled'
 import React from 'react'
 import { useCardDrawer } from './CardDrawerProvider'
 import { useCardSets } from './CardSetProvider'
-import CardSetSymbol from './CardSetSymbol'
 import Colors from './Colors'
 import GradeSelect, { Grade, gradeOptions } from './GradeSelect'
 import Icons from './Icon'
@@ -11,6 +10,8 @@ import Spinner from './Spinner'
 import Modal from './Modal'
 import PriceInput from './PriceInput'
 import useCardNameSearch from './useCardNameSearch'
+import CardDetailsTable, { CardDetailsDataTable } from './CardDetailsTable'
+import Button from './Button'
 
 function CardDetailsModal ({ initialCard, onClose, ...rest }) {
   const search = React.useRef('')
@@ -119,58 +120,13 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
               <CardImage src={card.image_uris.normal} alt={card.name} set={set.code} />
             )}
           </CardImageContainer>
-          <CardInfo>
+          <CardDetailsTableContainer>
+            <CardDetailsTable card={card} />
             <Table>
-              <thead><tr><th /><th /></tr>
+              <thead>
+                <tr><th /><th /></tr>
               </thead>
               <tbody>
-                <tr>
-                  <td>
-                    <h1><span>№ {card?.collector_number || '-'}/<span>{set.card_count || '-'}</span></span></h1>
-                  </td>
-                  <td><h1>{card?.name || '[Card name]'}</h1></td>
-                </tr>
-                <TableRowSpacer />
-                <tr>
-                  <td rowSpan={2}>
-                    <InfoText><CardSetSymbol code={set.code} size={42} fixedWidth={false} /></InfoText>
-                  </td>
-                  <td><InfoText>{set.name || '[Card set]'}</InfoText></td>
-                </tr>
-                <tr>
-                  <td>
-                    <InfoText>
-                      {card ? (
-                        <InfoText>Released - {new Date(set.released_at).getFullYear()}</InfoText>
-                      ) : (
-                        <InfoText>[Release year]</InfoText>
-                      )}
-                    </InfoText>
-                  </td>
-                </tr>
-                <TableRowSpacer />
-                <tr>
-                  <td><InfoText>Rarity:</InfoText></td>
-                  <td>
-                    <InfoText>
-                      <Rarity rarity={card?.rarity}>{card?.rarity?.toUpperCase() || '-'}</Rarity>
-                    </InfoText>
-                  </td>
-                </tr>
-                <tr>
-                  <td><InfoText>Reserved:</InfoText></td>
-                  <td>
-                    <InfoText>
-                      <ReservedStatus reserved={card?.reserved || '-'}>
-                        {card ? (
-                          card.reserved ? 'YES' : 'NO'
-                        ) : (
-                          '-'
-                        )}
-                      </ReservedStatus>
-                    </InfoText>
-                  </td>
-                </tr>
                 <tr>
                   <td><InfoText>Grade:</InfoText></td>
                   <td>
@@ -189,25 +145,25 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
                 </tr>
               </tbody>
             </Table>
-            <AddContainer>
+            <DetailsMenu>
               {isInCollection && (
-                <LinkButton.Danger
+                <RemoveButton
                   disabled={!isInCollection}
                   onClick={() => cardDrawer.remove(card)}
                 >
                   Remove
-                </LinkButton.Danger>
+                </RemoveButton>
               )}
               {!isInCollection && (
-                <LinkButton.Accept
+                <AddButton
                   disabled={!card}
                   onClick={() => cardDrawer.add(card, { grade, price })}
                 >
                   Add
-                </LinkButton.Accept>
+                </AddButton>
               )}
-            </AddContainer>
-          </CardInfo>
+            </DetailsMenu>
+          </CardDetailsTableContainer>
         </CardDetailsContainer>
       </Wrapper>
     </Modal>
@@ -216,10 +172,10 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
 
 const stripes = `repeating-linear-gradient(
   -45deg,
-  ${Colors.backgroundDark},
-  ${Colors.backgroundDark} 10px,
-  ${Colors.backgroundLight} 10px,
-  ${Colors.backgroundLight} 20px
+  #2D2924,
+  #2D2924 10px,
+  #181510 10px,
+  #181510 20px
 )`
 
 const Wrapper = styled('div')({
@@ -260,8 +216,8 @@ const SearchErrorContainer = styled('div')({
 
 const CardDetailsSearch = styled('input')({
   fontSize: 42,
-  flex: 1,
   outline: 'none',
+  width: '100%',
   border: 'none',
   color: Colors.control,
   backgroundColor: 'transparent',
@@ -296,34 +252,49 @@ const CardImageContainer = styled('div')({
   aspectRatio: '488 / 680',
   width: '50%',
   maxWidth: 300,
-  background: stripes,
+  backgroundColor: '#181510',
   boxShadow: '0px 0px 4px 0px white'
 }, ({ set }) => ({
-  borderRadius: (set === 'lea') ? 22 : 14,
+  borderRadius: (set === 'lea') ? '7.5%/5.4%' : '4.8%/3.4%',
   ':before': {
-    content: '"[card]"',
+    content: '""',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    aspectRatio: '488 / 680',
-    width: '95%',
-    borderRadius: (set === 'lea') ? 16 : 8,
+    position: 'absolute',
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0,
+    margin: 14,
     color: Colors.borderLight,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)'
+    background: stripes
   }
 }))
 
 const CardImage = styled('img')({
+  display: 'block',
   position: 'absolute',
   width: '100%'
 }, ({ set }) => ({
-  clipPath: (set === 'lea') ? 'inset(0px round 22px)' : 'inset(0px round 14px)'
+  clipPath: (set === 'lea') ? 'inset(0px round 7.5%/5.4%)' : 'inset(0px round 4.8%/3.4%)'
 }))
+
+const CardDetailsTableContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  flex: 1,
+  justifyContent: 'space-between',
+  gap: 16,
+  width: '100%',
+  // height: '100%',
+  maxWidth: 500
+})
 
 const CardInfo = styled('div')({
   flex: 1,
   maxWidth: 500,
-  'h1': {
+  h1: {
     fontSize: 20,
     margin: 0,
     span: {
@@ -336,21 +307,12 @@ const CardInfo = styled('div')({
   }
 })
 
-const Table = styled('table')({
-  width: '100%',
-  borderCollapse: 'collapse',
-  th: {
-    padding: 0,
-    ':nth-of-type(1)': {
-      width: 120
-    }
-  },
-  tbody: {
-    'tr:first-of-type': {
-      borderBottom: `1px solid ${Colors.backgroundAccent}`
-    },
-    td: {
-      paddingBottom: 4
+const Table = styled(CardDetailsDataTable)({
+  '> tbody': {
+    '> tr': {
+      '> td': {
+        overflow: 'visible'
+      }
     }
   }
 })
@@ -359,37 +321,26 @@ const PriceTableData = styled('td')({
   display: 'flex'
 })
 
-const TableRowSpacer = styled('tr')({
-  height: 12
-})
-
 const InfoText = styled('span')({
   color: Colors.control
 })
 
-const ReservedStatus = styled('span')({
-  fontWeight: 'bold'
-}, ({ reserved }) => {
-  if (reserved === '-') {
-    return Colors.control
-  }
-
-  return {
-    color: reserved ? Colors.accept : Colors.error
-  }
+const DetailsMenu = styled('div')({
+  display: 'flex',
+  flex: 1,
+  alignItems: 'flex-end',
+  gap: 8,
+  marginBottom: 8
 })
 
-const Rarity = styled('span')({
-  fontWeight: 'bold'
-}, ({ rarity }) => ({
-  color: Colors[rarity]
-}))
+const AddButton = styled(Button.Accept)({
+  height: 24,
+  lineHeight: '24px'
+})
 
-const AddContainer = styled('div')({
-  display: 'flex',
-  justifyContent: 'center',
-  margin: '64px 0 24px',
-  borderTop: `1px solid ${Colors.backgroundAccent}`
+const RemoveButton = styled(Button.Danger)({
+  height: 24,
+  lineHeight: '24px'
 })
 
 export default CardDetailsModal

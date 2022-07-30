@@ -21,11 +21,11 @@ function useCardSearch () {
 
       if (response.status === 200) {
         setResult(json)
-        onSuccess && onSuccess()
+        onSuccess && onSuccess(json)
       } else {
         queryStack.clear()
-        setError(response)
-        onError && onError()
+        setError(json)
+        onError && onError(json)
       }
 
       setFetching(false)

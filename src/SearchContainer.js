@@ -17,7 +17,7 @@ import Icons from './Icon'
 import CardDetailsModal from './CardDetailsModal'
 import { useCardDrawer } from './CardDrawerProvider'
 import CardDrawer from './CardDrawer'
-import CardTable from './CardTable'
+import CardTable, { CardTableFull } from './CardTable'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -59,7 +59,7 @@ function SearchContainer () {
     const completeSearch = `(${setParams}) (${colorParams}) ${searchPhrase}`
 
     // searchCards(completeSearch)
-    searchCards(`set:beta order:${order.current}`)
+    searchCards(`set:mirage order:${order.current}`)
     // searchCards(`jedit ojanen order:${order.current}`)
   }
 
@@ -125,6 +125,10 @@ function SearchContainer () {
           sortCards={sortCards}
           openCardInfo={openCardInfo}
         />
+        {/* <CardTableFull
+          cards={cards}
+          openCardInfo={openCardInfo}
+        /> */}
       </TableContainer>
       <Footer>
         <Menu>

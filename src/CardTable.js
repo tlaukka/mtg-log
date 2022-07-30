@@ -1,5 +1,6 @@
 import styled from '@emotion/styled'
 import React from 'react'
+import Button from './Button'
 import { useCardDrawer } from './CardDrawerProvider'
 import { useCardSets } from './CardSetProvider'
 import CardSetSymbol from './CardSetSymbol'
@@ -10,6 +11,8 @@ import Icons from './Icon'
 import LinkButton from './LinkButton'
 import Popup, { withPopupPosition } from './Popup'
 import Tooltip from './Tooltip'
+import CardImage from './CardImage'
+import CardDetailsTable from './CardDetailsTable'
 
 function CardTable ({ cards, sortCards, openCardInfo }) {
   const { sets } = useCardSets()
@@ -20,26 +23,26 @@ function CardTable ({ cards, sortCards, openCardInfo }) {
       data={cards}
       renderHeader={() => (
         <>
-          <DataTable.Header className={'th-set'}>Set</DataTable.Header>
-          <TableSortingHeader className={'th-number'} onClick={() => sortCards('set')}>№</TableSortingHeader>
-          <DataTable.Header className={'th-reserved'}>Res.</DataTable.Header>
-          <DataTable.Header className={'th-image'}></DataTable.Header>
-          <TableSortingHeader className={'th-name'} onClick={() => sortCards('name')}>Name</TableSortingHeader>
-          <DataTable.Header className={'th-add'}></DataTable.Header>
+          <DataTable.Header fitToContent>Set</DataTable.Header>
+          <TableSortingHeader textAlign={'right'} fitToContent onClick={() => sortCards('set')}>№</TableSortingHeader>
+          <DataTable.Header fitToContent>Res.</DataTable.Header>
+          <DataTable.Header fitToContent></DataTable.Header>
+          <TableSortingHeader textAlign={'left'} onClick={() => sortCards('name')}>Name</TableSortingHeader>
+          <DataTable.Header fitToContent></DataTable.Header>
         </>
       )}
       renderRow={(card) => (
         <>
-          <DataTable.Data className={'td-set'}>
+          <DataTable.Data>
             <CardSet set={sets[card.set]} rarity={card.rarity} />
           </DataTable.Data>
-          <DataTable.Data className={'td-number'}>{card.collector_number}</DataTable.Data>
-          <DataTable.Data className={'td-reserved'}><ReservedStatus reserved={card.reserved} /></DataTable.Data>
-          <DataTable.Data className={'td-image'}><CardPreview card={card} /></DataTable.Data>
-          <DataTable.Data className={'td-name'}>
+          <DataTable.Data textAlign={'right'} color={Colors.control}>{card.collector_number}</DataTable.Data>
+          <DataTable.Data textAlign={'center'}><ReservedStatus reserved={card.reserved} /></DataTable.Data>
+          <DataTable.Data noPadding><CardPreviewPopup card={card} /></DataTable.Data>
+          <DataTable.Data>
             <CardName onClick={() => openCardInfo(card)}>{card.name}</CardName>
           </DataTable.Data>
-          <DataTable.Data className={'td-add'}>
+          <DataTable.Data textAlign={'center'}>
             {cardDrawer.has(card) ? (
               <LinkButton.Danger onClick={() => cardDrawer.remove(card)}>
                 <Icons.Cross />
@@ -49,6 +52,36 @@ function CardTable ({ cards, sortCards, openCardInfo }) {
                 <Icons.Plus />
               </LinkButton.Accept>
             )}
+          </DataTable.Data>
+        </>
+      )}
+    />
+  )
+}
+
+export function CardTableFull ({ cards, openCardInfo }) {
+  return (
+    <CardDataTableFull
+      data={cards}
+      renderHeader={() => (
+        <>
+          <DataTable.Header fitToContent>Image</DataTable.Header>
+          <DataTable.Header textAlign={'left'}>Details</DataTable.Header>
+        </>
+      )}
+      renderRow={(card) => (
+        <>
+          <DataTable.Data>
+            <CardImage src={card.image_uris.small} alt={card.name} set={card.set} />
+          </DataTable.Data>
+          <DataTable.Data>
+            <CardDetailsContainer>
+              <CardDetailsTable card={card} openCardInfo={openCardInfo} />
+              <DetailsMenu>
+                <AddButton>Add</AddButton>
+                <RemoveButton>Remove</RemoveButton>
+              </DetailsMenu>
+            </CardDetailsContainer>
           </DataTable.Data>
         </>
       )}
@@ -68,11 +101,11 @@ function CardSet ({ set, rarity }) {
 
 function ReservedStatus ({ reserved }) {
   return reserved
-    ? <Icons.Check style={{ color: Colors.accept }} />
-    : <Icons.Cross style={{ color: Colors.error }}  />
+    ? <Icons.Check style={{ color: Colors.accept }} fixedWidth={false} />
+    : <Icons.Cross style={{ color: Colors.error }} fixedWidth={false} />
 }
 
-function CardPreview ({ card }) {
+function CardPreviewPopup ({ card }) {
   return (
     <Popup content={<CardPreviewImage src={card.image_uris.small} alt={card.name} set={card.set} />}>
       <CardPreviewButton><Icons.Camera /></CardPreviewButton>
@@ -81,65 +114,37 @@ function CardPreview ({ card }) {
 }
 
 const CardDataTable = styled(DataTable)({
-  th: {
-    '&.th-set': {
-      width: '1%',
-      whiteSpace: 'nowrap',
-      paddingLeft: 24
-    },
-    '&.th-number': {
-      textAlign: 'right',
-      width: '1%',
-      whiteSpace: 'nowrap'
-    },
-    '&.th-reserved': {
-      width: '1%',
-      whiteSpace: 'nowrap'
-    },
-    '&.th-image': {
-      width: '1%',
-      whiteSpace: 'nowrap'
-    },
-    '&.th-name': {
-      textAlign: 'left'
-    },
-    '&.th-add': {
-      width: '1%',
-      whiteSpace: 'nowrap'
-    },
-    ':last-of-type': {
-      paddingRight: 24
+  '> thead': {
+    '> tr': {
+      '> th:first-of-type': {
+        paddingLeft: 24
+      },
+      '> th:last-of-type': {
+        paddingRight: 24
+      }
     }
   },
-  tbody: {
+  '> tbody': {
     fontSize: 16,
-    'tr:nth-of-type(odd)': {
-      backgroundColor: Colors.backgroundAccent
-    },
-    'tr:first-of-type': {
-      height: 12,
+    '> tr': {
+      '> td:first-of-type': {
+        paddingLeft: 24
+      },
+      '> td:last-of-type': {
+        paddingRight: 24
+      }
     }
-  },
-  td: {
-    '&.td-set': {
-      paddingLeft: 24
-    },
-    '&.td-number': {
-      textAlign: 'right',
-      color: Colors.control
-    },
-    '&.td-reserved': {
-      textAlign: 'center'
-    },
-    '&.td-image': {
-      padding: 0,
-      color: Colors.control
-    },
-    '&.td-add': {
-      textAlign: 'center'
-    },
-    ':last-of-type': {
-      paddingRight: 24
+  }
+})
+
+const CardDataTableFull = styled(CardDataTable)({
+  height: 1,
+  '> tbody': {
+    '> tr:not(:first-of-type)': {
+      '> td:not(:first-of-type):not(:last-of-type)': {
+        verticalAlign: 'top',
+        padding: 12
+      }
     }
   }
 })
@@ -164,11 +169,12 @@ const CardPreviewButton = styled(LinkButton)({
 })
 
 const CardPreviewImage = withPopupPosition(styled('img')({
+  display: 'block',
   aspectRatio: '488 / 680',
-  width: 130
+  width: 146
 }, ({ set, position }) => {
   const styles = {
-    borderRadius: (set === 'lea') ? 10 : 7
+    borderRadius: (set === 'lea') ? '7.5%/5.4%' : '4.8%/3.4%'
   }
 
   if (position === 'top') {
@@ -197,5 +203,29 @@ const CardSetContainer = styled('div')({
 }, ({ rarity = 'common' }) => ({
   backgroundColor: Colors[rarity] || Colors.foregroundLight
 }))
+
+const CardDetailsContainer = styled('div')({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  height: '100%',
+  minWidth: 400
+})
+
+const DetailsMenu = styled('div')({
+  display: 'flex',
+  gap: 8,
+  marginBottom: 8
+})
+
+const AddButton = styled(Button.Accept)({
+  height: 24,
+  lineHeight: '24px'
+})
+
+const RemoveButton = styled(Button.Danger)({
+  height: 24,
+  lineHeight: '24px'
+})
 
 export default CardTable

@@ -36,7 +36,7 @@ const Backdrop = styled('div')({
   width: '100vw',
   height: '100vh',
   overflow: 'auto',
-  backgroundColor: 'rgba(0, 0, 0, 0.8)',
+  backgroundColor: 'rgba(0, 0, 0, 0.85)',
   backdropFilter: 'blur(2px)'
 })
 

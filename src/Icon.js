@@ -1,8 +1,19 @@
+import styled from '@emotion/styled'
 import React from 'react'
 
-export function Icon ({ icon, ...rest }) {
-  return <i className={`zmdi zmdi-${icon} zmdi-hc-fw`} {...rest}></i>
+export function Icon ({ icon, color, fixedWidth = true, ...rest }) {
+  return (
+    <Symbol
+      className={`zmdi zmdi-${icon} ${fixedWidth ? 'zmdi-hc-fw' : ''}`}
+      color={color}
+      {...rest}
+    />
+  )
 }
+
+const Symbol = styled('i')(({ color = 'inherit' }) => ({
+  color
+}))
 
 function withIconData (icon) {
   return function (WrappedComponent) {

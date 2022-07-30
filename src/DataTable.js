@@ -12,9 +12,9 @@ function DataTable ({ data = [], renderHeader, renderRow, ...rest }) {
       </thead>
       <tbody>
         <tr />
-        {data.map((entry) => (
+        {data.map((entry, index) => (
           <tr key={entry.id}>
-            {renderRow(entry)}
+            {renderRow(entry, index)}
           </tr>
         ))}
       </tbody>
@@ -46,32 +46,29 @@ const Table = styled('table')({
   width: '100%',
   marginBottom: 24,
   backgroundColor: Colors.backgroundLight,
-  thead: {
+  '> thead': {
     fontSize: 16,
     color: Colors.control,
-    tr: {
+    '> tr': {
       position: 'sticky',
       zIndex: 2,
       top: 0,
       overflow: 'hidden',
-      boxShadow: '0px -2px 14px rgba(0, 0, 0, 0.6)'
+      boxShadow: '0px -2px 14px rgba(0, 0, 0, 0.6)',
+      '> th': {
+        padding: '8px 12px',
+        backgroundColor: Colors.backgroundLight
+      }
     }
   },
-  th: {
-    padding: '8px 12px',
-    backgroundColor: Colors.backgroundLight
-  },
-  tbody: {
+  '> tbody': {
     fontSize: 16,
-    'tr:nth-of-type(odd)': {
+    '> tr:nth-of-type(odd)': {
       backgroundColor: Colors.backgroundAccent
     },
-    'tr:first-of-type': {
-      height: 12
+    '> tr:first-of-type': {
+      height: 12,
     }
-  },
-  td: {
-    padding: '8px 12px'
   }
 })
 
@@ -86,7 +83,16 @@ const ExpandedRowWrapper = styled('div')({
   maxHeight: visible ? 43 : 0
 }))
 
-DataTable.Header = styled('th')()
-DataTable.Data = styled('td')()
+DataTable.Header = styled('th')(({ textAlign = 'center', fitToContent }) => ({
+  textAlign,
+  width: fitToContent ? '1%' : 'auto',
+  whiteSpace: fitToContent ? 'nowrap' : 'normal'
+}))
+
+DataTable.Data = styled('td')(({ textAlign = 'left', noPadding, color = Colors.foregroundLight }) => ({
+  textAlign,
+  padding: noPadding ? 0 : '8px 12px',
+  color
+}))
 
 export default DataTable
