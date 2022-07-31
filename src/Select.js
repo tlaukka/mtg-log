@@ -5,7 +5,6 @@ import Colors from './Colors'
 function Select({ styles = selectStyles, ...rest }) {
   return (
     <ReactSelect
-      classNamePrefix={'custom-select'}
       styles={styles}
       components={{ Option, MultiValue }}
       filterOption={createFilter({ ignoreAccents: false })}

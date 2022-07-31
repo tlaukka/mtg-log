@@ -25,10 +25,15 @@ function CardTable ({ cards, sortCards, openCardInfo }) {
       renderHeader={() => (
         <>
           <DataTable.Header fitToContent>Set</DataTable.Header>
-          <TableSortingHeader textAlign={'right'} fitToContent onClick={() => sortCards('set')}>№</TableSortingHeader>
+          <DataTable.Header textAlign={'left'} fitToContent>
+            <TableSortingHeader onClick={() => sortCards('set')}>№</TableSortingHeader>
+          </DataTable.Header>
+
           <DataTable.Header fitToContent>Res.</DataTable.Header>
           <DataTable.Header fitToContent></DataTable.Header>
-          <TableSortingHeader textAlign={'left'} onClick={() => sortCards('name')}>Name</TableSortingHeader>
+          <DataTable.Header textAlign={'left'}>
+            <TableSortingHeader onClick={() => sortCards('name')}>Name</TableSortingHeader>
+          </DataTable.Header>
           <DataTable.Header fitToContent></DataTable.Header>
         </>
       )}
@@ -150,7 +155,8 @@ const CardDataTableFull = styled(CardDataTable)({
   }
 })
 
-const TableSortingHeader = styled(DataTable.Header)({
+const TableSortingHeader = styled('div')({
+  display: 'inline-block',
   cursor: 'pointer',
   ':hover': {
     color: Colors.accept

@@ -30,7 +30,7 @@ function CardSetSelect ({ sets, onChange, ...rest }) {
       isMulti
       styles={styles}
       options={options}
-      placeholder={'Card set...'}
+      placeholder={null}
       components={{ Option: CardSetOption, MultiValue: CardSetMultiValue }}
       onChange={onSelectChange}
     />

@@ -18,6 +18,7 @@ import CardDetailsModal from './CardDetailsModal'
 import { useCardDrawer } from './CardDrawerProvider'
 import CardDrawer from './CardDrawer'
 import CardTable, { CardTableFull } from './CardTable'
+import TableLayoutSelect from './TableLayoutSelect'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -155,6 +156,7 @@ function SearchContainer () {
           )}
         </Menu>
         <Menu>
+          <TableLayoutSelect />
           <MenuButton disabled={cards.length === 0} onClick={backToTop}>
             Back to top<Icons.ArrowUp />
           </MenuButton>
