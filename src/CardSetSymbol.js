@@ -10,7 +10,7 @@ function CardSetSymbol ({ code, size, fixedWidth = true, color = 'inherit', ...r
 }
 
 const SymbolContainer = styled('span')({
-  display: 'flex',
+  display: 'inline-flex',
 }, ({ size, color }) => ({
   fontSize: size,
   color

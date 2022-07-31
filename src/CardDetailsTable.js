@@ -5,7 +5,6 @@ import CardSetSymbol from './CardSetSymbol'
 import Colors from './Colors'
 import Rarity from './Rarity'
 import ReservedStatus from './ReservedStatus'
-import Tag from './Tag'
 
 function CardDetailsTable ({ card, openCardInfo, ...rest }) {
   const { sets } = useCardSets()

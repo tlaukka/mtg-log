@@ -3,7 +3,7 @@ import React from 'react'
 import Colors from './Colors'
 import Tag from './Tag'
 
-// const labels = {
+// const rarityLabel = {
 //   common: 'common',
 //   uncommon: 'uncommon',
 //   rare: 'rare',
@@ -11,7 +11,7 @@ import Tag from './Tag'
 //   bonus: 'bonus'
 // }
 
-const labels = {
+const rarityLabel = {
   common: 'co',
   uncommon: 'un',
   rare: 'ra',
@@ -19,7 +19,7 @@ const labels = {
   bonus: 'bo'
 }
 
-const backgrounds = {
+export const rarityBackground = {
   common: 'black',
   uncommon: 'linear-gradient(90deg, rgba(94,104,107,1) 0%, rgba(245,253,255,1) 50%)',
   rare: 'linear-gradient(90deg, rgba(102,84,56,1) 0%, rgba(255,244,146,1) 50%)',
@@ -27,7 +27,7 @@ const backgrounds = {
   bonus: 'linear-gradient(90deg, rgba(69,88,112,1) 0%, rgba(156,181,214,1) 50%)'
 }
 
-// const borderColor = {
+// export const rarityBorderColor = {
 //   common: Colors.borderLight,
 //   uncommon: 'rgba(94,104,107,1)',
 //   rare: 'rgba(102,84,56,1)',
@@ -35,7 +35,7 @@ const backgrounds = {
 //   bonus: 'rgba(69,88,112,1)'
 // }
 
-const borderColor = {
+export const rarityBorderColor = {
   common: Colors.borderLight,
   uncommon: 'rgba(245,253,255,1)',
   rare: 'rgba(255,244,146,1)',
@@ -45,15 +45,15 @@ const borderColor = {
 
 function Rarity ({ rarity }) {
   return (
-    <RarityTag rarity={rarity} background={backgrounds[rarity]}>
-      {labels[rarity] || '-'}
+    <RarityTag rarity={rarity} background={rarityBackground[rarity]}>
+      {rarityLabel[rarity] || '-'}
     </RarityTag>
   )
 }
 
 const RarityTag = styled(Tag)(({ rarity }) => ({
-  border: `1px solid ${borderColor[rarity]}`,
-  color: (rarity === 'common') ? Colors.borderLight : Colors.backgroundDark
+  border: `1px solid ${rarityBorderColor[rarity]}`,
+  color: (rarity === 'common') ? Colors.borderLight : '#15171B'
 }))
 
 export default Rarity

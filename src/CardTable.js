@@ -13,6 +13,7 @@ import Popup, { withPopupPosition } from './Popup'
 import Tooltip from './Tooltip'
 import CardImage from './CardImage'
 import CardDetailsTable from './CardDetailsTable'
+import { rarityBackground, rarityBorderColor } from './Rarity'
 
 function CardTable ({ cards, sortCards, openCardInfo }) {
   const { sets } = useCardSets()
@@ -191,6 +192,7 @@ const CardPreviewImage = withPopupPosition(styled('img')({
 }))
 
 const CardSetContainer = styled('div')({
+  boxSizing: 'border-box',
   position: 'relative',
   display: 'flex',
   justifyContent: 'center',
@@ -202,6 +204,9 @@ const CardSetContainer = styled('div')({
   color: 'black',
 }, ({ rarity = 'common' }) => ({
   backgroundColor: Colors[rarity] || Colors.foregroundLight
+  // border: `1px solid ${rarityBorderColor[rarity]}`,
+  // color: (rarity === 'common') ? Colors.borderLight : '#15171B',
+  // background: rarityBackground[rarity]
 }))
 
 const CardDetailsContainer = styled('div')({

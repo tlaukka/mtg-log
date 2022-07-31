@@ -17,7 +17,8 @@ const Colors = {
   common: '#65737E',
   uncommon: '#C7CBCF',
   rare: '#EBCB8B',
-  mythic: '#FF8B39'
+  mythic: '#FF8B39',
+  bonus: '#96ACCC'
 }
 
 export default Colors
