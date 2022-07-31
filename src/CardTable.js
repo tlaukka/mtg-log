@@ -15,7 +15,7 @@ import CardImage from './CardImage'
 import CardDetailsTable from './CardDetailsTable'
 import { rarityBackground, rarityBorderColor } from './Rarity'
 
-function CardTable ({ cards, sortCards, openCardInfo }) {
+function Compact ({ cards, sortCards, openCardInfo }) {
   const { sets } = useCardSets()
   const cardDrawer = useCardDrawer()
 
@@ -65,7 +65,7 @@ function CardTable ({ cards, sortCards, openCardInfo }) {
   )
 }
 
-export function CardTableFull ({ cards, openCardInfo }) {
+function Full ({ cards, openCardInfo }) {
   return (
     <CardDataTableFull
       data={cards}
@@ -238,5 +238,10 @@ const RemoveButton = styled(Button.Danger)({
   height: 24,
   lineHeight: '24px'
 })
+
+const CardTable = {
+  Compact,
+  Full
+}
 
 export default CardTable

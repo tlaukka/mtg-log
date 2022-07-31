@@ -1,7 +1,6 @@
-import styled from '@emotion/styled'
 import React from 'react'
 import Colors from './Colors'
-import Icons, { Icon } from './Icon'
+import { Icon } from './Icon'
 import Select, { selectStyles } from './Select'
 
 const options = [
@@ -9,10 +8,15 @@ const options = [
   { value: 'details', label: 'Details', icon: 'view-agenda' }
 ]
 
+export const layoutOptions = options.reduce((result, entry) => {
+  result[entry.value] = entry
+  return result
+}, {})
+
 function TableLayoutSelect ({ menuPlacement = 'top', onChange, ...rest }) {
   const onSelectChange = React.useCallback(
     (data) => {
-      onChange && onChange(data.value)
+      onChange && onChange(data)
     },
     [onChange]
   )
@@ -80,7 +84,7 @@ const styles = {
     overflow: 'visible',
     filter: `grayscale(${state.isDisabled ? 1 : 0})`,
     i: {
-      lineHeight: '14px',
+      alignSelf: 'center',
       marginRight: 2
     }
   }),

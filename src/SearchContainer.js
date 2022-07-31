@@ -17,8 +17,13 @@ import Icons from './Icon'
 import CardDetailsModal from './CardDetailsModal'
 import { useCardDrawer } from './CardDrawerProvider'
 import CardDrawer from './CardDrawer'
-import CardTable, { CardTableFull } from './CardTable'
-import TableLayoutSelect from './TableLayoutSelect'
+import CardTable from './CardTable'
+import TableLayoutSelect, { layoutOptions } from './TableLayoutSelect'
+
+const CardTableComponent = {
+  compact: CardTable.Compact,
+  details: CardTable.Full
+}
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -29,6 +34,7 @@ function SearchContainer () {
 
   const [selectedCard, setSelectedCard] = React.useState(null)
 
+  const [tableLayout, setTableLayout] = React.useState(layoutOptions.compact)
   const [drawerOpen, setDrawerOpen] = React.useState(false)
   const [detailsOpen, setDetailsOpen] = React.useState(false)
 
@@ -104,6 +110,18 @@ function SearchContainer () {
     setDrawerOpen(false)
   }
 
+  function renderCardTable () {
+    const Table = CardTableComponent[tableLayout.value]
+
+    return (
+      <Table
+        cards={cards}
+        sortCards={sortCards}
+        openCardInfo={openCardInfo}
+      />
+    )
+  }
+
   return (
     <>
       <Header>
@@ -130,11 +148,12 @@ function SearchContainer () {
         </InputBar>
       </Header>
       <TableContainer id={'table-container'} drawerOpen={drawerOpen}>
-        <CardTable
+        {renderCardTable()}
+        {/* <CardTable
           cards={cards}
           sortCards={sortCards}
           openCardInfo={openCardInfo}
-        />
+        /> */}
         {/* <CardTableFull
           cards={cards}
           openCardInfo={openCardInfo}
@@ -156,10 +175,10 @@ function SearchContainer () {
           )}
         </Menu>
         <Menu>
-          <TableLayoutSelect />
           <MenuButton disabled={cards.length === 0} onClick={backToTop}>
             Back to top<Icons.ArrowUp />
           </MenuButton>
+          <TableLayoutSelect value={tableLayout} onChange={(value) => setTableLayout(value)} />
           <MenuButton onClick={toggleDrawer}>
             {`Card drawer [${cardDrawer.size()}]`}
           </MenuButton>
