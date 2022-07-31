@@ -2,6 +2,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import Colors from './Colors'
 import Select, { selectStyles } from './Select'
+import Tag from './Tag'
 
 export const Grade = {
   m: 'm',
@@ -73,16 +74,9 @@ function GradeSingleValue (props) {
   )
 }
 
-export const GradeTag = styled('div')({
+export const GradeTag = styled(Tag)({
   cursor: 'pointer',
-  fontSize: 14,
-  fontWeight: 'bold',
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  flex: 1,
-  borderRadius: 3,
-  color: Colors.backgroundDark,
+  padding: 0,
   ':hover': {
     filter: 'brightness(1.1)'
   }
@@ -139,6 +133,7 @@ const inlineStyles = {
     padding: 0
   }),
   singleValue: (_, state) => ({
+    display: 'inline-flex',
     flex: 1,
     overflow: 'visible',
     width: 46,
@@ -165,7 +160,7 @@ const sizes = {
   sm: {
     fontSize: 12,
     width: 36,
-    height: 16
+    height: 18
   },
   md: {
     fontSize: 14,

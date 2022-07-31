@@ -3,7 +3,9 @@ import React from 'react'
 import { useCardSets } from './CardSetProvider'
 import CardSetSymbol from './CardSetSymbol'
 import Colors from './Colors'
+import Rarity from './Rarity'
 import ReservedStatus from './ReservedStatus'
+import Tag from './Tag'
 
 function CardDetailsTable ({ card, openCardInfo, ...rest }) {
   const { sets } = useCardSets()
@@ -47,9 +49,7 @@ function CardDetailsTable ({ card, openCardInfo, ...rest }) {
         <TableRowSpacer><td /><td /></TableRowSpacer>
         <tr>
           <td>Rarity:</td>
-          <td>
-            <Rarity rarity={card?.rarity}>{card?.rarity?.toUpperCase() || '-'}</Rarity>
-          </td>
+          <td><Rarity rarity={card?.rarity} /></td>
         </tr>
         <tr>
           <td>Reserved:</td>
@@ -113,12 +113,6 @@ const CardHeader = styled('h1')({
   ':hover': {
     color: onClick ? Colors.accept : Colors.foregroundLight
   }
-}))
-
-const Rarity = styled('span')({
-  fontWeight: 'bold'
-}, ({ rarity }) => ({
-  color: Colors[rarity]
 }))
 
 export default CardDetailsTable
