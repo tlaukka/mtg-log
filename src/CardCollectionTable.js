@@ -5,20 +5,18 @@ import { Route, useRoute } from './RouteProvider'
 import CardTable from './CardTable'
 import { useCardStorage } from './CardStorageProvider'
 import DataTable from './DataTable'
+import { layoutOptions } from './TableLayoutSelect'
 
-function CardContainer () {
-  const { setRoute } = useRoute()
+function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
   const cardStorage = useCardStorage()
-  console.log(cardStorage)
+
+  const Table = CardTableComponent[tableLayout]
 
   return (
     <>
-      <Button onClick={() => setRoute(Route.search)}>Search</Button>
-      <div>
-        <CardTable.Full
-          cards={cardStorage.cardCollection.toArray()}
-        />
-      </div>
+      <Table
+        cards={cardStorage.cardCollection.toArray()}
+      />
     </>
   )
 }
@@ -67,4 +65,4 @@ const CardTableComponent = {
   details: CardTableFull
 }
 
-export default CardContainer
+export default CardCollectionTable

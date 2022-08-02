@@ -17,10 +17,9 @@ import Icons from './Icon'
 import CardDetailsModal from './CardDetailsModal'
 import { useCardDrawer } from './CardDrawerProvider'
 import CardDrawer from './CardDrawer'
-import CardTable from './CardTable'
 import TableLayoutSelect, { layoutOptions } from './TableLayoutSelect'
-import { Grade } from './GradeSelect'
-import DataTable from './DataTable'
+import CardCollectionTable from './CardCollectionTable'
+import CardSearchTable from './CardSearchTable'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -36,13 +35,18 @@ function SearchContainer () {
   const [detailsOpen, setDetailsOpen] = React.useState(false)
 
   const { sets } = useCardSets()
-  const { setRoute } = useRoute()
+  const { route, setRoute } = useRoute()
   const { cards, meta, fetching, searchCards, next, previous } = useCardSearch()
 
   const cardDrawer = useCardDrawer()
 
   // const storage = useStorage()
   // const storageData = storage.getValues()
+
+  function changeRoute (value) {
+    setRoute(value)
+    backToTop()
+  }
 
   function onSubmit (e) {
     e.preventDefault()
@@ -107,25 +111,16 @@ function SearchContainer () {
     setDrawerOpen(false)
   }
 
-  function renderCardTable () {
-    const Table = CardTableComponent[tableLayout.value]
-
-    return (
-      <Table
-        cards={cards}
-        sortCards={sortCards}
-        openCardInfo={openCardInfo}
-      />
-    )
-  }
-
   return (
     <>
       <Header>
         <NavBar>
           <Menu>
-            <MenuButton onClick={() => setRoute(Route.list)}>
-              <Icons.ArrowLeft />Back to cards
+            <MenuButton disabled={route === Route.search} onClick={() => changeRoute(Route.search)}>
+              <Icons.ArrowLeft />Card search
+            </MenuButton>
+            <MenuButton disabled={route === Route.list} onClick={() => changeRoute(Route.list)}>
+              Card collection<Icons.ArrowRight />
             </MenuButton>
           </Menu>
         </NavBar>
@@ -145,7 +140,17 @@ function SearchContainer () {
         </InputBar>
       </Header>
       <TableContainer id={'table-container'} drawerOpen={drawerOpen}>
-        {renderCardTable()}
+        {(route === Route.search) && (
+          <CardSearchTable
+            cards={cards}
+            tableLayout={tableLayout.value}
+            sortCards={sortCards}
+            openCardInfo={openCardInfo}
+          />
+        )}
+        {(route === Route.list) && (
+          <CardCollectionTable tableLayout={tableLayout.value} />
+        )}
       </TableContainer>
       <Footer>
         <Menu>
@@ -188,54 +193,6 @@ function SearchContainer () {
       />
     </>
   )
-}
-
-function CardTableCompact (props) {
-  const cardDrawer = useCardDrawer()
-
-  return (
-    <CardTable.Compact
-      {...props}
-      renderHeader={() => (
-        <DataTable.Header fitToContent></DataTable.Header>
-      )}
-      renderRow={({ card }) => (
-        <DataTable.Data textAlign={'center'}>
-          {cardDrawer.has(card) ? (
-            <LinkButton.Danger onClick={() => cardDrawer.remove(card)}>
-              <Icons.Cross />
-            </LinkButton.Danger>
-          ) : (
-            <LinkButton.Accept onClick={() => cardDrawer.add(card, { grade: Grade.nm })}>
-              <Icons.Plus />
-            </LinkButton.Accept>
-          )}
-        </DataTable.Data>
-      )}
-    />
-  )
-}
-
-function CardTableFull (props) {
-  const cardDrawer = useCardDrawer()
-
-  return (
-    <CardTable.Full
-      {...props}
-      renderMenu={({ card }) => (
-        cardDrawer.has(card) ? (
-          <Button.Danger size={'small'} onClick={() => cardDrawer.remove(card)}>Remove</Button.Danger>
-        ) : (
-          <Button.Accept size={'small'} onClick={() => cardDrawer.add(card, { grade: Grade.nm })}>Add</Button.Accept>
-        )
-      )}
-    />
-  )
-}
-
-const CardTableComponent = {
-  compact: CardTableCompact,
-  details: CardTableFull
 }
 
 const NavBar = styled('div')({
