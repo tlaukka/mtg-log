@@ -161,6 +161,7 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
             <DetailsMenu>
               {isInCollection && (
                 <RemoveButton
+                  size={'small'}
                   disabled={!isInCollection}
                   onClick={() => cardDrawer.remove(card)}
                 >
@@ -169,6 +170,7 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
               )}
               {!isInCollection && (
                 <AddButton
+                  size={'small'}
                   disabled={!card}
                   onClick={() => cardDrawer.add(card, { grade, price })}
                 >
@@ -337,13 +339,27 @@ const DetailsMenu = styled('div')({
 })
 
 const AddButton = styled(Button.Accept)({
-  height: 24,
-  lineHeight: '24px'
+  // lineHeight: '24px',
+  // height: 24,
+  padding: 0,
+  borderRadius: 0,
+  borderBottom: `1px solid ${Colors.accept}`,
+  backgroundColor: 'transparent',
+  ':hover': {
+    borderColor: Colors.acceptLight
+  }
 })
 
 const RemoveButton = styled(Button.Danger)({
-  height: 24,
-  lineHeight: '24px'
+  // lineHeight: '24px',
+  // height: 24,
+  padding: 0,
+  borderRadius: 0,
+  borderBottom: `1px solid ${Colors.decline}`,
+  backgroundColor: 'transparent',
+  ':hover': {
+    borderColor: Colors.declineLight
+  }
 })
 
 export default CardDetailsModal

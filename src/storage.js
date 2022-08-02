@@ -10,45 +10,64 @@ function readFile (path) {
         return reject(error)
       }
 
-      resolve(data)
+      resolve(JSON.parse(data))
     })
   })
 }
 
 function writeFile (path, data) {
   return new Promise((resolve, reject) => {
-    fs.writeFile(path, data, 'utf8', (error) => {
+    fs.writeFile(path, JSON.stringify(data), 'utf8', (error) => {
       if (error) {
         return reject(error)
       }
 
-      resolve()
+      resolve(data)
     })
   })
 }
 
-async function load () {
+export class StorageFile {
+  constructor (fileName) {
+    this.fileName = fileName
+  }
+
+  async save (data, onSuccess, onError) {
+    return save(this.fileName, data, onSuccess, onError)
+  }
+
+  async load (onSuccess, onError) {
+    return load(this.fileName, onSuccess, onError)
+  }
+}
+
+async function load (fileName, onSuccess, onError) {
   try {
-    const data = await readFile(STORAGE_FILE)
-    return JSON.parse(data)
+    const result = await readFile(fileName)
+    onSuccess && onSuccess(result)
+
+    return result
   } catch (error) {
     console.log(error)
+    onError && onError(error)
 
     if (error.code === 'ENOENT') {
       // Create an empty storage file if it doesn't exist
-      await writeFile(STORAGE_FILE, JSON.stringify({}))
-      const data = await load()
+      await writeFile(fileName, {})
+      const data = await this.load()
 
       return data
     }
   }
 }
 
-async function save (data) {
+async function save (fileName, data, onSuccess, onError) {
   try {
-    writeFile(STORAGE_FILE, JSON.stringify(data))
+    const result = await writeFile(fileName, data)
+    onSuccess && onSuccess(result)
   } catch (error) {
     console.log(error)
+    onError && onError(error)
   }
 }
 
@@ -81,7 +100,7 @@ export default function StorageProvider ({ children }) {
     () => {
       async function saveStorage () {
         if (storage) {
-          save(storage)
+          save(STORAGE_FILE, storage)
         }
       }
 
@@ -93,7 +112,7 @@ export default function StorageProvider ({ children }) {
   React.useEffect(
     () => {
       async function loadStorage () {
-        const data = await load()
+        const data = await load(STORAGE_FILE)
 
         setStorageReady(true)
         setStorage(data)

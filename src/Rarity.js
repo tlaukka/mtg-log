@@ -20,12 +20,21 @@ const rarityLabel = {
 }
 
 export const rarityBackground = {
-  common: 'black',
+  // common: 'black',
+  common: 'linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(25,25,25,1) 50%)',
   uncommon: 'linear-gradient(90deg, rgba(94,104,107,1) 0%, rgba(245,253,255,1) 50%)',
   rare: 'linear-gradient(90deg, rgba(102,84,56,1) 0%, rgba(255,244,146,1) 50%)',
   mythic: 'linear-gradient(90deg, rgba(210,87,29,1) 0%, rgba(255,192,53,1) 50%)',
   bonus: 'linear-gradient(90deg, rgba(69,88,112,1) 0%, rgba(156,181,214,1) 50%)'
 }
+
+// export const rarityBackground = {
+//   common: 'black',
+//   uncommon: 'rgba(245,253,255,1)',
+//   rare: 'rgba(255,244,146,1)',
+//   mythic: 'rgba(255,192,53,1)',
+//   bonus: 'rgba(156,181,214,1)'
+// }
 
 // export const rarityBorderColor = {
 //   common: Colors.borderLight,
@@ -37,6 +46,7 @@ export const rarityBackground = {
 
 export const rarityBorderColor = {
   common: Colors.borderLight,
+  // common: 'rgba(25,25,25,1)',
   uncommon: 'rgba(245,253,255,1)',
   rare: 'rgba(255,244,146,1)',
   mythic: 'rgba(255,192,53,1)',

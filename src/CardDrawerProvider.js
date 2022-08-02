@@ -7,7 +7,7 @@ export function useCardDrawer () {
   return React.useContext(CardDrawerContext)
 }
 
-export default function CardDrawerProvider ({ children }) {
+function CardDrawerProvider ({ children }) {
   const cardDrawer = useCardCollection()
 
   return (
@@ -16,3 +16,5 @@ export default function CardDrawerProvider ({ children }) {
     </CardDrawerContext.Provider>
   )
 }
+
+export default CardDrawerProvider

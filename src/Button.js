@@ -1,10 +1,24 @@
 import styled from '@emotion/styled'
 import Colors from './Colors'
 
+export const buttonSize = {
+  small: {
+    lineHeight: '24px',
+    height: 24
+  },
+  default: {
+    lineHeight: '32px',
+    height: 32
+  },
+  large: {
+    lineHeight: '38px',
+    height: 38
+  }
+}
+
 const Button = styled('button')({
   cursor: 'pointer',
   fontSize: 12,
-  lineHeight: '32px',
   letterSpacing: 0.4,
   whiteSpace: 'nowrap',
   padding: '0px 12px',
@@ -20,7 +34,10 @@ const Button = styled('button')({
     cursor: 'default',
     color: Colors.foregroundDark
   }
-})
+}, ({ size = 'default' }) => ({
+  lineHeight: buttonSize[size].lineHeight,
+  height: buttonSize[size].height
+}))
 
 export const acceptStyles = {
   color: Colors.accept,

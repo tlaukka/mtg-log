@@ -10,7 +10,7 @@ export function useCardSets () {
   return React.useContext(CardSetContext)
 }
 
-export default function CardSetProvider ({ children }) {
+function CardSetProvider ({ children }) {
   const value = useFetchCardSets()
 
   return (
@@ -49,3 +49,5 @@ const FooterPlaceholder = styled('div')({
   height: constants.FOOTER_HEIGHT,
   backgroundColor: Colors.backgroundDark
 })
+
+export default CardSetProvider

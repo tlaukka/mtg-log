@@ -2,7 +2,7 @@ import React from 'react'
 import qs from 'qs'
 
 function useCardNameSearch () {
-  const [result, setResult] = React.useState(null)
+  const [card, setCard] = React.useState(null)
   const [fetching, setFetching] = React.useState(false)
   const [error, setError] = React.useState(null)
 
@@ -15,7 +15,7 @@ function useCardNameSearch () {
       console.log(json)
 
       if (response.status === 200) {
-        setResult(json)
+        setCard(json)
         onSuccess && onSuccess(json)
       } else {
         setError(json)
@@ -28,7 +28,7 @@ function useCardNameSearch () {
   )
 
   return {
-    card: result,
+    card,
     fetching,
     error,
     searchCard

@@ -2,6 +2,7 @@ import styled from '@emotion/styled'
 import React from 'react'
 import Button from './Button'
 import { useCardDrawer } from './CardDrawerProvider'
+import { useCardStorage } from './CardStorageProvider'
 import Colors from './Colors'
 import Drawer from './Drawer'
 import GradeSelect, { gradeOptions } from './GradeSelect'
@@ -9,8 +10,30 @@ import Icons from './Icon'
 import LinkButton from './LinkButton'
 import PriceInput from './PriceInput'
 
+/*
+
+const cardStorage = useCardStorage(onSuccess, onError)
+
+
+
+*/
+
 function CardDrawer ({ open, openCardInfo, onClose }) {
+  const cardStorage = useCardStorage()
   const cardDrawer = useCardDrawer()
+
+  function save () {
+    // cardStorage.set(cardDrawer.cards)
+    cardStorage.save(cardDrawer.cards, { onSuccess: onSaveSuccess, onError: onSaveError })
+  }
+
+  function onSaveSuccess (data) {
+    console.log(data)
+  }
+
+  function onSaveError (error) {
+    console.log(error)
+  }
 
   return (
     <Drawer open={open}>
@@ -59,7 +82,9 @@ function CardDrawer ({ open, openCardInfo, onClose }) {
         </CardTable>
       </CardDrawerContainer>
       <CardDrawerFooter>
-        <SaveButton disabled={cardDrawer.empty()}>Save!</SaveButton>
+        <SaveButton disabled={cardDrawer.empty()} onClick={save}>
+          Save!
+        </SaveButton>
       </CardDrawerFooter>
     </Drawer>
   )

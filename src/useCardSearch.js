@@ -65,8 +65,19 @@ function useCardSearch () {
     return null
   }
 
+  function getCards () {
+    if (!result?.data) {
+      return []
+    }
+
+    return result.data.map((entry) => {
+      return { card: entry, meta: {} }
+    })
+  }
+
   return {
-    cards: result?.data || [],
+    // cards: result?.data || [],
+    cards: getCards(),
     meta: {
       totalCards: result?.total_cards || null,
       page: queryStack.size,

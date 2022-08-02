@@ -1,12 +1,9 @@
 import styled from '@emotion/styled'
 import React from 'react'
-import Button from './Button'
-import { useCardDrawer } from './CardDrawerProvider'
 import { useCardSets } from './CardSetProvider'
 import CardSetSymbol from './CardSetSymbol'
 import Colors from './Colors'
 import DataTable from './DataTable'
-import { Grade } from './GradeSelect'
 import Icons from './Icon'
 import LinkButton from './LinkButton'
 import Popup, { withPopupPosition } from './Popup'
@@ -15,13 +12,13 @@ import CardImage from './CardImage'
 import CardDetailsTable from './CardDetailsTable'
 import { rarityBackground, rarityBorderColor } from './Rarity'
 
-function Compact ({ cards, sortCards, openCardInfo }) {
+function Compact ({ cards, sortCards, openCardInfo, renderHeader = () => null, renderRow = () => null }) {
   const { sets } = useCardSets()
-  const cardDrawer = useCardDrawer()
 
   return (
     <CardDataTable
       data={cards}
+      keyExtractor={({ card }) => card.id}
       renderHeader={() => (
         <>
           <DataTable.Header fitToContent>Set</DataTable.Header>
@@ -34,10 +31,10 @@ function Compact ({ cards, sortCards, openCardInfo }) {
           <DataTable.Header textAlign={'left'}>
             <TableSortingHeader onClick={() => sortCards('name')}>Name</TableSortingHeader>
           </DataTable.Header>
-          <DataTable.Header fitToContent></DataTable.Header>
+          {renderHeader()}
         </>
       )}
-      renderRow={(card) => (
+      renderRow={({ card, meta }) => (
         <>
           <DataTable.Data>
             <CardSet set={sets[card.set]} rarity={card.rarity} />
@@ -48,47 +45,44 @@ function Compact ({ cards, sortCards, openCardInfo }) {
           <DataTable.Data>
             <CardName onClick={() => openCardInfo(card)}>{card.name}</CardName>
           </DataTable.Data>
-          <DataTable.Data textAlign={'center'}>
-            {cardDrawer.has(card) ? (
-              <LinkButton.Danger onClick={() => cardDrawer.remove(card)}>
-                <Icons.Cross />
-              </LinkButton.Danger>
-            ) : (
-              <LinkButton.Accept onClick={() => cardDrawer.add(card, { grade: Grade.nm })}>
-                <Icons.Plus />
-              </LinkButton.Accept>
-            )}
-          </DataTable.Data>
+          {renderRow({ card, meta })}
         </>
       )}
     />
   )
 }
 
-function Full ({ cards, openCardInfo }) {
+function Full ({ cards, openCardInfo, renderHeader = () => null, renderRow = () => null, renderMenu = () => null }) {
   return (
     <CardDataTableFull
       data={cards}
+      keyExtractor={({ card }) => card.id}
       renderHeader={() => (
         <>
           <DataTable.Header fitToContent>Image</DataTable.Header>
           <DataTable.Header textAlign={'left'}>Details</DataTable.Header>
+          {renderHeader()}
         </>
       )}
-      renderRow={(card) => (
+      renderRow={({ card, meta }) => (
         <>
           <DataTable.Data>
-            <CardImage src={card.image_uris.small} alt={card.name} set={card.set} />
+            <CardImage
+              src={card.image_uris.small}
+              alt={card.name}
+              set={card.set}
+              onClick={() => openCardInfo(card)}
+            />
           </DataTable.Data>
           <DataTable.Data>
             <CardDetailsContainer>
               <CardDetailsTable card={card} openCardInfo={openCardInfo} />
               <DetailsMenu>
-                <AddButton>Add</AddButton>
-                <RemoveButton>Remove</RemoveButton>
+                {renderMenu({ card, meta })}
               </DetailsMenu>
             </CardDetailsContainer>
           </DataTable.Data>
+          {renderRow({ card, meta })}
         </>
       )}
     />
@@ -227,16 +221,6 @@ const DetailsMenu = styled('div')({
   display: 'flex',
   gap: 8,
   marginBottom: 8
-})
-
-const AddButton = styled(Button.Accept)({
-  height: 24,
-  lineHeight: '24px'
-})
-
-const RemoveButton = styled(Button.Danger)({
-  height: 24,
-  lineHeight: '24px'
 })
 
 const CardTable = {

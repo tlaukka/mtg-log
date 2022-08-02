@@ -2,7 +2,11 @@ import styled from '@emotion/styled'
 import React from 'react'
 import Colors from './Colors'
 
-function DataTable ({ data = [], renderHeader, renderRow, ...rest }) {
+function defaultKeyExtractor (entry) {
+  return entry.id
+}
+
+function DataTable ({ data = [], keyExtractor = defaultKeyExtractor, renderHeader, renderRow, ...rest }) {
   return (
     <Table {...rest}>
       <thead>
@@ -13,7 +17,7 @@ function DataTable ({ data = [], renderHeader, renderRow, ...rest }) {
       <tbody>
         <tr />
         {data.map((entry, index) => (
-          <tr key={entry.id}>
+          <tr key={keyExtractor(entry)}>
             {renderRow(entry, index)}
           </tr>
         ))}

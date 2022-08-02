@@ -3,6 +3,13 @@ import React from 'react'
 function useCardCollection () {
   const [cards, setCards] = React.useState({})
 
+  const set = React.useCallback(
+    (data) => {
+      setCards(data)
+    },
+    []
+  )
+
   const add = React.useCallback(
     (card, meta) => {
       setCards((value) => ({ ...value, [card.id]: { card, meta } }))
@@ -85,6 +92,7 @@ function useCardCollection () {
 
   return {
     cards,
+    set,
     add,
     remove,
     update,

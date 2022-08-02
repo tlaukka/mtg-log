@@ -76,7 +76,10 @@ const styles = {
     justifyContent: 'center',
     width: 64,
     height: '100%',
-    padding: 0
+    padding: 0,
+    ':hover': {
+      color: Colors.accept
+    }
   }),
   singleValue: (_, state) => ({
     display: 'inline-flex',

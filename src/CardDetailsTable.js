@@ -32,7 +32,7 @@ function CardDetailsTable ({ card, openCardInfo, ...rest }) {
         <TableRowSpacer><td /><td /></TableRowSpacer>
         <tr>
           <td rowSpan={2}>
-            <CardSetSymbol code={card.set} size={42} fixedWidth={false} />
+            <CardSetSymbol code={card.set} size={41} fixedWidth={false} />
           </td>
           <td>{sets[card.set].name || '[Card set]'}</td>
         </tr>

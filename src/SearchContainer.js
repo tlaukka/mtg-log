@@ -19,11 +19,8 @@ import { useCardDrawer } from './CardDrawerProvider'
 import CardDrawer from './CardDrawer'
 import CardTable from './CardTable'
 import TableLayoutSelect, { layoutOptions } from './TableLayoutSelect'
-
-const CardTableComponent = {
-  compact: CardTable.Compact,
-  details: CardTable.Full
-}
+import { Grade } from './GradeSelect'
+import DataTable from './DataTable'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -75,7 +72,7 @@ function SearchContainer () {
     ].join(' ')
 
     // searchCards(completeSearch)
-    searchCards(`set:mirage order:${order.current}`)
+    searchCards(`set:beta order:${order.current}`)
     // searchCards(`jedit ojanen order:${order.current}`)
   }
 
@@ -144,20 +141,11 @@ function SearchContainer () {
             placeholder={'Search...'}
             onChange={(e) => search.current = e.target.value}
           />
-          <GetCardsButton type={'submit'}>Get cards!</GetCardsButton>
+          <GetCardsButton size={'large'} type={'submit'}>Get cards!</GetCardsButton>
         </InputBar>
       </Header>
       <TableContainer id={'table-container'} drawerOpen={drawerOpen}>
         {renderCardTable()}
-        {/* <CardTable
-          cards={cards}
-          sortCards={sortCards}
-          openCardInfo={openCardInfo}
-        /> */}
-        {/* <CardTableFull
-          cards={cards}
-          openCardInfo={openCardInfo}
-        /> */}
       </TableContainer>
       <Footer>
         <Menu>
@@ -200,6 +188,54 @@ function SearchContainer () {
       />
     </>
   )
+}
+
+function CardTableCompact (props) {
+  const cardDrawer = useCardDrawer()
+
+  return (
+    <CardTable.Compact
+      {...props}
+      renderHeader={() => (
+        <DataTable.Header fitToContent></DataTable.Header>
+      )}
+      renderRow={({ card }) => (
+        <DataTable.Data textAlign={'center'}>
+          {cardDrawer.has(card) ? (
+            <LinkButton.Danger onClick={() => cardDrawer.remove(card)}>
+              <Icons.Cross />
+            </LinkButton.Danger>
+          ) : (
+            <LinkButton.Accept onClick={() => cardDrawer.add(card, { grade: Grade.nm })}>
+              <Icons.Plus />
+            </LinkButton.Accept>
+          )}
+        </DataTable.Data>
+      )}
+    />
+  )
+}
+
+function CardTableFull (props) {
+  const cardDrawer = useCardDrawer()
+
+  return (
+    <CardTable.Full
+      {...props}
+      renderMenu={({ card }) => (
+        cardDrawer.has(card) ? (
+          <Button.Danger size={'small'} onClick={() => cardDrawer.remove(card)}>Remove</Button.Danger>
+        ) : (
+          <Button.Accept size={'small'} onClick={() => cardDrawer.add(card, { grade: Grade.nm })}>Add</Button.Accept>
+        )
+      )}
+    />
+  )
+}
+
+const CardTableComponent = {
+  compact: CardTableCompact,
+  details: CardTableFull
 }
 
 const NavBar = styled('div')({
@@ -247,7 +283,7 @@ const Footer = styled('div')({
   alignItems: 'stretch',
   letterSpacing: 0.2,
   position: 'fixed',
-  zIndex: 10,
+  zIndex: 1001,
   left: 0,
   right: 0,
   bottom: 0,
