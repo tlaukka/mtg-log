@@ -87,9 +87,9 @@ const ExpandedRowWrapper = styled('div')({
   maxHeight: visible ? 43 : 0
 }))
 
-DataTable.Header = styled('th')(({ textAlign = 'center', fitToContent }) => ({
+DataTable.Header = styled('th')(({ textAlign = 'center', width = 'auto', fitToContent }) => ({
   textAlign,
-  width: fitToContent ? '1%' : 'auto',
+  width: fitToContent ? '1%' : width,
   whiteSpace: fitToContent ? 'nowrap' : 'normal'
 }))
 

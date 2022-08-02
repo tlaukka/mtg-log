@@ -116,12 +116,14 @@ function SearchContainer () {
       <Header>
         <NavBar>
           <Menu>
-            <MenuButton disabled={route === Route.search} onClick={() => changeRoute(Route.search)}>
-              <Icons.ArrowLeft />Card search
-            </MenuButton>
-            <MenuButton disabled={route === Route.list} onClick={() => changeRoute(Route.list)}>
-              Card collection<Icons.ArrowRight />
-            </MenuButton>
+            <NavMenuItem disabled={route === Route.search} onClick={() => changeRoute(Route.search)}>
+              {/* <Icons.ArrowLeft />Card search */}
+              <Icons.Search />Card search
+            </NavMenuItem>
+            <NavMenuItem disabled={route === Route.list} onClick={() => changeRoute(Route.list)}>
+              {/* Card collection<Icons.ArrowRight /> */}
+              <Icons.Case />Card collection
+            </NavMenuItem>
           </Menu>
         </NavBar>
         <InputBar onSubmit={onSubmit}>
@@ -196,11 +198,12 @@ function SearchContainer () {
 }
 
 const NavBar = styled('div')({
+  boxSizing: 'border-box',
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'stretch',
   padding: '0 12px',
-  borderBottom: `1px solid ${Colors.backgroundDark}`
+  backgroundColor: Colors.backgroundDark
 })
 
 const Header = styled('div')({
@@ -256,6 +259,7 @@ const Menu = styled('div')({
   gap: 12
 })
 
+
 const FooterItem = styled('div')({
   display: 'flex',
   alignItems: 'center'
@@ -265,6 +269,18 @@ const MenuButton = styled(LinkButton)({
   fontSize: 12,
   lineHeight: `${constants.FOOTER_HEIGHT}px`,
   padding: '0 6px'
+})
+
+const NavMenuItem = styled(MenuButton)({
+  position: 'relative',
+  padding: '0 12px',
+  i: {
+    marginRight: 2
+  },
+  ':disabled': {
+    color: Colors.control,
+    backgroundColor: Colors.backgroundLight
+  }
 })
 
 const FooterLoaderContainer = styled(FooterItem)({

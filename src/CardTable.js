@@ -22,7 +22,7 @@ function Compact ({ cards, sortCards, openCardInfo, renderHeader = () => null, r
       renderHeader={() => (
         <>
           <DataTable.Header fitToContent>Set</DataTable.Header>
-          <DataTable.Header textAlign={'left'} fitToContent>
+          <DataTable.Header textAlign={'right'} width={50}>
             <TableSortingHeader onClick={() => sortCards('set')}>№</TableSortingHeader>
           </DataTable.Header>
 
@@ -116,6 +116,9 @@ function CardPreviewPopup ({ card }) {
 const CardDataTable = styled(DataTable)({
   '> thead': {
     '> tr': {
+      '> th': {
+        boxSizing: 'border-box'
+      },
       '> th:first-of-type': {
         paddingLeft: 24
       },
@@ -127,6 +130,10 @@ const CardDataTable = styled(DataTable)({
   '> tbody': {
     fontSize: 16,
     '> tr': {
+      '> td': {
+        boxSizing: 'border-box',
+        height: 48
+      },
       '> td:first-of-type': {
         paddingLeft: 24
       },

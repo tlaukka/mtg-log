@@ -1,5 +1,5 @@
 const constants = {
-  HEADER_HEIGHT: 95,
+  HEADER_HEIGHT: 94,
   FOOTER_HEIGHT: 32
 }
 
