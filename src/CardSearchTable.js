@@ -23,10 +23,10 @@ function CardSearchTable ({ cards, tableLayout = layoutOptions.compact, sortCard
 
 function CardTableCompact (props) {
   const cardDrawer = useCardDrawer()
-  const { cardCollection } = useCardStorage()
+  const cardStorage = useCardStorage()
 
   function renderMenu ({ card }) {
-    if (cardCollection.has(card)) {
+    if (cardStorage.has(card)) {
       return (
         <DataTable.Data>
           <LinkButton disabled><Icons.Check /></LinkButton>
@@ -62,10 +62,10 @@ function CardTableCompact (props) {
 
 function CardTableFull (props) {
   const cardDrawer = useCardDrawer()
-  const { cardCollection } = useCardStorage()
+  const cardStorage = useCardStorage()
 
   function renderMenu ({ card }) {
-    if (cardCollection.has(card)) {
+    if (cardStorage.has(card)) {
       return (
         <Button size={'small'} disabled>Owned</Button>
       )

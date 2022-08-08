@@ -60,6 +60,14 @@ function PriceInput ({ value = '', disabled, readOnly, editInline, onChange, ...
     }
   }
 
+  function onBlur () {
+    if (internalValue.length === 0) {
+      declineChange()
+    } else {
+      acceptChange()
+    }
+  }
+
   function handleAccept (e) {
     e.stopPropagation()
     acceptChange()
@@ -95,7 +103,8 @@ function PriceInput ({ value = '', disabled, readOnly, editInline, onChange, ...
           value={internalValue}
           valueLength={value.length}
           onFocus={(e) => e.target.select()}
-          onBlur={() => acceptChange()}
+          // onBlur={() => acceptChange()}
+          onBlur={onBlur}
           onKeyDown={onKeyDown}
           onChange={handleChange}
         />
@@ -144,7 +153,7 @@ const PriceInputContainer = styled('div')({
     fontFamily: 'Lucida Console',
     fontSize: 12,
     display: 'inline',
-    margin: '0 4px',
+    marginLeft: 4,
     color: disabled ? Colors.borderLight : Colors.control
   }
 }))

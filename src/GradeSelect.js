@@ -67,7 +67,7 @@ function GradeOption (props) {
 function GradeSingleValue (props) {
   return (
     <Select.SingleValue {...props}>
-      <GradeTag grade={props.data.value} size={props.selectProps.size}>
+      <GradeTag isDisabled={props.data.disabled} grade={props.data.value} size={props.selectProps.size}>
         {props.isDisabled ? '-' : props.data.label}
       </GradeTag>
     </Select.SingleValue>

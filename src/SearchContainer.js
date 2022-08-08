@@ -31,7 +31,7 @@ function SearchContainer () {
   const [selectedCard, setSelectedCard] = React.useState(null)
 
   const [tableLayout, setTableLayout] = React.useState(layoutOptions.compact)
-  const [drawerOpen, setDrawerOpen] = React.useState(false)
+  const [drawerOpen, setDrawerOpen] = React.useState(true)
   const [detailsOpen, setDetailsOpen] = React.useState(false)
 
   const { sets } = useCardSets()
@@ -115,16 +115,14 @@ function SearchContainer () {
     <>
       <Header>
         <NavBar>
-          <Menu>
+          <NavBarTabContainer>
             <NavMenuItem disabled={route === Route.search} onClick={() => changeRoute(Route.search)}>
-              {/* <Icons.ArrowLeft />Card search */}
               <Icons.Search />Card search
             </NavMenuItem>
             <NavMenuItem disabled={route === Route.list} onClick={() => changeRoute(Route.list)}>
-              {/* Card collection<Icons.ArrowRight /> */}
               <Icons.Case />Card collection
             </NavMenuItem>
-          </Menu>
+          </NavBarTabContainer>
         </NavBar>
         <InputBar onSubmit={onSubmit}>
           <CardSetSelect
@@ -151,7 +149,10 @@ function SearchContainer () {
           />
         )}
         {(route === Route.list) && (
-          <CardCollectionTable tableLayout={tableLayout.value} />
+          <CardCollectionTable
+            tableLayout={tableLayout.value}
+            openCardInfo={openCardInfo}
+          />
         )}
       </TableContainer>
       <Footer>
@@ -200,10 +201,13 @@ function SearchContainer () {
 const NavBar = styled('div')({
   boxSizing: 'border-box',
   display: 'flex',
-  justifyContent: 'space-between',
   alignItems: 'stretch',
   padding: '0 12px',
   backgroundColor: Colors.backgroundDark
+})
+
+const NavBarTabContainer = styled('div')({
+  display: 'flex'
 })
 
 const Header = styled('div')({
@@ -274,12 +278,18 @@ const MenuButton = styled(LinkButton)({
 const NavMenuItem = styled(MenuButton)({
   position: 'relative',
   padding: '0 12px',
+  color: '#6B7986',
   i: {
     marginRight: 2
   },
   ':disabled': {
     color: Colors.control,
     backgroundColor: Colors.backgroundLight
+  },
+  ':not(:disabled)': {
+    ':hover': {
+      color: Colors.control
+    }
   }
 })
 

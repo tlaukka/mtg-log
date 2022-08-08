@@ -10,25 +10,17 @@ import Icons from './Icon'
 import LinkButton from './LinkButton'
 import PriceInput from './PriceInput'
 
-/*
-
-const cardStorage = useCardStorage(onSuccess, onError)
-
-
-
-*/
-
 function CardDrawer ({ open, openCardInfo, onClose }) {
   const cardStorage = useCardStorage()
   const cardDrawer = useCardDrawer()
 
   function save () {
-    // cardStorage.set(cardDrawer.cards)
+    // cardStorage.merge(cardDrawer.cards)
     cardStorage.save(cardDrawer.cards, { onSuccess: onSaveSuccess, onError: onSaveError })
   }
 
   function onSaveSuccess (data) {
-    console.log(data)
+    cardDrawer.clear()
   }
 
   function onSaveError (error) {

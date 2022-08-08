@@ -12,6 +12,7 @@ import PriceInput from './PriceInput'
 import useCardNameSearch from './useCardNameSearch'
 import CardDetailsTable, { CardDetailsDataTable } from './CardDetailsTable'
 import Button from './Button'
+import ErrorMessage from './ErrorMessage'
 
 function CardDetailsModal ({ initialCard, onClose, ...rest }) {
   const search = React.useRef('')
@@ -117,12 +118,9 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
             </SearchButton>
           )}
           {error && (
-            <SearchErrorContainer>
-              <LinkButton.Danger onClick={() => setError(null)}>
-                <Icons.Cross />
-              </LinkButton.Danger>
+            <SearchErrorMessage onClick={() => setError(null)}>
               {error.details}
-            </SearchErrorContainer>
+            </SearchErrorMessage>
           )}
         </CardDetailsSearchContainer>
         <CardDetailsContainer>
@@ -210,23 +208,10 @@ const CardDetailsSearchContainer = styled('div')({
   borderBottom: `2px solid ${Colors.backgroundAccent}`
 })
 
-const SearchErrorContainer = styled('div')({
-  fontSize: 14,
-  lineHeight: '28px',
+const SearchErrorMessage = styled(ErrorMessage)({
   position: 'absolute',
-  bottom: -28,
-  width: '100%',
-  height: 28,
-  overflow: 'hidden',
-  whiteSpace: 'nowrap',
-  textOverflow: 'ellipsis',
-  color: Colors.error,
-  backgroundColor: 'transparent',
-  button: {
-    lineHeight: '28px',
-    height: 28,
-    padding: '0 4px'
-  }
+  bottom: -32,
+  width: '100%'
 })
 
 const CardDetailsSearch = styled('input')({
@@ -339,8 +324,6 @@ const DetailsMenu = styled('div')({
 })
 
 const AddButton = styled(Button.Accept)({
-  // lineHeight: '24px',
-  // height: 24,
   padding: 0,
   borderRadius: 0,
   borderBottom: `1px solid ${Colors.accept}`,
@@ -351,8 +334,6 @@ const AddButton = styled(Button.Accept)({
 })
 
 const RemoveButton = styled(Button.Danger)({
-  // lineHeight: '24px',
-  // height: 24,
   padding: 0,
   borderRadius: 0,
   borderBottom: `1px solid ${Colors.decline}`,

@@ -52,7 +52,14 @@ function Compact ({ cards, sortCards, openCardInfo, renderHeader = () => null, r
   )
 }
 
-function Full ({ cards, openCardInfo, renderHeader = () => null, renderRow = () => null, renderMenu = () => null }) {
+function Full ({
+  cards,
+  openCardInfo,
+  renderHeader = () => null,
+  renderRow = () => null,
+  renderDetails = () => null,
+  renderMenu = () => null
+}) {
   return (
     <CardDataTableFull
       data={cards}
@@ -66,7 +73,7 @@ function Full ({ cards, openCardInfo, renderHeader = () => null, renderRow = () 
       )}
       renderRow={({ card, meta }) => (
         <>
-          <DataTable.Data>
+          <DataTable.Data verticalAlign={'top'}>
             <CardImage
               src={card.image_uris.small}
               alt={card.name}
@@ -77,6 +84,7 @@ function Full ({ cards, openCardInfo, renderHeader = () => null, renderRow = () 
           <DataTable.Data>
             <CardDetailsContainer>
               <CardDetailsTable card={card} openCardInfo={openCardInfo} />
+              {renderDetails({ card, meta })}
               <DetailsMenu>
                 {renderMenu({ card, meta })}
               </DetailsMenu>
@@ -219,15 +227,17 @@ const CardSetContainer = styled('div')({
 const CardDetailsContainer = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'space-between',
+  // justifyContent: 'space-between',
+  gap: 16,
   height: '100%',
-  minWidth: 400
+  minWidth: 400,
+  // marginBottom: 24
 })
 
 const DetailsMenu = styled('div')({
   display: 'flex',
   gap: 8,
-  marginBottom: 8
+  // marginBottom: 8
 })
 
 const CardTable = {

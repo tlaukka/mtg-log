@@ -98,6 +98,7 @@ const CardHeader = styled('h1')({
   overflow: 'hidden',
   whiteSpace: 'nowrap',
   textOverflow: 'ellipsis',
+  display: 'inline-flex',
   margin: 0,
   color: Colors.foregroundLight,
   span: {

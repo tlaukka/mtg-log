@@ -54,7 +54,7 @@ async function load (fileName, onSuccess, onError) {
     if (error.code === 'ENOENT') {
       // Create an empty storage file if it doesn't exist
       await writeFile(fileName, {})
-      const data = await this.load()
+      const data = await load()
 
       return data
     }

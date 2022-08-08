@@ -93,7 +93,8 @@ DataTable.Header = styled('th')(({ textAlign = 'center', width = 'auto', fitToCo
   whiteSpace: fitToContent ? 'nowrap' : 'normal'
 }))
 
-DataTable.Data = styled('td')(({ textAlign = 'left', noPadding, color = Colors.foregroundLight }) => ({
+DataTable.Data = styled('td')(({ verticalAlign = 'middle', textAlign = 'left', noPadding, color = Colors.foregroundLight }) => ({
+  verticalAlign,
   textAlign,
   padding: noPadding ? 0 : '8px 12px',
   color

@@ -6,17 +6,71 @@ const storageFile = new StorageFile('card-collection.json')
 
 export const CardStorageContext = React.createContext()
 
+// export function useCardStorage ({ onSaveSuccess, onSaveError } = {}) {
+//   const [storageReady, setStorageReady] = React.useState(false)
+
+//   const cardCollection = React.useContext(CardStorageContext)
+
+//   React.useEffect(
+//     () => {
+//       async function load () {
+//         console.log('------- loading storage! -------')
+//         const cards = await storageFile.load()
+//         // console.log(cards)
+//         cardCollection.set(cards)
+//         setStorageReady(true)
+//       }
+
+//       load()
+//     },
+//     [cardCollection.set]
+//   )
+
+//   React.useEffect(
+//     () => {
+//       function handleSuccess (data) {
+//         console.log('---- save success! ----')
+//         onSaveSuccess && onSaveSuccess(data)
+//       }
+
+//       function handleError (error) {
+//         console.log(error)
+//         onSaveError && onSaveError(error)
+//       }
+
+//       if (storageReady) {
+//         storageFile.save(cardCollection.cards, handleSuccess, handleError)
+//       }
+//     },
+//     [storageReady, cardCollection.cards, onSaveSuccess, onSaveError]
+//   )
+
+//   return cardCollection
+// }
+
+// function CardStorageProvider ({ children }) {
+//   const cardCollection = useCardCollection()
+
+//   return (
+//     <CardStorageContext.Provider value={cardCollection}>
+//       {children}
+//     </CardStorageContext.Provider>
+//   )
+// }
+
 export function useCardStorage () {
   return React.useContext(CardStorageContext)
 }
 
 function CardStorageProvider ({ children }) {
-  const cardCollection = useCardCollection()
+  const [storageReady, setStorageReady] = React.useState(false)
+
+  const { cards, set, merge, eventListeners, ...rest } = useCardCollection()
 
   const save = React.useCallback(
     (data, options) => {
       function onSuccess (data) {
-        cardCollection.set(data)
+        merge(data)
         options.onSuccess && options.onSuccess(data)
       }
 
@@ -24,32 +78,61 @@ function CardStorageProvider ({ children }) {
         options.onSuccess && options.onError(error)
       }
 
-      storageFile.save(data, onSuccess, onError)
+      const entry = {
+        ...cards,
+        ...data
+      }
+
+      storageFile.save(entry, onSuccess, onError)
     },
-    [cardCollection]
+    [cards, merge]
   )
 
   React.useEffect(
     () => {
       async function load () {
         const cards = await storageFile.load()
-        console.log(cards)
-        cardCollection.set(cards)
+        // console.log(cards)
+        console.log('--------- LOAD --------')
+        set(cards)
+        setStorageReady(true)
       }
 
       load()
     },
-    [cardCollection.set]
+    [set]
   )
+
   // React.useEffect(
   //   () => {
-  //     storageFile.save(cardCollection.cards, options?.onSuccess, options?.onError)
+  //     function handleSuccess (data) {
+  //       console.log('---- save success! ----')
+  //       eventListeners.get('save-success')?.(data)
+  //     }
+
+  //     function handleError (error) {
+  //       console.log(error)
+  //       eventListeners.get('save-error')?.(error)
+  //     }
+
+  //     if (storageReady) {
+  //       storageFile.save(cards, handleSuccess, handleError)
+  //     }
   //   },
-  //   [cardCollection.cards]
+  //   [storageReady, cards, eventListeners]
   // )
 
+  const value = {
+    storageReady,
+    save,
+    set,
+    merge,
+    eventListeners,
+    ...rest
+  }
+
   return (
-    <CardStorageContext.Provider value={{ cardCollection, save }}>
+    <CardStorageContext.Provider value={value}>
       {children}
     </CardStorageContext.Provider>
   )
