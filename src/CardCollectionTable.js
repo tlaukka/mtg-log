@@ -11,6 +11,7 @@ import PriceInput from './PriceInput'
 import { CardDetailsDataTable } from './CardDetailsTable'
 import Colors from './Colors'
 import useCollection from './useCollection'
+import MenuBar from './MenuBar'
 
 function CardCollectionTable ({ tableLayout = layoutOptions.compact, openCardInfo }) {
   // const cardStorage = useCardStorage()
@@ -25,6 +26,10 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact, openCardInf
         cards={cardStorage.toArray()}
         openCardInfo={openCardInfo}
       />
+      <MenuBar.ContextMenu>
+        <MenuBar.Item>asd</MenuBar.Item>
+        {/* <MenuBar.Button>Qwe</MenuBar.Button> */}
+      </MenuBar.ContextMenu>
     </>
   )
 }
@@ -77,6 +82,14 @@ function CardTableCompact (props) {
         </>
       )}
     />
+  )
+}
+
+function Menu () {
+  return (
+    <MenuBar>
+      <div>Footer</div>
+    </MenuBar>
   )
 }
 

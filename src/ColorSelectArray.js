@@ -2,7 +2,6 @@ import styled from '@emotion/styled'
 import React from 'react'
 import CardSymbols from './CardSymbols'
 import Colors from './Colors'
-import Select, { selectStyles } from './Select'
 
 const colors = [
   { value: 'c:green', label: 'Green', symbol: <CardSymbols.Forest /> },

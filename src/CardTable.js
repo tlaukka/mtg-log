@@ -21,13 +21,12 @@ function Compact ({ cards, sortCards, openCardInfo, renderHeader = () => null, r
       keyExtractor={({ card }) => card.id}
       renderHeader={() => (
         <>
-          <DataTable.Header fitToContent>Set</DataTable.Header>
+          <DataTable.Header width={64}>Set</DataTable.Header>
           <DataTable.Header textAlign={'right'} width={50}>
             <TableSortingHeader onClick={() => sortCards('set')}>№</TableSortingHeader>
           </DataTable.Header>
-
           <DataTable.Header fitToContent>Res.</DataTable.Header>
-          <DataTable.Header fitToContent></DataTable.Header>
+          <DataTable.Header width={45}></DataTable.Header>
           <DataTable.Header textAlign={'left'}>
             <TableSortingHeader onClick={() => sortCards('name')}>Name</TableSortingHeader>
           </DataTable.Header>

@@ -34,11 +34,11 @@ function useCardSearch () {
   )
 
   const searchCards = React.useCallback(
-    (search) => {
+    (search, options) => {
       const url = `https://api.scryfall.com/cards/search?${qs.stringify({ q: search })}`
       queryStack.clear()
       queryStack.push(url)
-      fetchCards()
+      fetchCards(options)
     },
     [queryStack, fetchCards]
   )

@@ -7,17 +7,47 @@ import DataTable from './DataTable'
 import { Grade } from './GradeSelect'
 import Icons from './Icon'
 import LinkButton from './LinkButton'
+import MenuBar from './MenuBar'
 import { layoutOptions } from './TableLayoutSelect'
+import backToTop from './backToTop'
 
-function CardSearchTable ({ cards, tableLayout = layoutOptions.compact, sortCards, openCardInfo }) {
+function CardSearchTable ({
+  cards,
+  meta,
+  next,
+  previous,
+  tableLayout = layoutOptions.compact,
+  sortCards,
+  openCardInfo
+}) {
   const Table = CardTableComponent[tableLayout]
 
+  function onPageChange (fn) {
+    fn({ onSuccess: () => backToTop('table-container') })
+  }
+
   return (
-    <Table
-      cards={cards}
-      sortCards={sortCards}
-      openCardInfo={openCardInfo}
-    />
+    <>
+      <Table
+        cards={cards}
+        sortCards={sortCards}
+        openCardInfo={openCardInfo}
+      />
+      <MenuBar.ContextMenu>
+        {(cards.length > 0) && (
+          <>
+            {meta.totalCards && <MenuBar.Item>{`Total cards: ${meta.totalCards}`}</MenuBar.Item>}
+            {meta.page && <MenuBar.Item>{`${meta.page} / ${meta.totalPages}`}</MenuBar.Item>}
+            <MenuBar.Button disabled={!previous} onClick={() => onPageChange(previous)}>
+              <Icons.ChevronLeft />Previous
+            </MenuBar.Button>
+            <MenuBar.Button disabled={!next} onClick={() => onPageChange(next)}>
+              Next<Icons.ChevronRight />
+            </MenuBar.Button>
+          </>
+        )}
+      </MenuBar.ContextMenu>
+    </>
   )
 }
 

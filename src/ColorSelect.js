@@ -58,9 +58,10 @@ const styles = {
   ...selectStyles,
   container: (provided) => ({
     ...provided,
-    flex: 1,
-    minWidth: 314,
-    maxWidth: 314
+    // flex: 1,
+    // minWidth: 314,
+    // maxWidth: 314
+    display: 'inline-flex'
   }),
   multiValue: (provided) => ({
     ...selectStyles.multiValue(provided),
@@ -88,6 +89,10 @@ const styles = {
     ':hover': {
       opacity: 1
     }
+  }),
+  menu: (provided) => ({
+    ...selectStyles.menu(provided),
+    minWidth: 116
   })
 }
 

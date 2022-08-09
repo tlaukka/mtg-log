@@ -1,6 +1,5 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { animateScroll } from 'react-scroll'
 import { useStorage } from './storage'
 import Button from './Button'
 import TextInput from './TextInput'
@@ -13,6 +12,7 @@ import CardSetSelect from './CardSetSelect'
 import useCardSearch from './useCardSearch'
 import constants from './constants'
 import ColorSelectArray from './ColorSelectArray'
+import ColorSelect from './ColorSelect'
 import Icons from './Icon'
 import CardDetailsModal from './CardDetailsModal'
 import { useCardDrawer } from './CardDrawerProvider'
@@ -20,6 +20,8 @@ import CardDrawer from './CardDrawer'
 import TableLayoutSelect, { layoutOptions } from './TableLayoutSelect'
 import CardCollectionTable from './CardCollectionTable'
 import CardSearchTable from './CardSearchTable'
+import MenuBar from './MenuBar'
+import backToTop from './backToTop'
 
 function SearchContainer () {
   // console.log('----- render -----')
@@ -75,27 +77,18 @@ function SearchContainer () {
       searchPhrase
     ].join(' ')
 
+    const options = {
+      onSuccess: () => backToTop('table-container')
+    }
+
     // searchCards(completeSearch)
-    searchCards(`set:beta order:${order.current}`)
+    searchCards(`set:beta order:${order.current}`, options)
     // searchCards(`jedit ojanen order:${order.current}`)
   }
 
   function sortCards (newOrder) {
     order.current = newOrder
     getCards()
-  }
-
-  function onPageChange (fn) {
-    fn()
-    backToTop(100)
-  }
-
-  function backToTop (delay = 0) {
-    animateScroll.scrollToTop({
-      containerId: 'table-container',
-      duration: 200,
-      delay
-    })
   }
 
   function toggleDrawer () {
@@ -129,8 +122,8 @@ function SearchContainer () {
             sets={sets}
             onChange={(value) => selectedSets.current = value}
           />
-          <ColorSelectArray onChange={(value) => selectedColors.current = value} />
-          {/* <ColorSelect onChange={(value) => selectedColors.current = value} /> */}
+          {/* <ColorSelectArray onChange={(value) => selectedColors.current = value} /> */}
+          <ColorSelect onChange={(value) => selectedColors.current = value} />
           <Search
             spellCheck={false}
             placeholder={'Search...'}
@@ -143,6 +136,9 @@ function SearchContainer () {
         {(route === Route.search) && (
           <CardSearchTable
             cards={cards}
+            meta={meta}
+            next={next}
+            previous={previous}
             tableLayout={tableLayout.value}
             sortCards={sortCards}
             openCardInfo={openCardInfo}
@@ -155,34 +151,18 @@ function SearchContainer () {
           />
         )}
       </TableContainer>
-      <Footer>
-        <Menu>
-          {(cards.length > 0) && (
-            <>
-              {meta.totalCards && <FooterItem>{`Total cards: ${meta.totalCards}`}</FooterItem>}
-              {meta.page && <FooterItem>{`${meta.page} / ${meta.totalPages}`}</FooterItem>}
-              <MenuButton disabled={!previous} onClick={() => onPageChange(previous)}>
-                <Icons.ChevronLeft />Previous
-              </MenuButton>
-              <MenuButton disabled={!next} onClick={() => onPageChange(next)}>
-                Next<Icons.ChevronRight />
-              </MenuButton>
-            </>
-          )}
-        </Menu>
-        <Menu>
-          <MenuButton disabled={cards.length === 0} onClick={backToTop}>
-            Back to top<Icons.ArrowUp />
-          </MenuButton>
-          <TableLayoutSelect value={tableLayout} onChange={(value) => setTableLayout(value)} />
-          <MenuButton onClick={toggleDrawer}>
-            {`Card drawer [${cardDrawer.size()}]`}
-          </MenuButton>
-          <FooterLoaderContainer>
-            {fetching && <Loader />}
-          </FooterLoaderContainer>
-        </Menu>
-      </Footer>
+      <MenuBar>
+        <MenuBar.Button disabled={cards.length === 0} onClick={() => backToTop('table-container')}>
+          Back to top<Icons.ArrowUp />
+        </MenuBar.Button>
+        <TableLayoutSelect value={tableLayout} onChange={(value) => setTableLayout(value)} />
+        <MenuBar.Button onClick={toggleDrawer}>
+          {`Card drawer [${cardDrawer.size()}]`}
+        </MenuBar.Button>
+        <FooterLoaderContainer>
+          {fetching && <Loader />}
+        </FooterLoaderContainer>
+      </MenuBar>
       <CardDrawer
         open={drawerOpen}
         openCardInfo={openCardInfo}
@@ -240,29 +220,6 @@ const TableContainer = styled('div')({
 }, ({ drawerOpen }) => ({
   marginRight: drawerOpen ? 360 : 0
 }))
-
-const Footer = styled('div')({
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'stretch',
-  letterSpacing: 0.2,
-  position: 'fixed',
-  zIndex: 1001,
-  left: 0,
-  right: 0,
-  bottom: 0,
-  height: constants.FOOTER_HEIGHT,
-  fontSize: 12,
-  padding: '0 12px',
-  color: Colors.control,
-  backgroundColor: Colors.backgroundDark
-})
-
-const Menu = styled('div')({
-  display: 'flex',
-  gap: 12
-})
-
 
 const FooterItem = styled('div')({
   display: 'flex',
