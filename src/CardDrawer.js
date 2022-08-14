@@ -1,7 +1,9 @@
 import styled from '@emotion/styled'
 import React from 'react'
 import Button from './Button'
+import CardSearchDetailsModal from './CardSearchDetailsModal'
 import { useCardDrawer } from './CardDrawerProvider'
+import { useCardModalControls } from './CardModal'
 import { useCardStorage } from './CardStorageProvider'
 import Colors from './Colors'
 import Drawer from './Drawer'
@@ -10,9 +12,11 @@ import Icons from './Icon'
 import LinkButton from './LinkButton'
 import PriceInput from './PriceInput'
 
-function CardDrawer ({ open, openCardInfo, onClose }) {
+function CardDrawer ({ open, onClose }) {
   const cardStorage = useCardStorage()
   const cardDrawer = useCardDrawer()
+
+  const { visible, selectedCard, openCardDetails, closeCardDetails } = useCardModalControls()
 
   function save () {
     // cardStorage.merge(cardDrawer.cards)
@@ -28,57 +32,65 @@ function CardDrawer ({ open, openCardInfo, onClose }) {
   }
 
   return (
-    <Drawer open={open}>
-      <CardDrawerHeader>
-        <Menu>
-          {!cardDrawer.empty() && (
-            <LinkButton.Decline onClick={cardDrawer.clear}>
-              Clear<Icons.Cross />
-            </LinkButton.Decline>
-          )}
-        </Menu>
-        <Menu>
-          <LinkButton onClick={onClose}>Close<Icons.ArrowRight /></LinkButton>
-        </Menu>
-      </CardDrawerHeader>
-      <CardDrawerContainer>
-        <CardTable>
-          <thead><tr><th /><th /><th /><th /></tr></thead>
-          <tbody>
-            {cardDrawer.toArray().map(({ card, meta }) => (
-              <tr key={card.id}>
-                <td>
-                  <CardDrawerRemove onClick={() => cardDrawer.remove(card)}>
-                    <Icons.Cross />
-                  </CardDrawerRemove>
-                </td>
-                <td>
-                  <GradeSelect.Inline.Sm
-                    value={gradeOptions[meta.grade]}
-                    onChange={(grade) => cardDrawer.updateGrade(card.id, grade)}
-                  />
-                </td>
-                <td>
-                  <PriceInput
-                    editInline
-                    value={meta.price}
-                    onChange={(price) => cardDrawer.updatePrice(card.id, price)}
-                  />
-                </td>
-                <td>
-                  <CardDrawerCardName onClick={() => openCardInfo(card)}>{card.name}</CardDrawerCardName>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </CardTable>
-      </CardDrawerContainer>
-      <CardDrawerFooter>
-        <SaveButton disabled={cardDrawer.empty()} onClick={save}>
-          Save!
-        </SaveButton>
-      </CardDrawerFooter>
-    </Drawer>
+    <>
+      <Drawer open={open}>
+        <CardDrawerHeader>
+          <Menu>
+            {!cardDrawer.empty() && (
+              <LinkButton.Decline onClick={cardDrawer.clear}>
+                Clear<Icons.Cross />
+              </LinkButton.Decline>
+            )}
+          </Menu>
+          <Menu>
+            <LinkButton onClick={onClose}>Close<Icons.ArrowRight /></LinkButton>
+          </Menu>
+        </CardDrawerHeader>
+        <CardDrawerContainer>
+          <CardTable>
+            <thead><tr><th /><th /><th /><th /></tr></thead>
+            <tbody>
+              {cardDrawer.toArray().map(({ card, meta }) => (
+                <tr key={card.id}>
+                  <td>
+                    <CardDrawerRemove onClick={() => cardDrawer.remove(card)}>
+                      <Icons.Cross />
+                    </CardDrawerRemove>
+                  </td>
+                  <td>
+                    <GradeSelect.Inline.Sm
+                      value={gradeOptions[meta.grade]}
+                      onChange={(grade) => cardDrawer.updateGrade(card.id, grade)}
+                    />
+                  </td>
+                  <td>
+                    <PriceInput
+                      editInline
+                      value={meta.price}
+                      onChange={(price) => cardDrawer.updatePrice(card.id, price)}
+                    />
+                  </td>
+                  <td>
+                    {/* <CardDrawerCardName onClick={() => openCardInfo(card)}>{card.name}</CardDrawerCardName> */}
+                    <CardDrawerCardName onClick={() => openCardDetails(card)}>{card.name}</CardDrawerCardName>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </CardTable>
+        </CardDrawerContainer>
+        <CardDrawerFooter>
+          <SaveButton disabled={cardDrawer.empty()} onClick={save}>
+            Save!
+          </SaveButton>
+        </CardDrawerFooter>
+      </Drawer>
+      <CardSearchDetailsModal
+        visible={visible}
+        initialCard={selectedCard}
+        onClose={closeCardDetails}
+      />
+    </>
   )
 }
 

@@ -1,68 +1,76 @@
 import styled from '@emotion/styled'
 import React from 'react'
-import { useCardDrawer } from './CardDrawerProvider'
-import { useCardSets } from './CardSetProvider'
+import CardDetailsTable, { CardDetailsDataTable } from './CardDetailsTable'
 import Colors from './Colors'
-import GradeSelect, { Grade, gradeOptions } from './GradeSelect'
+import ErrorMessage from './ErrorMessage'
+import GradeSelect, { gradeOptions } from './GradeSelect'
 import Icons from './Icon'
 import LinkButton from './LinkButton'
-import Spinner from './Spinner'
 import Modal from './Modal'
 import PriceInput from './PriceInput'
-import useCardNameSearch from './useCardNameSearch'
-import CardDetailsTable, { CardDetailsDataTable } from './CardDetailsTable'
-import Button from './Button'
-import ErrorMessage from './ErrorMessage'
+import Spinner from './Spinner'
 
-function CardDetailsModal ({ initialCard, onClose, ...rest }) {
+export function useCardModalControls () {
+  const [visible, setVisible] = React.useState(false)
+  const [selectedCard, setSelectedCard] = React.useState(null)
+
+  const openCardDetails = React.useCallback(
+    (card) => {
+      setSelectedCard(card)
+      setVisible(true)
+    },
+    []
+  )
+
+  const closeCardDetails = React.useCallback(
+    () => {
+      setSelectedCard(null)
+      setVisible(false)
+    },
+    []
+  )
+
+  return {
+    visible,
+    selectedCard,
+    openCardDetails,
+    closeCardDetails
+  }
+}
+
+function CardModal ({
+  card,
+  fetching,
+  searchEnabled,
+  onSearch,
+  onClose,
+  renderDetails = () => null,
+  renderMenu = () => null,
+  ...rest
+}) {
   const search = React.useRef('')
   const searchInput = React.useRef()
 
-  const [searchedCard, setSearchedCard] = React.useState()
-  const [error, setError] = React.useState()
   const [searchActive, setSearchActive] = React.useState(false)
-  const [selectedGrade, setSelectedGrade] = React.useState(Grade.nm)
-  const [selectedPrice, setSelectedPrice] = React.useState()
-
-  const { sets } = useCardSets()
-  const cardDrawer = useCardDrawer()
-
-  const { searchCard, fetching } = useCardNameSearch()
-
-  const card = searchedCard || initialCard
-  const set = sets[card?.set] || {}
-  const isInCollection = cardDrawer.has(card || {})
-
-  const grade = isInCollection ? cardDrawer.get(card.id).meta.grade : selectedGrade
-  const price = isInCollection ? cardDrawer.get(card.id).meta.price : selectedPrice
+  const [error, setError] = React.useState(null)
 
   function onSearchKeyDown (e) {
     if (e.key === 'Enter') {
-      onSearch()
+      handleSearch()
     }
   }
 
-  function onSearch () {
-    const setRegExp = new RegExp(/set:\w+/i)
-    const setInSearch = search.current.match(setRegExp)?.[0] || ''
-
-    const set = setInSearch.replace('set:', '')
-    const fuzzy = search.current.replace(setRegExp, '').trim()
-
-    const params = {
-      fuzzy,
-      set
+  function handleSearch () {
+    if (search.current) {
+      setError(null)
+      onSearch && onSearch(search.current, onSearchSuccess, onSearchError)
     }
-
-    searchCard(params, { onSuccess: onSearchSuccess, onError: onSearchError })
-    setError(null)
   }
 
-  function onSearchSuccess (card) {
+  function onSearchSuccess () {
     search.current = ''
     searchInput.current.value = ''
     searchInput.current.blur()
-    setSearchedCard(card)
   }
 
   function onSearchError (error) {
@@ -70,30 +78,10 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
     setError(error)
   }
 
-  function onChangeGrade (grade) {
-    if (isInCollection) {
-      cardDrawer.updateGrade(card.id, grade)
-    } else {
-      setSelectedGrade(grade)
-    }
-  }
-
-  function onChangePrice (price) {
-    if (isInCollection) {
-      cardDrawer.updatePrice(card.id, price)
-    } else {
-      setSelectedPrice(price)
-    }
-  }
-
   function handleClose () {
     search.current = ''
-
     setSearchActive(false)
-    setSelectedPrice('')
-    setSelectedGrade(Grade.nm)
-    setSearchedCard(null)
-
+    setError(null)
     onClose && onClose()
   }
 
@@ -113,7 +101,7 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
           {fetching ? (
             <SearchSpinner />
           ) : (
-            <SearchButton active={searchActive} onClick={onSearch}>
+            <SearchButton active={searchActive} onClick={handleSearch}>
               <Icons.ArrowRight />
             </SearchButton>
           )}
@@ -124,62 +112,51 @@ function CardDetailsModal ({ initialCard, onClose, ...rest }) {
           )}
         </CardDetailsSearchContainer>
         <CardDetailsContainer>
-          <CardImageContainer set={set.code}>
+          <CardImageContainer set={card?.set}>
             {card && (
-              <CardImage src={card.image_uris.normal} alt={card.name} set={set.code} />
+              <CardImage src={card.image_uris.normal} alt={card.name} set={card.set} />
             )}
           </CardImageContainer>
           <CardDetailsTableContainer>
             <CardDataTable card={card} />
-            <MetaDataTable>
-              <thead>
-                <tr><th /><th /></tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td><InfoText>Grade:</InfoText></td>
-                  <td>
-                      <GradeSelect.Inline.Sm
-                        isDisabled={!card}
-                        value={gradeOptions[grade]}
-                        onChange={onChangeGrade}
-                      />
-                  </td>
-                </tr>
-                <tr>
-                  <td><InfoText>Price (€):</InfoText></td>
-                  <td>
-                    <PriceInputContainer>
-                      <PriceInput disabled={!card} value={price} onChange={onChangePrice} />
-                    </PriceInputContainer>
-                  </td>
-                </tr>
-              </tbody>
-            </MetaDataTable>
+            {renderDetails()}
             <DetailsMenu>
-              {isInCollection && (
-                <RemoveButton
-                  size={'small'}
-                  disabled={!isInCollection}
-                  onClick={() => cardDrawer.remove(card)}
-                >
-                  Remove
-                </RemoveButton>
-              )}
-              {!isInCollection && (
-                <AddButton
-                  size={'small'}
-                  disabled={!card}
-                  onClick={() => cardDrawer.add(card, { grade, price })}
-                >
-                  Add
-                </AddButton>
-              )}
+              {renderMenu()}
             </DetailsMenu>
           </CardDetailsTableContainer>
         </CardDetailsContainer>
       </Wrapper>
     </Modal>
+  )
+}
+
+export function CardMetaDataTable ({ isReadOnly, card, meta, onChangeGrade, onChangePrice }) {
+  return (
+    <MetaDataTable>
+      <thead>
+        <tr><th /><th /></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><InfoText>Grade:</InfoText></td>
+          <td>
+              <GradeSelect.Inline.Sm
+                isDisabled={!card}
+                value={gradeOptions[meta.grade]}
+                onChange={onChangeGrade}
+              />
+          </td>
+        </tr>
+        <tr>
+          <td><InfoText>Price (€):</InfoText></td>
+          <PriceTableData>
+            <PriceInputContainer>
+              <PriceInput disabled={!card} value={meta.price} onChange={onChangePrice} />
+            </PriceInputContainer>
+          </PriceTableData>
+        </tr>
+      </tbody>
+    </MetaDataTable>
   )
 }
 
@@ -309,6 +286,10 @@ const MetaDataTable = styled(CardDetailsDataTable)({
   }
 })
 
+const PriceTableData = styled('td')({
+  verticalAlign: 'bottom'
+})
+
 const PriceInputContainer = styled('div')({
   display: 'flex'
 })
@@ -323,24 +304,4 @@ const DetailsMenu = styled('div')({
   padding: '4px 0'
 })
 
-const AddButton = styled(Button.Accept)({
-  padding: 0,
-  borderRadius: 0,
-  borderBottom: `1px solid ${Colors.accept}`,
-  backgroundColor: 'transparent',
-  ':hover': {
-    borderColor: Colors.acceptLight
-  }
-})
-
-const RemoveButton = styled(Button.Danger)({
-  padding: 0,
-  borderRadius: 0,
-  borderBottom: `1px solid ${Colors.decline}`,
-  backgroundColor: 'transparent',
-  ':hover': {
-    borderColor: Colors.declineLight
-  }
-})
-
-export default CardDetailsModal
+export default CardModal

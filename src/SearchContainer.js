@@ -14,7 +14,6 @@ import constants from './constants'
 import ColorSelectArray from './ColorSelectArray'
 import ColorSelect from './ColorSelect'
 import Icons from './Icon'
-import CardDetailsModal from './CardDetailsModal'
 import { useCardDrawer } from './CardDrawerProvider'
 import CardDrawer from './CardDrawer'
 import TableLayoutSelect, { layoutOptions } from './TableLayoutSelect'
@@ -30,11 +29,8 @@ function SearchContainer () {
   const selectedSets = React.useRef([])
   const selectedColors = React.useRef([])
 
-  const [selectedCard, setSelectedCard] = React.useState(null)
-
   const [tableLayout, setTableLayout] = React.useState(layoutOptions.compact)
   const [drawerOpen, setDrawerOpen] = React.useState(true)
-  const [detailsOpen, setDetailsOpen] = React.useState(false)
 
   const { sets } = useCardSets()
   const { route, setRoute } = useRoute()
@@ -95,11 +91,6 @@ function SearchContainer () {
     setDrawerOpen((value) => !value)
   }
 
-  function openCardInfo (card) {
-    setSelectedCard(card)
-    setDetailsOpen(true)
-  }
-
   function closeCardDrawer () {
     setDrawerOpen(false)
   }
@@ -141,13 +132,11 @@ function SearchContainer () {
             previous={previous}
             tableLayout={tableLayout.value}
             sortCards={sortCards}
-            openCardInfo={openCardInfo}
           />
         )}
         {(route === Route.list) && (
           <CardCollectionTable
             tableLayout={tableLayout.value}
-            openCardInfo={openCardInfo}
           />
         )}
       </TableContainer>
@@ -165,14 +154,7 @@ function SearchContainer () {
       </MenuBar>
       <CardDrawer
         open={drawerOpen}
-        openCardInfo={openCardInfo}
         onClose={closeCardDrawer}
-      />
-      <CardDetailsModal
-        visible={detailsOpen}
-        initialCard={selectedCard}
-        card={selectedCard}
-        onClose={() => setDetailsOpen(false)}
       />
     </>
   )

@@ -12,10 +12,14 @@ import { CardDetailsDataTable } from './CardDetailsTable'
 import Colors from './Colors'
 import useCollection from './useCollection'
 import MenuBar from './MenuBar'
+import CardCollectionDetailsModal from './CardCollectionDetailsModal'
+import { useCardModalControls } from './CardModal'
 
-function CardCollectionTable ({ tableLayout = layoutOptions.compact, openCardInfo }) {
+function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
   // const cardStorage = useCardStorage()
   const cardStorage = useCardStorage()
+
+  const { visible, selectedCard, openCardDetails, closeCardDetails } = useCardModalControls()
 
   const Table = CardTableComponent[tableLayout]
 
@@ -24,12 +28,17 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact, openCardInf
       <Table
         // cards={cardStorage.cardCollection.toArray()}
         cards={cardStorage.toArray()}
-        openCardInfo={openCardInfo}
+        openCardInfo={openCardDetails}
       />
       <MenuBar.ContextMenu>
         <MenuBar.Item>asd</MenuBar.Item>
         {/* <MenuBar.Button>Qwe</MenuBar.Button> */}
       </MenuBar.ContextMenu>
+      <CardCollectionDetailsModal
+        visible={visible}
+        initialCard={selectedCard}
+        onClose={closeCardDetails}
+      />
     </>
   )
 }

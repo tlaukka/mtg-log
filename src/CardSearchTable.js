@@ -10,6 +10,8 @@ import LinkButton from './LinkButton'
 import MenuBar from './MenuBar'
 import { layoutOptions } from './TableLayoutSelect'
 import backToTop from './backToTop'
+import CardSearchDetailsModal from './CardSearchDetailsModal'
+import { useCardModalControls } from './CardModal'
 
 function CardSearchTable ({
   cards,
@@ -17,9 +19,10 @@ function CardSearchTable ({
   next,
   previous,
   tableLayout = layoutOptions.compact,
-  sortCards,
-  openCardInfo
+  sortCards
 }) {
+  const { visible, selectedCard, openCardDetails, closeCardDetails } = useCardModalControls()
+
   const Table = CardTableComponent[tableLayout]
 
   function onPageChange (fn) {
@@ -31,7 +34,7 @@ function CardSearchTable ({
       <Table
         cards={cards}
         sortCards={sortCards}
-        openCardInfo={openCardInfo}
+        openCardInfo={openCardDetails}
       />
       <MenuBar.ContextMenu>
         {(cards.length > 0) && (
@@ -47,6 +50,11 @@ function CardSearchTable ({
           </>
         )}
       </MenuBar.ContextMenu>
+      <CardSearchDetailsModal
+        visible={visible}
+        initialCard={selectedCard}
+        onClose={closeCardDetails}
+      />
     </>
   )
 }
