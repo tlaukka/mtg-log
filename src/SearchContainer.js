@@ -43,7 +43,7 @@ function SearchContainer () {
 
   function changeRoute (value) {
     setRoute(value)
-    backToTop()
+    backToTop('table-container')
   }
 
   function onSubmit (e) {

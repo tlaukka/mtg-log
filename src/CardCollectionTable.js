@@ -1,7 +1,5 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import Button from './Button'
-import { Route, useRoute } from './RouteProvider'
 import CardTable from './CardTable'
 import { useCardStorage } from './CardStorageProvider'
 import DataTable from './DataTable'
@@ -14,10 +12,13 @@ import useCollection from './useCollection'
 import MenuBar from './MenuBar'
 import CardCollectionDetailsModal from './CardCollectionDetailsModal'
 import { useCardModalControls } from './CardModal'
+import Pagination from './Pagination'
+import usePagination from './usePagination'
 
 function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
   // const cardStorage = useCardStorage()
   const cardStorage = useCardStorage()
+  const { items: cards, ...pagination } = usePagination(cardStorage)
 
   const { visible, selectedCard, openCardDetails, closeCardDetails } = useCardModalControls()
 
@@ -26,13 +27,21 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
   return (
     <>
       <Table
-        // cards={cardStorage.cardCollection.toArray()}
-        cards={cardStorage.toArray()}
+        // cards={cardStorage.toArray()}
+        cards={cards}
         openCardInfo={openCardDetails}
       />
       <MenuBar.ContextMenu>
-        <MenuBar.Item>asd</MenuBar.Item>
-        {/* <MenuBar.Button>Qwe</MenuBar.Button> */}
+        {!cardStorage.empty() && (
+          <Pagination
+            page={pagination.page}
+            totalPages={pagination.totalPages}
+            totalItems={pagination.totalItems}
+            next={pagination.next}
+            previous={pagination.previous}
+            // onPageChangeSuccess={() => backToTop('table-container')}
+          />
+        )}
       </MenuBar.ContextMenu>
       <CardCollectionDetailsModal
         visible={visible}
@@ -73,7 +82,6 @@ function CardTableCompact (props) {
             <GradeContainer>
               <GradeSelect.Inline.Sm
                 value={gradeOptions[meta.grade]}
-                // onChange={(grade) => cardStorage.updateGrade(card.id, grade)}
                 onChange={(grade) => updateGrade(card, grade)}
               />
             </GradeContainer>
@@ -83,7 +91,6 @@ function CardTableCompact (props) {
               <PriceInput
                 editInline
                 value={meta.price}
-                // onChange={(price) => cardStorage.updatePrice(card.id, price)}
                 onChange={(price) => updatePrice(card, price)}
               />
             </PriceContainer>
@@ -91,14 +98,6 @@ function CardTableCompact (props) {
         </>
       )}
     />
-  )
-}
-
-function Menu () {
-  return (
-    <MenuBar>
-      <div>Footer</div>
-    </MenuBar>
   )
 }
 

@@ -5,6 +5,12 @@ import Colors from './Colors'
 function Popup ({ content, openOnHover = true, children }) {
   const [visible, setVisible] = React.useState(false)
 
+  function onClick () {
+    if (!openOnHover) {
+      setVisible((value) => !value)
+    }
+  }
+
   function onMouseEnter () {
     if (openOnHover) {
       setVisible(true)
@@ -23,6 +29,7 @@ function Popup ({ content, openOnHover = true, children }) {
 
   return (
     <PopupContainer
+      onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >

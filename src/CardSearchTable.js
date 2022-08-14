@@ -12,6 +12,7 @@ import { layoutOptions } from './TableLayoutSelect'
 import backToTop from './backToTop'
 import CardSearchDetailsModal from './CardSearchDetailsModal'
 import { useCardModalControls } from './CardModal'
+import Pagination from './Pagination'
 
 function CardSearchTable ({
   cards,
@@ -38,16 +39,14 @@ function CardSearchTable ({
       />
       <MenuBar.ContextMenu>
         {(cards.length > 0) && (
-          <>
-            {meta.totalCards && <MenuBar.Item>{`Total cards: ${meta.totalCards}`}</MenuBar.Item>}
-            {meta.page && <MenuBar.Item>{`${meta.page} / ${meta.totalPages}`}</MenuBar.Item>}
-            <MenuBar.Button disabled={!previous} onClick={() => onPageChange(previous)}>
-              <Icons.ChevronLeft />Previous
-            </MenuBar.Button>
-            <MenuBar.Button disabled={!next} onClick={() => onPageChange(next)}>
-              Next<Icons.ChevronRight />
-            </MenuBar.Button>
-          </>
+          <Pagination
+            page={meta.page}
+            totalPages={meta.totalPages}
+            totalItems={meta.totalCards}
+            next={next}
+            previous={previous}
+            onPageChangeSuccess={() => backToTop('table-container')}
+          />
         )}
       </MenuBar.ContextMenu>
       <CardSearchDetailsModal

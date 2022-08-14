@@ -58,6 +58,25 @@ function CardCollectionDetailsModal ({ initialCard, onClose, ...rest }) {
     onClose && onClose()
   }
 
+  function update () {
+    const data = {
+      [card.id]: {
+        card,
+        meta
+      }
+    }
+
+    cardStorage.save(data, { onSuccess: onUpdateSuccess, onError: onUpdateError })
+  }
+
+  function onUpdateSuccess () {
+    handleClose()
+  }
+
+  function onUpdateError (error) {
+    console.log(error)
+  }
+
   function renderDetails () {
     return (
       <CardMetaDataTable
@@ -71,7 +90,7 @@ function CardCollectionDetailsModal ({ initialCard, onClose, ...rest }) {
 
   function renderMenu () {
     return (
-      <UpdateButton>
+      <UpdateButton onClick={update}>
         Update
       </UpdateButton>
     )
