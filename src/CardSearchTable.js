@@ -4,7 +4,7 @@ import { useCardDrawer } from './CardDrawerProvider'
 import { useCardStorage } from './CardStorageProvider'
 import CardTable from './CardTable'
 import DataTable from './DataTable'
-import { Grade } from './GradeSelect'
+import { Grade } from './GradeTag'
 import Icons from './Icon'
 import LinkButton from './LinkButton'
 import MenuBar from './MenuBar'
@@ -25,10 +25,6 @@ function CardSearchTable ({
   const { visible, selectedCard, openCardDetails, closeCardDetails } = useCardModalControls()
 
   const Table = CardTableComponent[tableLayout]
-
-  function onPageChange (fn) {
-    fn({ onSuccess: () => backToTop('table-container') })
-  }
 
   return (
     <>

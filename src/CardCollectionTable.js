@@ -14,11 +14,13 @@ import CardCollectionDetailsModal from './CardCollectionDetailsModal'
 import { useCardModalControls } from './CardModal'
 import Pagination from './Pagination'
 import usePagination from './usePagination'
+import GradeTag from './GradeTag'
+import backToTop from './backToTop'
 
 function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
   // const cardStorage = useCardStorage()
   const cardStorage = useCardStorage()
-  const { items: cards, ...pagination } = usePagination(cardStorage)
+  const { items: cards, ...pagination } = usePagination(cardStorage, 5)
 
   const { visible, selectedCard, openCardDetails, closeCardDetails } = useCardModalControls()
 
@@ -39,9 +41,10 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
             totalItems={pagination.totalItems}
             next={pagination.next}
             previous={pagination.previous}
-            // onPageChangeSuccess={() => backToTop('table-container')}
+            onPageChangeSuccess={() => backToTop('table-container')}
           />
         )}
+        <MenuBar.Button onClick={() => backToTop('table-container')}>asd</MenuBar.Button>
       </MenuBar.ContextMenu>
       <CardCollectionDetailsModal
         visible={visible}
@@ -53,19 +56,7 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
 }
 
 function CardTableCompact (props) {
-  // const { cardCollection } = useCardStorage()
   const cardStorage = useCardStorage()
-  const updates = useCollection()
-
-  function updateGrade (card, grade) {
-    cardStorage.updateGrade(card.id, grade)
-    updates.add(card)
-  }
-
-  function updatePrice (card, price) {
-    cardStorage.updatePrice(card.id, price)
-    updates.add(card)
-  }
 
   return (
     <CardTable.Compact
@@ -78,20 +69,17 @@ function CardTableCompact (props) {
       )}
       renderRow={({ card, meta }) => (
         <>
-          <DataTable.Data textAlign={'center'} style={{ backgroundColor: updates.has(card) ? 'gray' : 'inherit' }}>
+          <DataTable.Data textAlign={'center'}>
             <GradeContainer>
-              <GradeSelect.Inline.Sm
-                value={gradeOptions[meta.grade]}
-                onChange={(grade) => updateGrade(card, grade)}
-              />
+              <GradeTag grade={meta.grade} />
             </GradeContainer>
           </DataTable.Data>
           <DataTable.Data textAlign={'right'}>
             <PriceContainer>
               <PriceInput
+                isReadOnly
                 editInline
                 value={meta.price}
-                onChange={(price) => updatePrice(card, price)}
               />
             </PriceContainer>
           </DataTable.Data>

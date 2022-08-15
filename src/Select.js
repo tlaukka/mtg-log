@@ -2,9 +2,11 @@ import React from 'react'
 import ReactSelect, { components, createFilter } from 'react-select'
 import Colors from './Colors'
 
-function Select({ styles = selectStyles, ...rest }) {
+function Select({ isReadOnly, styles = selectStyles, ...rest }) {
   return (
     <ReactSelect
+      isReadOnly={isReadOnly}
+      openMenuOnClick={!isReadOnly}
       styles={styles}
       components={{ Option, MultiValue }}
       filterOption={createFilter({ ignoreAccents: false })}

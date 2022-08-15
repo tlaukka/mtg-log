@@ -141,6 +141,7 @@ export function CardMetaDataTable ({ isReadOnly, card, meta, onChangeGrade, onCh
           <td><InfoText>Grade:</InfoText></td>
           <td>
               <GradeSelect.Inline.Sm
+                isReadOnly={isReadOnly}
                 isDisabled={!card}
                 value={gradeOptions[meta.grade]}
                 onChange={onChangeGrade}
@@ -151,7 +152,12 @@ export function CardMetaDataTable ({ isReadOnly, card, meta, onChangeGrade, onCh
           <td><InfoText>Price (€):</InfoText></td>
           <PriceTableData>
             <PriceInputContainer>
-              <PriceInput disabled={!card} value={meta.price} onChange={onChangePrice} />
+              <PriceInput
+                isReadOnly={isReadOnly}
+                disabled={!card}
+                value={meta.price}
+                onChange={onChangePrice}
+              />
             </PriceInputContainer>
           </PriceTableData>
         </tr>

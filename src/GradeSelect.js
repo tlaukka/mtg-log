@@ -2,27 +2,7 @@ import React from 'react'
 import styled from '@emotion/styled'
 import Colors from './Colors'
 import Select, { selectStyles } from './Select'
-import Tag from './Tag'
-
-export const Grade = {
-  m: 'm',
-  nm: 'nm',
-  ex: 'ex',
-  gd: 'gd',
-  lp: 'lp',
-  pl: 'pl',
-  dmg: 'dmg'
-}
-
-const colors = {
-  [Grade.m]: '#17A2B8',
-  [Grade.nm]: '#57BB8A',
-  [Grade.ex]: '#ABC978',
-  [Grade.gd]: '#FFD666',
-  [Grade.lp]: '#F3A96D',
-  [Grade.pl]: '#FB5555',
-  [Grade.dmg]: '#858585'
-}
+import GradeTag, { Grade } from './GradeTag'
 
 export const gradeOptions = Object.entries(Grade).reduce((result, [key, value]) => {
   result[key] = { value, label: value.toUpperCase() }
@@ -31,7 +11,7 @@ export const gradeOptions = Object.entries(Grade).reduce((result, [key, value]) 
 
 const options = Object.values(gradeOptions)
 
-function GradeSelect ({ styles = formStyles, size = sizes.md, onChange, ...rest }) {
+function GradeSelect ({ isReadOnly, styles = formStyles, size = sizes.md, onChange, ...rest }) {
   const onSelectChange = React.useCallback(
     (data) => {
       onChange && onChange(data.value)
@@ -42,6 +22,7 @@ function GradeSelect ({ styles = formStyles, size = sizes.md, onChange, ...rest 
   return (
     <Select
       {...rest}
+      isReadOnly={isReadOnly}
       isSearchable={false}
       styles={styles}
       size={size}
@@ -57,9 +38,9 @@ function GradeSelect ({ styles = formStyles, size = sizes.md, onChange, ...rest 
 function GradeOption (props) {
   return (
     <Select.Option {...props}>
-      <GradeTag grade={props.data.value} size={props.selectProps.size}>
+      <GradeSelectTag grade={props.data.value} size={props.selectProps.size}>
         {props.data.label}
-      </GradeTag>
+      </GradeSelectTag>
     </Select.Option>
   )
 }
@@ -67,24 +48,26 @@ function GradeOption (props) {
 function GradeSingleValue (props) {
   return (
     <Select.SingleValue {...props}>
-      <GradeTag isDisabled={props.data.disabled} grade={props.data.value} size={props.selectProps.size}>
+      <GradeSelectTag
+        isReadOnly={props.selectProps.isReadOnly}
+        isDisabled={props.data.disabled}
+        grade={props.data.value}
+        size={props.selectProps.size}
+      >
         {props.isDisabled ? '-' : props.data.label}
-      </GradeTag>
+      </GradeSelectTag>
     </Select.SingleValue>
   )
 }
 
-export const GradeTag = styled(Tag)({
-  cursor: 'pointer',
-  padding: 0,
-  ':hover': {
-    filter: 'brightness(1.1)'
-  }
-}, ({ grade, size }) => ({
+const GradeSelectTag = styled(GradeTag)(({ size, isReadOnly }) => ({
+  cursor: isReadOnly ? 'inherit' : 'pointer',
   fontSize: size.fontSize,
   width: size.width,
   height: size.height,
-  backgroundColor: colors[grade]
+  ':hover': {
+    filter: isReadOnly ? 'brightness(1)' : 'brightness(1.1)'
+  }
 }))
 
 const formStyles = {

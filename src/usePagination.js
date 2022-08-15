@@ -15,8 +15,9 @@ function usePagination (collection, pageSize = 50) {
 
   function getNext () {
     if (page < totalPages) {
-      return () => {
+      return ({ onSuccess } = {}) => {
         setPage((value) => value + 1)
+        onSuccess && onSuccess()
       }
     }
 
@@ -25,8 +26,9 @@ function usePagination (collection, pageSize = 50) {
 
   function getPrevious () {
     if (page > 1) {
-      return () => {
+      return ({ onSuccess } = {}) => {
         setPage((value) => value - 1)
+        onSuccess && onSuccess()
       }
     }
 

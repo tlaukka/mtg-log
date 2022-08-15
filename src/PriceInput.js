@@ -7,7 +7,7 @@ import TextInput from './TextInput'
 
 const priceInputRegExp = new RegExp(/^([0-9]*)(\.?[0-9]{0,2})$/)
 
-function PriceInput ({ value = '', disabled, readOnly, editInline, onChange, ...rest }) {
+function PriceInput ({ value = '', disabled, isReadOnly, editInline, onChange, ...rest }) {
   const container = React.useRef()
 
   const [inputVisible, setInputVisible] = React.useState(false)
@@ -49,7 +49,7 @@ function PriceInput ({ value = '', disabled, readOnly, editInline, onChange, ...
   }
 
   function onTriggerClick () {
-    if (!readOnly) {
+    if (!isReadOnly) {
       setInputVisible(!inputVisible)
     }
   }
@@ -131,7 +131,7 @@ function PriceInput ({ value = '', disabled, readOnly, editInline, onChange, ...
     <PriceInputContainer ref={container} disabled={disabled} {...rest}>
       <PriceInputTrigger
         readOnly
-        isReadOnly={readOnly}
+        isReadOnly={isReadOnly}
         disabled={disabled}
         value={value}
         placeholder={disabled ? '-.--' : '0.00'}
