@@ -1,18 +1,9 @@
 import React from 'react'
 import styled from '@emotion/styled'
-import { useStorage } from './storage'
-import Button from './Button'
-import TextInput from './TextInput'
-import Loader from './Loader'
 import { Route, useRoute } from './RouteProvider'
 import Colors from './Colors'
 import LinkButton from './LinkButton'
-import { useCardSets } from './CardSetProvider'
-import CardSetSelect from './CardSetSelect'
-import useCardSearch from './useCardSearch'
 import constants from './constants'
-import ColorSelectArray from './ColorSelectArray'
-import ColorSelect from './ColorSelect'
 import Icons from './Icon'
 import { useCardDrawer } from './CardDrawerProvider'
 import CardDrawer from './CardDrawer'
@@ -21,70 +12,18 @@ import CardCollectionTable from './CardCollectionTable'
 import CardSearchTable from './CardSearchTable'
 import MenuBar from './MenuBar'
 import backToTop from './backToTop'
+import SearchBar from './SearchBar'
 
 function SearchContainer () {
-  // console.log('----- render -----')
-  const order = React.useRef('name')
-  const search = React.useRef('')
-  const selectedSets = React.useRef([])
-  const selectedColors = React.useRef([])
-
   const [tableLayout, setTableLayout] = React.useState(layoutOptions.compact)
   const [drawerOpen, setDrawerOpen] = React.useState(true)
 
-  const { sets } = useCardSets()
   const { route, setRoute } = useRoute()
-  const { cards, meta, fetching, searchCards, next, previous } = useCardSearch()
-
   const cardDrawer = useCardDrawer()
-
-  // const storage = useStorage()
-  // const storageData = storage.getValues()
 
   function changeRoute (value) {
     setRoute(value)
     backToTop('table-container')
-  }
-
-  function onSubmit (e) {
-    e.preventDefault()
-    getCards()
-  }
-
-  function getCards () {
-    const setRegExp = new RegExp(/set:\w+/gi)
-    const setsInSearch = search.current.match(setRegExp) || []
-
-    const colorRegExp = new RegExp(/c:\w+/gi)
-    const colorsInSearch = search.current.match(colorRegExp) || []
-
-    const setParams = [...selectedSets.current, ...setsInSearch].join(' OR ')
-    const colorParams = [...selectedColors.current, ...colorsInSearch].join(' OR ')
-
-    const searchPhrase = search.current
-      .replace(setRegExp, '')
-      .replace(colorRegExp, '')
-      .trim()
-
-    const completeSearch = [
-      (setParams !== '') ? `(${setParams})` : '',
-      (colorParams !== '') ? `(${colorParams})` : '',
-      `order:${order.current}`,
-      searchPhrase
-    ].join(' ')
-
-    const options = {
-      onSuccess: () => backToTop('table-container')
-    }
-
-    // searchCards(completeSearch)
-    searchCards(`set:beta order:${order.current}`, options)
-    // searchCards(`jedit ojanen order:${order.current}`)
-  }
-
-  function sortCards (newOrder) {
-    order.current = newOrder
-    getCards()
   }
 
   function toggleDrawer () {
@@ -97,60 +36,36 @@ function SearchContainer () {
 
   return (
     <>
-      <Header>
-        <NavBar>
-          <NavBarTabContainer>
-            <NavMenuItem disabled={route === Route.search} onClick={() => changeRoute(Route.search)}>
-              <Icons.Search />Card search
-            </NavMenuItem>
-            <NavMenuItem disabled={route === Route.list} onClick={() => changeRoute(Route.list)}>
-              <Icons.Case />Card collection
-            </NavMenuItem>
-          </NavBarTabContainer>
-        </NavBar>
-        <InputBar onSubmit={onSubmit}>
-          <CardSetSelect
-            sets={sets}
-            onChange={(value) => selectedSets.current = value}
-          />
-          {/* <ColorSelectArray onChange={(value) => selectedColors.current = value} /> */}
-          <ColorSelect onChange={(value) => selectedColors.current = value} />
-          <Search
-            spellCheck={false}
-            placeholder={'Search...'}
-            onChange={(e) => search.current = e.target.value}
-          />
-          <GetCardsButton size={'large'} type={'submit'}>Get cards!</GetCardsButton>
-        </InputBar>
-      </Header>
+      <NavBar>
+        <NavBarTabContainer>
+          <NavMenuItem disabled={route === Route.search} onClick={() => changeRoute(Route.search)}>
+            <Icons.Search />Card search
+          </NavMenuItem>
+          <NavMenuItem disabled={route === Route.list} onClick={() => changeRoute(Route.list)}>
+            <Icons.Case />Card collection
+          </NavMenuItem>
+        </NavBarTabContainer>
+      </NavBar>
+      <SearchBar />
       <TableContainer id={'table-container'} drawerOpen={drawerOpen}>
         {(route === Route.search) && (
-          <CardSearchTable
-            cards={cards}
-            meta={meta}
-            next={next}
-            previous={previous}
-            tableLayout={tableLayout.value}
-            sortCards={sortCards}
-          />
+          <CardSearchTable tableLayout={tableLayout.value} />
         )}
         {(route === Route.list) && (
-          <CardCollectionTable
-            tableLayout={tableLayout.value}
-          />
+          <CardCollectionTable tableLayout={tableLayout.value} />
         )}
       </TableContainer>
       <MenuBar>
-        <MenuBar.Button disabled={cards.length === 0} onClick={() => backToTop('table-container')}>
+        {/* <MenuBar.Button disabled={cards.length === 0} onClick={() => backToTop('table-container')}>
           Back to top<Icons.ArrowUp />
-        </MenuBar.Button>
+        </MenuBar.Button> */}
         <TableLayoutSelect value={tableLayout} onChange={(value) => setTableLayout(value)} />
         <MenuBar.Button onClick={toggleDrawer}>
           {`Card drawer [${cardDrawer.size()}]`}
         </MenuBar.Button>
-        <FooterLoaderContainer>
+        {/* <FooterLoaderContainer>
           {fetching && <Loader />}
-        </FooterLoaderContainer>
+        </FooterLoaderContainer> */}
       </MenuBar>
       <CardDrawer
         open={drawerOpen}
@@ -172,26 +87,6 @@ const NavBarTabContainer = styled('div')({
   display: 'flex'
 })
 
-const Header = styled('div')({
-  backgroundColor: Colors.backgroundLight
-})
-
-const InputBar = styled('form')({
-  display: 'flex',
-  flex: 1,
-  gap: 12,
-  padding: 12
-})
-
-const Search = styled(TextInput)({
-  flex: 1,
-  maxWidth: 500
-})
-
-const GetCardsButton = styled(Button)({
-  lineHeight: '38px'
-})
-
 const TableContainer = styled('div')({
   overflow: 'auto',
   height: `calc(100vh - ${constants.HEADER_HEIGHT}px - ${constants.FOOTER_HEIGHT}px)`,
@@ -203,10 +98,6 @@ const TableContainer = styled('div')({
   marginRight: drawerOpen ? 360 : 0
 }))
 
-const FooterItem = styled('div')({
-  display: 'flex',
-  alignItems: 'center'
-})
 
 const MenuButton = styled(LinkButton)({
   fontSize: 12,
@@ -232,8 +123,10 @@ const NavMenuItem = styled(MenuButton)({
   }
 })
 
-const FooterLoaderContainer = styled(FooterItem)({
-  width: 22
-})
+// const FooterLoaderContainer = styled('div')({
+//   display: 'flex',
+//   alignItems: 'center'
+//   width: 22
+// })
 
 export default SearchContainer

@@ -13,12 +13,12 @@ export function useCardStorage () {
 function CardStorageProvider ({ children }) {
   const [storageReady, setStorageReady] = React.useState(false)
 
-  const { cards, set, merge, eventListeners, ...rest } = useCardCollection()
+  const { cards, set, remove, eventListeners, ...rest } = useCardCollection()
 
   const save = React.useCallback(
-    (data, options) => {
+    (data, options = {}) => {
       function onSuccess (data) {
-        merge(data)
+        set(data)
         options.onSuccess && options.onSuccess(data)
       }
 
@@ -33,7 +33,24 @@ function CardStorageProvider ({ children }) {
 
       storageFile.save(entry, onSuccess, onError)
     },
-    [cards, merge]
+    [cards, set]
+  )
+
+  const removeCard = React.useCallback(
+    (card, options = {}) => {
+      function onSuccess (data) {
+        set(data)
+        options.onSuccess && options.onSuccess(data)
+      }
+
+      function onError (error) {
+        options.onSuccess && options.onError(error)
+      }
+
+      const { [card.id]: removed, ...entry } = cards
+      storageFile.save(entry, onSuccess, onError)
+    },
+    [cards, set]
   )
 
   React.useEffect(
@@ -73,8 +90,8 @@ function CardStorageProvider ({ children }) {
   const value = {
     storageReady,
     save,
+    removeCard,
     set,
-    merge,
     eventListeners,
     ...rest
   }

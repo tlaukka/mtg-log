@@ -16,11 +16,11 @@ import Pagination from './Pagination'
 import usePagination from './usePagination'
 import GradeTag from './GradeTag'
 import backToTop from './backToTop'
+import SearchBar from './SearchBar'
 
 function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
-  // const cardStorage = useCardStorage()
   const cardStorage = useCardStorage()
-  const { items: cards, ...pagination } = usePagination(cardStorage, 5)
+  const { items: cards, ...pagination } = usePagination(cardStorage, 50)
 
   const { visible, selectedCard, openCardDetails, closeCardDetails } = useCardModalControls()
 
@@ -28,8 +28,10 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
 
   return (
     <>
+      <SearchBar.InputBar>
+        qwe
+      </SearchBar.InputBar>
       <Table
-        // cards={cardStorage.toArray()}
         cards={cards}
         openCardInfo={openCardDetails}
       />
@@ -44,7 +46,6 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
             onPageChangeSuccess={() => backToTop('table-container')}
           />
         )}
-        <MenuBar.Button onClick={() => backToTop('table-container')}>asd</MenuBar.Button>
       </MenuBar.ContextMenu>
       <CardCollectionDetailsModal
         visible={visible}

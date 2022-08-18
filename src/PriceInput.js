@@ -38,6 +38,13 @@ function PriceInput ({ value = '', disabled, isReadOnly, editInline, onChange, .
     [declineChange]
   )
 
+  React.useEffect(
+    () => {
+      setInternalValue(value)
+    },
+    [value]
+  )
+
   function onKeyDown (e) {
     if (e.key === 'Enter') {
       acceptChange()
@@ -103,7 +110,6 @@ function PriceInput ({ value = '', disabled, isReadOnly, editInline, onChange, .
           value={internalValue}
           valueLength={value.length}
           onFocus={(e) => e.target.select()}
-          // onBlur={() => acceptChange()}
           onBlur={onBlur}
           onKeyDown={onKeyDown}
           onChange={handleChange}

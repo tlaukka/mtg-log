@@ -20,7 +20,7 @@ const rarityLabel = {
 }
 
 export const rarityBackground = {
-  common: 'linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(30,30,30,1) 50%)',
+  common: 'linear-gradient(90deg, rgba(0,0,0,1) 0%, rgba(15,15,15,1) 50%)',
   uncommon: 'linear-gradient(90deg, rgba(94,104,107,1) 0%, rgba(245,253,255,1) 50%)',
   rare: 'linear-gradient(90deg, rgba(102,84,56,1) 0%, rgba(255,244,146,1) 50%)',
   mythic: 'linear-gradient(90deg, rgba(210,87,29,1) 0%, rgba(255,192,53,1) 50%)',

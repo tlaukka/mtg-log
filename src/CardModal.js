@@ -306,7 +306,7 @@ const InfoText = styled('span')({
 
 const DetailsMenu = styled('div')({
   display: 'flex',
-  gap: 8,
+  gap: 18,
   padding: '4px 0'
 })
 

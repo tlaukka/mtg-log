@@ -1,8 +1,11 @@
 import styled from '@emotion/styled'
 import React from 'react'
+import { useCardSets } from './CardSetProvider'
 import Select, { selectStyles } from './Select'
 
-function CardSetSelect ({ sets, onChange, ...rest }) {
+function CardSetSelect ({ onChange, ...rest }) {
+  const { sets } = useCardSets()
+
   const options = React.useMemo(
     () => {
       return Object.values(sets).map((set) => {
@@ -30,7 +33,7 @@ function CardSetSelect ({ sets, onChange, ...rest }) {
       isMulti
       styles={styles}
       options={options}
-      placeholder={null}
+      placeholder={'Sets...'}
       components={{ Option: CardSetOption, MultiValue: CardSetMultiValue }}
       onChange={onSelectChange}
     />

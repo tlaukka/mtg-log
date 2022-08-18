@@ -1,9 +1,27 @@
 import styled from '@emotion/styled'
 import React from 'react'
-import Colors from './Colors'
 
 function Popup ({ content, openOnHover = true, children }) {
+  const container = React.useRef()
+
   const [visible, setVisible] = React.useState(false)
+
+  React.useEffect(
+    () => {
+      function click (e) {
+        if (container.current && !container.current.contains(e.target)) {
+          setVisible(false)
+        }
+      }
+
+      document.addEventListener('click', click)
+
+      return () => {
+        document.removeEventListener('click', click)
+      }
+    },
+    []
+  )
 
   function onClick () {
     if (!openOnHover) {
@@ -29,6 +47,7 @@ function Popup ({ content, openOnHover = true, children }) {
 
   return (
     <PopupContainer
+      ref={container}
       onClick={onClick}
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}

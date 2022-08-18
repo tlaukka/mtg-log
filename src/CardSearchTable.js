@@ -13,21 +13,76 @@ import backToTop from './backToTop'
 import CardSearchDetailsModal from './CardSearchDetailsModal'
 import { useCardModalControls } from './CardModal'
 import Pagination from './Pagination'
+import SearchBar from './SearchBar'
+import TextInput from './TextInput'
+import CardSetSelect from './CardSetSelect'
+import ColorSelect from './ColorSelect'
+import styled from '@emotion/styled'
+import useCardSearch from './useCardSearch'
 
-function CardSearchTable ({
-  cards,
-  meta,
-  next,
-  previous,
-  tableLayout = layoutOptions.compact,
-  sortCards
-}) {
+function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
+  const order = React.useRef('name')
+  const search = React.useRef('')
+  const selectedSets = React.useRef([])
+  const selectedColors = React.useRef([])
+
   const { visible, selectedCard, openCardDetails, closeCardDetails } = useCardModalControls()
+  const { cards, meta, fetching, searchCards, next, previous } = useCardSearch()
 
   const Table = CardTableComponent[tableLayout]
 
+  function onSearch () {
+    getCards()
+  }
+
+  function getCards () {
+    const setRegExp = new RegExp(/set:\w+/gi)
+    const setsInSearch = search.current.match(setRegExp) || []
+
+    const colorRegExp = new RegExp(/c:\w+/gi)
+    const colorsInSearch = search.current.match(colorRegExp) || []
+
+    const setParams = [...selectedSets.current, ...setsInSearch].join(' OR ')
+    const colorParams = [...selectedColors.current, ...colorsInSearch].join(' OR ')
+
+    const searchPhrase = search.current
+      .replace(setRegExp, '')
+      .replace(colorRegExp, '')
+      .trim()
+
+    const completeSearch = [
+      (setParams !== '') ? `(${setParams})` : '',
+      (colorParams !== '') ? `(${colorParams})` : '',
+      `order:${order.current}`,
+      searchPhrase
+    ].join(' ')
+
+    const options = {
+      onSuccess: () => backToTop('table-container')
+    }
+
+    // searchCards(completeSearch)
+    searchCards(`set:beta order:${order.current}`, options)
+    // searchCards(`jedit ojanen order:${order.current}`)
+  }
+
+  function sortCards (newOrder) {
+    order.current = newOrder
+    getCards()
+  }
+
   return (
     <>
+      <SearchBar.InputBar onSubmit={onSearch}>
+        <CardSetSelect onChange={(value) => selectedSets.current = value} />
+        <ColorSelect onChange={(value) => selectedColors.current = value} />
+        <Search
+          spellCheck={false}
+          placeholder={'Search...'}
+          onChange={(e) => search.current = e.target.value}
+        />
+        <Button size={'large'} type={'submit'}>Get cards!</Button>
+      </SearchBar.InputBar>
       <Table
         cards={cards}
         sortCards={sortCards}
@@ -124,6 +179,11 @@ function CardTableFull (props) {
     />
   )
 }
+
+const Search = styled(TextInput)({
+  flex: 1,
+  maxWidth: 500
+})
 
 const CardTableComponent = {
   compact: CardTableCompact,

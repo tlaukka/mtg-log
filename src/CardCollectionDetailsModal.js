@@ -4,8 +4,12 @@ import Button from './Button'
 import CardModal, { CardMetaDataTable } from './CardModal'
 import { useCardStorage } from './CardStorageProvider'
 import Colors from './Colors'
+import Icons from './Icon'
+import Popup from './Popup'
+
 
 function CardCollectionDetailsModal ({ initialCard, onClose, ...rest }) {
+  const [editMode, setEditMode] = React.useState(false)
   const [searchedCard, setSearchedCard] = React.useState()
   const [selectedGrade, setSelectedGrade] = React.useState()
   const [selectedPrice, setSelectedPrice] = React.useState()
@@ -54,7 +58,9 @@ function CardCollectionDetailsModal ({ initialCard, onClose, ...rest }) {
   }
 
   function handleClose () {
+    setEditMode(false)
     setSearchedCard(null)
+
     onClose && onClose()
   }
 
@@ -77,9 +83,18 @@ function CardCollectionDetailsModal ({ initialCard, onClose, ...rest }) {
     console.log(error)
   }
 
+  function remove () {
+    cardStorage.removeCard(card, { onSuccess: onRemoveSuccess })
+  }
+
+  function onRemoveSuccess () {
+    handleClose()
+  }
+
   function renderDetails () {
     return (
       <CardMetaDataTable
+        isReadOnly={!editMode}
         card={card}
         meta={meta}
         onChangeGrade={onChangeGrade}
@@ -89,10 +104,37 @@ function CardCollectionDetailsModal ({ initialCard, onClose, ...rest }) {
   }
 
   function renderMenu () {
+    if (editMode) {
+      return (
+        <>
+          <MenuButton onClick={() => setEditMode(false)}>
+            <Icons.Cross />
+          </MenuButton>
+          <UpdateButton onClick={update}>
+            Update
+          </UpdateButton>
+          <Popup openOnHover={false} content={renderRemovePopup()}>
+            <RemoveButton>
+              Remove
+            </RemoveButton>
+          </Popup>
+        </>
+      )
+    }
+
     return (
-      <UpdateButton onClick={update}>
-        Update
-      </UpdateButton>
+      <MenuButton onClick={() => setEditMode(true)}>
+        <Icons.Edit />
+      </MenuButton>
+    )
+  }
+
+  function renderRemovePopup () {
+    return (
+      <RemovePopup>
+        <Button.Accept onClick={remove}>Yes</Button.Accept>
+        <Button.Danger>No</Button.Danger>
+      </RemovePopup>
     )
   }
 
@@ -110,23 +152,56 @@ function CardCollectionDetailsModal ({ initialCard, onClose, ...rest }) {
   )
 }
 
-const UpdateButton = styled(Button.Accept)({
+const menuButtonStyles = {
   padding: 0,
   borderRadius: 0,
-  borderBottom: `1px solid ${Colors.accept}`,
-  backgroundColor: 'transparent',
+  borderBottom: `1px solid ${Colors.control}`,
+  backgroundColor: 'transparent'
+}
+
+const MenuButton = styled(Button)({
+  ...menuButtonStyles,
+  ':hover:enabled': {
+    color: Colors.foregroundLight,
+    borderColor: Colors.foregroundLight
+  }
+})
+
+const UpdateButton = styled(Button.Accept)({
+  ...menuButtonStyles,
+  borderColor: Colors.accept,
   ':hover': {
     borderColor: Colors.acceptLight
   }
 })
 
 const RemoveButton = styled(Button.Danger)({
-  padding: 0,
-  borderRadius: 0,
-  borderBottom: `1px solid ${Colors.decline}`,
-  backgroundColor: 'transparent',
+  ...menuButtonStyles,
+  borderColor: Colors.decline,
   ':hover': {
     borderColor: Colors.declineLight
+  }
+})
+
+const RemovePopup = styled('div')({
+  display: 'flex',
+  position: 'absolute',
+  top: '-100%',
+  left: '-50%',
+  padding: '0 4px',
+  borderRadius: 3,
+  backgroundColor: Colors.backgroundDark,
+  button: {
+    borderRadius: 0
+  },
+  ':before': {
+    content: '""',
+    position: 'absolute',
+    top: '100%',
+    left: '50%',
+    marginLeft: -5,
+    border: `5px solid ${Colors.backgroundDark}`,
+    borderColor: `${Colors.backgroundDark} transparent transparent transparent`
   }
 })
 

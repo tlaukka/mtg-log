@@ -38,7 +38,8 @@ const Icons = {
  Camera: withIconData('camera')(Icon),
  HourGlass: withIconData('hourglass-alt')(Icon),
  Search: withIconData('search')(Icon),
- Case: withIconData('case')(Icon)
+ Case: withIconData('case')(Icon),
+ Edit: withIconData('edit')(Icon)
 }
 
 export default Icons
