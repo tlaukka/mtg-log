@@ -2,9 +2,16 @@ import React from 'react'
 import ReactSelect, { components, createFilter } from 'react-select'
 import Colors from './Colors'
 
-function Select({ isReadOnly, styles = selectStyles, ...rest }) {
+const Select = React.forwardRef(({ isReadOnly, styles = selectStyles, ...rest }, ref) => {
+  const select = React.useRef()
+
+  React.useImperativeHandle(ref, () => ({
+    clear: select.current.clearValue
+  }))
+
   return (
     <ReactSelect
+      ref={select}
       isReadOnly={isReadOnly}
       openMenuOnClick={!isReadOnly}
       styles={styles}
@@ -13,7 +20,7 @@ function Select({ isReadOnly, styles = selectStyles, ...rest }) {
       {...rest}
     />
   )
-}
+})
 
 function Option({ children, ...props }) {
   const { onMouseMove, onMouseOver, ...rest } = props.innerProps

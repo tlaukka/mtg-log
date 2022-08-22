@@ -4,7 +4,7 @@ import useQueryStack from './QueryStack'
 
 const PAGE_SIZE = 175
 
-function useCardSearch () {
+function useCardSearchQuery () {
   const [result, setResult] = React.useState(null)
   const [fetching, setFetching] = React.useState(false)
   const [error, setError] = React.useState(null)
@@ -65,6 +65,19 @@ function useCardSearch () {
     return null
   }
 
+  const cards = React.useMemo(
+    () => {
+      if (!result?.data) {
+        return []
+      }
+
+      return result.data.map((entry) => {
+        return { card: entry, meta: {} }
+      })
+    },
+    [result]
+  )
+
   function getCards () {
     if (!result?.data) {
       return []
@@ -76,8 +89,8 @@ function useCardSearch () {
   }
 
   return {
-    // cards: result?.data || [],
-    cards: getCards(),
+    // cards: getCards(),
+    cards,
     meta: {
       totalCards: result?.total_cards || null,
       page: queryStack.size,
@@ -91,4 +104,4 @@ function useCardSearch () {
   }
 }
 
-export default useCardSearch
+export default useCardSearchQuery

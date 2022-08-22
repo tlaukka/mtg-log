@@ -2,7 +2,8 @@ import styled from '@emotion/styled'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Colors from './Colors'
-import constants from './constants'
+import useDomReady from './useDomReady'
+import useFadeIn from './useFadeIn'
 
 function SearchBar () {
   return (
@@ -13,14 +14,8 @@ function SearchBar () {
 }
 
 function InputBar ({ onSubmit, children }) {
-  const [domReady, setDomReady] = React.useState(false)
-
-  React.useEffect(
-    () => {
-      setDomReady(true)
-    },
-    []
-  )
+  const domReady = useDomReady()
+  const fadeIn = useFadeIn(0.6)
 
   function handleSubmit (e) {
     e.preventDefault()
@@ -32,7 +27,7 @@ function InputBar ({ onSubmit, children }) {
   }
 
   return ReactDOM.createPortal(
-    <InputBarContainer onSubmit={handleSubmit}>
+    <InputBarContainer fadeIn={fadeIn} onSubmit={handleSubmit}>
       {children}
     </InputBarContainer>,
     document.getElementById('search-input-bar')
@@ -49,7 +44,7 @@ const InputBarContainer = styled('form')({
   flex: 1,
   gap: 12,
   padding: 12
-})
+})//, ({ fadeIn }) => fadeIn)
 
 SearchBar.InputBar = InputBar
 

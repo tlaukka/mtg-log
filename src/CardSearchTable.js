@@ -18,7 +18,7 @@ import TextInput from './TextInput'
 import CardSetSelect from './CardSetSelect'
 import ColorSelect from './ColorSelect'
 import styled from '@emotion/styled'
-import useCardSearch from './useCardSearch'
+import { useCardSearch } from './CardSearchProvider'
 
 function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
   const order = React.useRef('name')
@@ -30,10 +30,6 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
   const { cards, meta, fetching, searchCards, next, previous } = useCardSearch()
 
   const Table = CardTableComponent[tableLayout]
-
-  function onSearch () {
-    getCards()
-  }
 
   function getCards () {
     const setRegExp = new RegExp(/set:\w+/gi)
@@ -62,8 +58,12 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
     }
 
     // searchCards(completeSearch)
-    searchCards(`set:beta order:${order.current}`, options)
+    searchCards(`set:homelands order:${order.current}`, options)
     // searchCards(`jedit ojanen order:${order.current}`)
+  }
+
+  function onSearch () {
+    getCards()
   }
 
   function sortCards (newOrder) {
@@ -84,12 +84,12 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
         <Button size={'large'} type={'submit'}>Get cards!</Button>
       </SearchBar.InputBar>
       <Table
-        cards={cards}
+        cards={cards.toArray()}
         sortCards={sortCards}
         openCardInfo={openCardDetails}
       />
       <MenuBar.ContextMenu>
-        {(cards.length > 0) && (
+        {!cards.empty() && (
           <Pagination
             page={meta.page}
             totalPages={meta.totalPages}

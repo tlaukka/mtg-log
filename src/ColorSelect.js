@@ -14,7 +14,7 @@ const colors = [
   { value: 'c:colorless', label: 'Colorless', symbol: <CardSymbols.Colorless /> }
 ]
 
-function ColorSelect ({ onChange, ...rest }) {
+const ColorSelect = React.forwardRef(({ onChange, ...rest }, ref) => {
   const onSelectChange = React.useCallback(
     (data) => {
       const value = data.map((entry) => entry.value)
@@ -26,6 +26,7 @@ function ColorSelect ({ onChange, ...rest }) {
   return (
     <Select
       {...rest}
+      ref={ref}
       isMulti
       isSearchable={false}
       styles={styles}
@@ -35,7 +36,7 @@ function ColorSelect ({ onChange, ...rest }) {
       onChange={onSelectChange}
     />
   )
-}
+})
 
 function ColorOption (props) {
   return (

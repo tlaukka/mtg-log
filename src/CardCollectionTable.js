@@ -8,7 +8,6 @@ import GradeSelect, { gradeOptions } from './GradeSelect'
 import PriceInput from './PriceInput'
 import { CardDetailsDataTable } from './CardDetailsTable'
 import Colors from './Colors'
-import useCollection from './useCollection'
 import MenuBar from './MenuBar'
 import CardCollectionDetailsModal from './CardCollectionDetailsModal'
 import { useCardModalControls } from './CardModal'
@@ -17,19 +16,99 @@ import usePagination from './usePagination'
 import GradeTag from './GradeTag'
 import backToTop from './backToTop'
 import SearchBar from './SearchBar'
+import Button from './Button'
+import CardSetSelect from './CardSetSelect'
+import ColorSelect from './ColorSelect'
+import TextInput from './TextInput'
+
+const COLORS = {
+  'c:black': 'B',
+  'c:green': 'G',
+  'c:red': 'R',
+  'c:blue': 'U',
+  'c:white': 'W'
+}
+
+function useCardFilter (collection, filter) {
+  if ((filter.sets.length === 0) && (filter.colors.length === 0) && (filter.search === '')) {
+    return collection.toArray()
+  }
+
+  const colors = filter.colors.map((c) => COLORS[c])
+  const searchRegExp = new RegExp(`${filter.search}`, 'i')
+
+  return collection.toArray().filter(({ card }) => {
+    if (
+      ((filter.sets.length === 0) || filter.sets.includes(`set:${card.set}`))  &&
+      ((filter.colors.length === 0) || colors.some((c) => card.colors.includes(c))) &&
+      ((filter.search === '') || card.name.match(searchRegExp))
+    ) {
+      return true
+    }
+
+    return false
+  })
+}
+
+const initialState = {
+  sets: [],
+  colors: [],
+  search: ''
+}
+
+function filterReducer (state, action) {
+  switch (action.type) {
+    case 'set':
+      return { ...state, sets: action.value }
+
+    case 'color':
+      return { ...state, colors: action.value }
+
+    case 'search':
+      return { ...state, search: action.value }
+
+    case 'clear':
+      return initialState
+
+    default:
+      break
+  }
+}
 
 function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
+  const cardSetSelect = React.useRef()
+  const colorSelect = React.useRef()
+  const searchInput = React.useRef()
+
+  const [filter, dispatch] = React.useReducer(filterReducer, initialState)
+
   const cardStorage = useCardStorage()
-  const { items: cards, ...pagination } = usePagination(cardStorage, 50)
+  const filteredCards = useCardFilter(cardStorage, filter)
+  const { items: cards, ...pagination } = usePagination(filteredCards, 50)
 
   const { visible, selectedCard, openCardDetails, closeCardDetails } = useCardModalControls()
 
   const Table = CardTableComponent[tableLayout]
 
+  function onClearFilters () {
+    cardSetSelect.current.clear()
+    colorSelect.current.clear()
+    searchInput.current.value = ''
+    dispatch({ type: 'clear' })
+  }
+
   return (
     <>
-      <SearchBar.InputBar>
-        qwe
+      <SearchBar.InputBar onSubmit={onClearFilters}>
+        <CardSetSelect ref={cardSetSelect} onChange={(value) => dispatch({ type: 'set', value })} />
+        <ColorSelect ref={colorSelect} onChange={(value) => dispatch({ type: 'color', value })} />
+        <TextInput
+          ref={searchInput}
+          spellCheck={false}
+          placeholder={'Search...'}
+          onChange={(e) => dispatch({ type: 'search', value: e.target.value })}
+        />
+        <Button size={'large'} type={'submit'}>Clear filters</Button>
       </SearchBar.InputBar>
       <Table
         cards={cards}
@@ -57,8 +136,6 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
 }
 
 function CardTableCompact (props) {
-  const cardStorage = useCardStorage()
-
   return (
     <CardTable.Compact
       {...props}

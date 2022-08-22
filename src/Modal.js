@@ -8,6 +8,15 @@ import LinkButton from './LinkButton'
 function Modal ({ visible, onClose, children }) {
   const backdrop = React.useRef()
 
+  const [opacity, setOpacity] = React.useState(0)
+
+  React.useEffect(
+    () => {
+      setOpacity(visible ? 1 : 0)
+    },
+    [visible]
+  )
+
   function onBackdropClick (e) {
     if (e.target === backdrop.current) {
       onClose()
@@ -19,7 +28,7 @@ function Modal ({ visible, onClose, children }) {
   }
 
   return ReactDOM.createPortal(
-    <Backdrop ref={backdrop} onMouseDown={onBackdropClick}>
+    <Backdrop ref={backdrop} opacity={opacity} onMouseDown={onBackdropClick}>
       <ModalClose onClick={onClose}><Icons.Cross /></ModalClose>
         <ModalContainer>
           {children}
@@ -37,8 +46,11 @@ const Backdrop = styled('div')({
   height: '100vh',
   overflow: 'auto',
   backgroundColor: 'rgba(0, 0, 0, 0.85)',
-  backdropFilter: 'blur(2px)'
-})
+  backdropFilter: 'blur(2px)',
+  transition: 'opacity 0.2s'
+}, ({ opacity }) => ({
+  opacity
+}))
 
 const ModalContainer = styled('div')({
   display: 'flex',

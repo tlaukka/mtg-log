@@ -1,16 +1,18 @@
 import React from 'react'
 
-function usePagination (collection, pageSize = 50) {
+function usePagination (items, pageSize = 50) {
   const [page, setPage] = React.useState(1)
 
-  const totalItems = collection.size()
+  // const totalItems = collection.size()
+  const totalItems = items.length
   const totalPages = Math.ceil(totalItems / pageSize)
 
   function getItems () {
     const start = (page - 1) * pageSize
     const end = page * pageSize
 
-    return collection.toArray().slice(start, end)
+    // return collection.toArray().slice(start, end)
+    return items.slice(start, end)
   }
 
   function getNext () {

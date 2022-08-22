@@ -7,6 +7,12 @@ function Pagination ({ page, totalPages, totalItems, next, previous, onPageChang
     fn({ onSuccess: onPageChangeSuccess })
   }
 
+  if (totalItems === 0) {
+    return (
+      <MenuBar.Item>No cards!</MenuBar.Item>
+    )
+  }
+
   return (
     <>
       {totalItems && <MenuBar.Item>{`Total cards: ${totalItems}`}</MenuBar.Item>}

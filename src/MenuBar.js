@@ -4,6 +4,8 @@ import ReactDOM from 'react-dom'
 import Colors from './Colors'
 import constants from './constants'
 import LinkButton from './LinkButton'
+import useDomReady from './useDomReady'
+import useFadeIn from './useFadeIn'
 
 function MenuBar ({ children }) {
   return (
@@ -17,21 +19,15 @@ function MenuBar ({ children }) {
 }
 
 function ContextMenu ({ children }) {
-  const [domReady, setDomReady] = React.useState(false)
-
-  React.useEffect(
-    () => {
-      setDomReady(true)
-    },
-    []
-  )
+  const domReady = useDomReady()
+  const fadeIn = useFadeIn()
 
   if (!domReady) {
     return null
   }
 
   return ReactDOM.createPortal(
-    <Menu>
+    <Menu fadeIn={fadeIn}>
       {children}
     </Menu>,
     document.getElementById('menu-bar-context')
@@ -59,7 +55,7 @@ const Menu = styled('div')({
   display: 'flex',
   gap: 12,
   height: '100%'
-})
+}, ({ fadeIn }) => fadeIn)
 
 const MenuItem = styled('div')({
   display: 'flex',

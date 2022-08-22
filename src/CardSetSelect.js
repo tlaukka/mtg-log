@@ -3,7 +3,7 @@ import React from 'react'
 import { useCardSets } from './CardSetProvider'
 import Select, { selectStyles } from './Select'
 
-function CardSetSelect ({ onChange, ...rest }) {
+const CardSetSelect = React.forwardRef(({ onChange, ...rest }, ref) => {
   const { sets } = useCardSets()
 
   const options = React.useMemo(
@@ -30,6 +30,7 @@ function CardSetSelect ({ onChange, ...rest }) {
   return (
     <Select
       {...rest}
+      ref={ref}
       isMulti
       styles={styles}
       options={options}
@@ -38,7 +39,7 @@ function CardSetSelect ({ onChange, ...rest }) {
       onChange={onSelectChange}
     />
   )
-}
+})
 
 function CardSetOption (props) {
   return (
