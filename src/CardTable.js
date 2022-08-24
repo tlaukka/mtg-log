@@ -13,7 +13,14 @@ import CardDetailsTable from './CardDetailsTable'
 import { rarityBackground, rarityBorderColor } from './Rarity'
 
 function Compact ({ cards, sortCards, openCardInfo, renderHeader = () => null, renderRow = () => null }) {
+  const [activeSortingField, setActiveSortingField] = React.useState()
+
   const { sets } = useCardSets()
+
+  function handleSort (field, order) {
+    sortCards(field, order)
+    setActiveSortingField(field)
+  }
 
   return (
     <CardDataTable
@@ -22,14 +29,23 @@ function Compact ({ cards, sortCards, openCardInfo, renderHeader = () => null, r
       renderHeader={() => (
         <>
           <DataTable.Header width={64}>Set</DataTable.Header>
-          <DataTable.Header textAlign={'right'} width={50}>
-            <TableSortingHeader onClick={() => sortCards('set')}>№</TableSortingHeader>
-          </DataTable.Header>
+          <DataTable.SortingHeader
+            active={activeSortingField === 'set'}
+            textAlign={'right'}
+            fitToContent
+            sort={(order) => handleSort('set', order)}
+          >
+            №
+          </DataTable.SortingHeader>
           <DataTable.Header fitToContent>Res.</DataTable.Header>
           <DataTable.Header width={45}></DataTable.Header>
-          <DataTable.Header textAlign={'left'}>
-            <TableSortingHeader onClick={() => sortCards('name')}>Name</TableSortingHeader>
-          </DataTable.Header>
+          <DataTable.SortingHeader
+            active={activeSortingField === 'name'}
+            textAlign={'left'}
+            sort={(order) => handleSort('name', order)}
+          >
+            Name
+          </DataTable.SortingHeader>
           {renderHeader()}
         </>
       )}
@@ -163,14 +179,6 @@ const CardDataTableFull = styled(CardDataTable)({
   }
 })
 
-const TableSortingHeader = styled('div')({
-  display: 'inline-block',
-  cursor: 'pointer',
-  ':hover': {
-    color: Colors.accept
-  }
-})
-
 const CardName = styled('div')({
   cursor: 'pointer',
   display: 'inline-block',
@@ -226,17 +234,14 @@ const CardSetContainer = styled('div')({
 const CardDetailsContainer = styled('div')({
   display: 'flex',
   flexDirection: 'column',
-  // justifyContent: 'space-between',
   gap: 16,
   height: '100%',
-  minWidth: 400,
-  // marginBottom: 24
+  minWidth: 400
 })
 
 const DetailsMenu = styled('div')({
   display: 'flex',
-  gap: 8,
-  // marginBottom: 8
+  gap: 8
 })
 
 const CardTable = {

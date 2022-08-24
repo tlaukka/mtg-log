@@ -50,10 +50,35 @@ function useCardFilter (collection, filter) {
   })
 }
 
+function useCardSorting (collection, sort) {
+  if (sort.field === 'set') {
+    return [...collection].sort((a, b) => {
+      if (sort.order === 'asc') {
+        return a.card.collector_number - b.card.collector_number
+      }
+
+      return b.card.collector_number - a.card.collector_number
+    })
+  }
+
+  if (sort.field === 'name') {
+    return [...collection].sort((a, b) => {
+      if (sort.order === 'asc') {
+        return a.card.name.localeCompare(b.card.name)
+      }
+
+      return b.card.name.localeCompare(a.card.name)
+    })
+  }
+
+  return collection
+}
+
 const initialState = {
   sets: [],
   colors: [],
-  search: ''
+  search: '',
+  sort: {}
 }
 
 function filterReducer (state, action) {
@@ -70,6 +95,16 @@ function filterReducer (state, action) {
     case 'clear':
       return initialState
 
+    case 'sort':
+      return {
+        ...state,
+        sort: {
+          ...state.sort,
+          field: action.field,
+          order: action.order
+        }
+      }
+
     default:
       break
   }
@@ -84,7 +119,8 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
 
   const cardStorage = useCardStorage()
   const filteredCards = useCardFilter(cardStorage, filter)
-  const { items: cards, ...pagination } = usePagination(filteredCards, 50)
+  const sortedCards = useCardSorting(filteredCards, filter.sort)
+  const { items: cards, ...pagination } = usePagination(sortedCards, 50)
 
   const { visible, selectedCard, openCardDetails, closeCardDetails } = useCardModalControls()
 
@@ -95,6 +131,10 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
     colorSelect.current.clear()
     searchInput.current.value = ''
     dispatch({ type: 'clear' })
+  }
+
+  function sortCards (field, order) {
+    dispatch({ type: 'sort', field, order })
   }
 
   return (
@@ -112,6 +152,7 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
       </SearchBar.InputBar>
       <Table
         cards={cards}
+        sortCards={sortCards}
         openCardInfo={openCardDetails}
       />
       <MenuBar.ContextMenu>

@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import React from 'react'
 import Colors from './Colors'
+import Icons from './Icon'
 
 function defaultKeyExtractor (entry) {
   return entry.id
@@ -45,6 +46,65 @@ export function ExpandableRow ({ content, children }) {
   )
 }
 
+function SortingHeader ({ active, sort, children, ...rest }) {
+  const [order, setOrder] = React.useState()
+
+  function handleSort () {
+    let value = undefined
+
+    if (!order) {
+      value = 'asc'
+      setOrder(value)
+    } else {
+      value = (order === 'asc') ? 'desc' : 'asc'
+      setOrder(value)
+    }
+
+    sort(value)
+  }
+
+  return (
+    <DataTable.Header {...rest}>
+      <TableSortingHeader direction={order} onClick={handleSort}>
+        <Sorting active={active} order={order} />
+        {children}
+      </TableSortingHeader>
+    </DataTable.Header>
+  )
+}
+
+function Sorting ({ active, order }) {
+  if (!active) {
+    return null
+  }
+
+  return (
+    <>
+      {(order === 'asc') && <Icons.CaretUp style={caretUpStyles} />}
+      {(order === 'desc') && <Icons.CaretDown style={caretDownStyles} />}
+    </>
+  )
+}
+
+const caretStyles = {
+  lineHeight: '8px',
+  position: 'absolute',
+  left: 'calc(50% - 4px)',
+  width: 8,
+  height: 8,
+  color: Colors.foregroundDark
+}
+
+const caretUpStyles = {
+  ...caretStyles,
+  top: -8
+}
+
+const caretDownStyles = {
+  ...caretStyles,
+  bottom: -8
+}
+
 const Table = styled('table')({
   borderCollapse: 'collapse',
   width: '100%',
@@ -87,11 +147,22 @@ const ExpandedRowWrapper = styled('div')({
   maxHeight: visible ? 43 : 0
 }))
 
+const TableSortingHeader = styled('div')({
+  display: 'inline-block',
+  cursor: 'pointer',
+  position: 'relative',
+  ':hover': {
+    color: Colors.accept
+  }
+})
+
 DataTable.Header = styled('th')(({ textAlign = 'center', width = 'auto', fitToContent }) => ({
   textAlign,
   width: fitToContent ? '1%' : width,
   whiteSpace: fitToContent ? 'nowrap' : 'normal'
 }))
+
+DataTable.SortingHeader = SortingHeader
 
 DataTable.Data = styled('td')(({ verticalAlign = 'middle', textAlign = 'left', noPadding, color = Colors.foregroundLight }) => ({
   verticalAlign,

@@ -24,11 +24,16 @@ function withIconData (icon) {
 }
 
 const Icons = {
+ CaretUp: withIconData('caret-up')(Icon),
+ CaretDown: withIconData('caret-down')(Icon),
  CaretLeft: withIconData('caret-left')(Icon),
  CaretRight: withIconData('caret-right')(Icon),
+ ChevronUp: withIconData('chevron-up')(Icon),
+ ChevronDown: withIconData('chevron-down')(Icon),
  ChevronLeft: withIconData('chevron-left')(Icon),
  ChevronRight: withIconData('chevron-right')(Icon),
  ArrowUp: withIconData('long-arrow-up')(Icon),
+ ArrowDown: withIconData('long-arrow-down')(Icon),
  ArrowLeft: withIconData('arrow-left')(Icon),
  ArrowRight: withIconData('arrow-right')(Icon),
  Check: withIconData('check')(Icon),
