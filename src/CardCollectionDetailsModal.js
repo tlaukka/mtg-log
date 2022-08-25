@@ -138,6 +138,7 @@ function CardCollectionDetailsModal ({ initialCard, onClose, ...rest }) {
     )
   }
 
+  console.log(card)
   return (
     <CardModal
       card={card}

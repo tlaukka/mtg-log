@@ -11,6 +11,7 @@ import Tooltip from './Tooltip'
 import CardImage from './CardImage'
 import CardDetailsTable from './CardDetailsTable'
 import { rarityBackground, rarityBorderColor } from './Rarity'
+import ManaCost from './ManaCost'
 
 function Compact ({ cards, sortCards, openCardInfo, renderHeader = () => null, renderRow = () => null }) {
   const [activeSortingField, setActiveSortingField] = React.useState()
@@ -38,6 +39,7 @@ function Compact ({ cards, sortCards, openCardInfo, renderHeader = () => null, r
             №
           </DataTable.SortingHeader>
           <DataTable.Header fitToContent>Res.</DataTable.Header>
+          <DataTable.Header textAlign={'left'} fitToContent>Cost</DataTable.Header>
           <DataTable.Header width={45}></DataTable.Header>
           <DataTable.SortingHeader
             active={activeSortingField === 'name'}
@@ -56,6 +58,7 @@ function Compact ({ cards, sortCards, openCardInfo, renderHeader = () => null, r
           </DataTable.Data>
           <DataTable.Data textAlign={'right'} color={Colors.control}>{card.collector_number}</DataTable.Data>
           <DataTable.Data textAlign={'center'}><ReservedStatus reserved={card.reserved} /></DataTable.Data>
+          <DataTable.Data><ManaCost cost={card.mana_cost} /></DataTable.Data>
           <DataTable.Data noPadding><CardPreviewPopup card={card} /></DataTable.Data>
           <DataTable.Data>
             <CardName onClick={() => openCardInfo(card)}>{card.name}</CardName>

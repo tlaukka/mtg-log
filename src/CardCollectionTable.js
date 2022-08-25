@@ -26,7 +26,29 @@ const COLORS = {
   'c:green': 'G',
   'c:red': 'R',
   'c:blue': 'U',
-  'c:white': 'W'
+  'c:white': 'W',
+  'c:multicolor': 'M',
+  'c:colorless': 'C',
+}
+
+const Filter = {}
+
+Filter.color = (colors, card) => {
+  if (colors.length === 0) {
+    return true
+  }
+
+  if (colors.includes('M') && card.colors.length > 1) {
+    return true
+  }
+
+  if (colors.includes('C') && card.colors.length === 0) {
+    return true
+  }
+
+  return colors.some((c) => {
+    return card.colors.includes(c)
+  })
 }
 
 function useCardFilter (collection, filter) {
@@ -40,7 +62,8 @@ function useCardFilter (collection, filter) {
   return collection.toArray().filter(({ card }) => {
     if (
       ((filter.sets.length === 0) || filter.sets.includes(`set:${card.set}`))  &&
-      ((filter.colors.length === 0) || colors.some((c) => card.colors.includes(c))) &&
+      Filter.color(colors, card) &&
+      // ((filter.colors.length === 0) || colors.some((c) => card.colors.includes(c))) &&
       ((filter.search === '') || card.name.match(searchRegExp))
     ) {
       return true
