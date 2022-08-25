@@ -151,6 +151,7 @@ const TableSortingHeader = styled('div')({
   display: 'inline-block',
   cursor: 'pointer',
   position: 'relative',
+  textDecoration: 'underline',
   ':hover': {
     color: Colors.accept
   }

@@ -20,7 +20,7 @@ function ManaCost ({ cost }) {
 
 const ManaCostContainer = styled('div')({
   display: 'flex',
-  gap: 2
+  gap: 3
 })
 
 export default ManaCost

@@ -31,9 +31,17 @@ const COLORS = {
   'c:colorless': 'C',
 }
 
-const Filter = {}
+const CardFilter = {}
 
-Filter.color = (colors, card) => {
+CardFilter.set = (sets, card) => {
+  if (sets.length === 0) {
+    return true
+  }
+
+  return sets.includes(`set:${card.set}`)
+}
+
+CardFilter.color = (colors, card) => {
   if (colors.length === 0) {
     return true
   }
@@ -51,20 +59,27 @@ Filter.color = (colors, card) => {
   })
 }
 
+CardFilter.search = (search, card) => {
+  if (search === '') {
+    return true
+  }
+
+  const searchRegExp = new RegExp(`${search}`, 'i')
+  return card.name.match(searchRegExp)
+}
+
 function useCardFilter (collection, filter) {
   if ((filter.sets.length === 0) && (filter.colors.length === 0) && (filter.search === '')) {
     return collection.toArray()
   }
 
   const colors = filter.colors.map((c) => COLORS[c])
-  const searchRegExp = new RegExp(`${filter.search}`, 'i')
 
   return collection.toArray().filter(({ card }) => {
     if (
-      ((filter.sets.length === 0) || filter.sets.includes(`set:${card.set}`))  &&
-      Filter.color(colors, card) &&
-      // ((filter.colors.length === 0) || colors.some((c) => card.colors.includes(c))) &&
-      ((filter.search === '') || card.name.match(searchRegExp))
+      CardFilter.set(filter.sets, card) &&
+      CardFilter.color(colors, card) &&
+      CardFilter.search(filter.search, card)
     ) {
       return true
     }
@@ -128,8 +143,7 @@ function filterReducer (state, action) {
         }
       }
 
-    default:
-      break
+    default: break
   }
 }
 

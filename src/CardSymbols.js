@@ -22,10 +22,10 @@ const multicolorStyles = {
 }
 
 const Symbol = styled('i')({
-  fontSize: 15,
-  lineHeight: '20px',
-  width: 20,
-  height: 20
+  // fontSize: 15,
+  // lineHeight: '20px',
+  // width: 20,
+  // height: 20
 })
 
 const MulticolorSymbol = styled('div')({
@@ -53,7 +53,8 @@ const CardSymbols = {
   Swamp: withSymbolData('ms-b')(CardSymbol),
   Plains: withSymbolData('ms-w')(CardSymbol),
   Multicolor: () => <Multicolor />,
-  Colorless: withSymbolData('ms-c')(CardSymbol)
+  Colorless: withSymbolData('ms-c')(CardSymbol),
+  Land: withSymbolData('ms-land')(CardSymbol)
 }
 
 export default CardSymbols
