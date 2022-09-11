@@ -113,8 +113,10 @@ function CardModal ({
         </CardDetailsSearchContainer>
         <CardDetailsContainer>
           <CardImageContainer set={card?.set}>
-            {card && (
-              <CardImage src={card.image_uris.normal} alt={card.name} set={card.set} />
+            {card?.image_uris?.normal ? (
+              <CardImage src={card.image_uris?.normal} alt={card.name} set={card.set} />
+            ) : (
+              <span>Image N/A</span>
             )}
           </CardImageContainer>
           <CardDetailsTableContainer>
@@ -236,7 +238,11 @@ const CardImageContainer = styled('div')({
   width: '50%',
   maxWidth: 300,
   backgroundColor: '#181510',
-  boxShadow: '0px 0px 4px 0px white'
+  boxShadow: '0px 0px 4px 0px white',
+  span: {
+    zIndex: 1,
+    color: Colors.control
+  }
 }, ({ set }) => ({
   borderRadius: (set === 'lea') ? '7.5%/5.4%' : '4.8%/3.4%',
   ':before': {

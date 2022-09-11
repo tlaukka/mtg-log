@@ -35,15 +35,15 @@ function InputBar ({ onSubmit, children }) {
 }
 
 const SearchBarContainer = styled('div')({
-  height: 62,
+  // height: 80,
   backgroundColor: Colors.backgroundLight
 })
 
 const InputBarContainer = styled('form')({
-  display: 'flex',
-  flex: 1,
-  gap: 12,
-  padding: 12
+  // display: 'flex',
+  // flex: 1,
+  // gap: 12,
+  padding: '12px 24px'
 })//, ({ fadeIn }) => fadeIn)
 
 SearchBar.InputBar = InputBar

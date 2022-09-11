@@ -80,9 +80,9 @@ export const CardDetailsDataTable = styled('table')({
     '> tr': {
       '> td': {
         maxWidth: 0,
-        overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
+        // overflow: 'hidden',
+        // textOverflow: 'ellipsis',
+        // whiteSpace: 'nowrap',
         padding: '0 0 4px 0'
       }
     }
@@ -95,9 +95,9 @@ const TableRowSpacer = styled('tr')({
 
 const CardHeader = styled('h1')({
   fontSize: 20,
-  overflow: 'hidden',
-  whiteSpace: 'nowrap',
-  textOverflow: 'ellipsis',
+  // overflow: 'hidden',
+  // whiteSpace: 'nowrap',
+  // textOverflow: 'ellipsis',
   display: 'inline-flex',
   margin: 0,
   color: Colors.foregroundLight,

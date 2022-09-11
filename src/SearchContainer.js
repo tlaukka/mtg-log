@@ -16,7 +16,7 @@ import SearchBar from './SearchBar'
 
 function SearchContainer () {
   const [tableLayout, setTableLayout] = React.useState(layoutOptions.compact)
-  const [drawerOpen, setDrawerOpen] = React.useState(true)
+  const [drawerOpen, setDrawerOpen] = React.useState(false)
 
   const { route, setRoute } = useRoute()
   const cardDrawer = useCardDrawer()
@@ -71,16 +71,30 @@ function SearchContainer () {
         open={drawerOpen}
         onClose={closeCardDrawer}
       />
+      <div
+        style={{ position: 'fixed', zIndex: 100000, top: 0, right: 0 }}
+        onClick={() => console.log({ w: window.innerWidth, h: window.innerHeight })}
+      >
+        Size
+      </div>
     </>
   )
+}
+
+const media = {
+  screen: {
+    sm: '@media only screen and (max-width: 1024px)',
+    md: '@media only screen and (max-width: 1624px)'
+  }
 }
 
 const NavBar = styled('div')({
   boxSizing: 'border-box',
   display: 'flex',
+  justifyContent: 'center',
   alignItems: 'stretch',
-  padding: '0 12px',
-  backgroundColor: Colors.backgroundDark
+  // padding: '0 12px',
+  // backgroundColor: Colors.backgroundDark
 })
 
 const NavBarTabContainer = styled('div')({
@@ -95,13 +109,15 @@ const TableContainer = styled('div')({
     marginTop: 35
   }
 }, ({ drawerOpen }) => ({
-  marginRight: drawerOpen ? 360 : 0
+  // marginRight: drawerOpen ? 360 : 0
 }))
 
 
 const MenuButton = styled(LinkButton)({
-  fontSize: 12,
-  lineHeight: `${constants.FOOTER_HEIGHT}px`,
+  fontSize: 20,
+  // lineHeight: `${constants.FOOTER_HEIGHT}px`,
+  lineHeight: '48px',
+  height: 48,
   padding: '0 6px'
 })
 

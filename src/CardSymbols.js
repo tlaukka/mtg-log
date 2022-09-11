@@ -1,41 +1,49 @@
 import styled from '@emotion/styled'
 import React from 'react'
-import { Icon } from './Icon'
 
 export function CardSymbol ({ symbol, ...rest }) {
-  return <Symbol className={`ms ${symbol} ms-fw ms-cost ms-shadow`} {...rest} />
+  return <i className={`ms ${symbol} ms-fw ms-cost ms-shadow`} {...rest} />
 }
 
-function Multicolor () {
+function Artifact (props) {
   return (
-    <MulticolorSymbol>
-      <Icon icon={'circle-o'} style={multicolorStyles} />
-    </MulticolorSymbol>
+    <CardSymbol {...props} symbol={'ms-artifact'} style={artifactStyles} />
   )
 }
 
-const multicolorStyles = {
-  fontSize: 18,
-  lineHeight: '20px',
-  width: 20,
-  height: 20
+function Land (props) {
+  return (
+    <CardSymbol {...props} symbol={'ms-land'} style={landStyles} />
+  )
 }
 
-const Symbol = styled('i')({
-  // fontSize: 15,
-  // lineHeight: '20px',
-  // width: 20,
-  // height: 20
-})
+const artifactStyles = {
+  backgroundColor: '#946D63'
+}
 
-const MulticolorSymbol = styled('div')({
-  display: 'inline-block',
-  width: 20,
-  height: 20,
+const landStyles = {
+  backgroundColor: '#948163'
+}
+
+const MultiColor = styled('i')({
+  position: 'relative',
+  fontSize: '0.95em',
+  width: '1.3em',
+  height: '1.3em',
   borderRadius: '100%',
   boxShadow: '-0.06em 0.07em 0 #111, 0 0.06em 0 #111',
-  color: 'black',
-  backgroundColor: '#D0B569'
+  backgroundColor: '#D0B569',
+  ':after': {
+    content: '""',
+    boxSizing: 'border-box',
+    position: 'absolute',
+    top: '10%',
+    right: '10%',
+    bottom: '10%',
+    left: '10%',
+    borderRadius: '1em',
+    border: '2px solid black'
+  }
 })
 
 function withSymbolData (symbol) {
@@ -52,9 +60,10 @@ const CardSymbols = {
   Island: withSymbolData('ms-u')(CardSymbol),
   Swamp: withSymbolData('ms-b')(CardSymbol),
   Plains: withSymbolData('ms-w')(CardSymbol),
-  Multicolor: () => <Multicolor />,
+  Multicolor: () => <MultiColor />,
   Colorless: withSymbolData('ms-c')(CardSymbol),
-  Land: withSymbolData('ms-land')(CardSymbol)
+  Artifact: () => <Artifact />,
+  Land: () => <Land />
 }
 
 export default CardSymbols

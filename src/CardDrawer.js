@@ -23,7 +23,7 @@ function CardDrawer ({ open, onClose }) {
     cardStorage.save(cardDrawer.cards, { onSuccess: onSaveSuccess, onError: onSaveError })
   }
 
-  function onSaveSuccess (data) {
+  function onSaveSuccess () {
     cardDrawer.clear()
   }
 
@@ -51,7 +51,7 @@ function CardDrawer ({ open, onClose }) {
             <thead><tr><th /><th /><th /><th /></tr></thead>
             <tbody>
               {cardDrawer.toArray().map(({ card, meta }) => (
-                <tr key={card.id}>
+                <tr>
                   <td>
                     <CardDrawerRemove onClick={() => cardDrawer.remove(card)}>
                       <Icons.Cross />
@@ -71,7 +71,6 @@ function CardDrawer ({ open, onClose }) {
                     />
                   </td>
                   <td>
-                    {/* <CardDrawerCardName onClick={() => openCardInfo(card)}>{card.name}</CardDrawerCardName> */}
                     <CardDrawerCardName onClick={() => openCardDetails(card)}>{card.name}</CardDrawerCardName>
                   </td>
                 </tr>

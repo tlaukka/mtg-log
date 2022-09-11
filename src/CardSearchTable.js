@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Children } from 'react'
 import Button from './Button'
 import { useCardDrawer } from './CardDrawerProvider'
 import { useCardStorage } from './CardStorageProvider'
@@ -19,12 +19,36 @@ import CardSetSelect from './CardSetSelect'
 import ColorSelect from './ColorSelect'
 import styled from '@emotion/styled'
 import { useCardSearch } from './CardSearchProvider'
+import Colors from './Colors'
+import Checkbox from './Checkbox'
+import CardSymbols from './CardSymbols'
+import Rarity from './Rarity'
+
+const SearchKeyword = {
+  set: new RegExp(/set:\w+/gi),
+  color: new RegExp(/[c|t]:\w+/gi)
+}
+
+function getSearchKeywords (search, keyword) {
+  return search.match(keyword) || []
+}
+
+function getSearchString (search, params, order) {
+  const searchParams = params.reduce((result, entry) => {
+    result += `(${entry.join(' OR ')})`
+    return result
+  }, '')
+
+  const orderParam = order ? `order:${order}` : ''
+
+  return `${searchParams} ${orderParam} ${search}`
+}
 
 function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
   const order = React.useRef('name')
   const search = React.useRef('')
   const selectedSets = React.useRef([])
-  const selectedColors = React.useRef([])
+  const filter = React.useRef({})
 
   const { visible, selectedCard, openCardDetails, closeCardDetails } = useCardModalControls()
   const { cards, meta, fetching, searchCards, next, previous } = useCardSearch()
@@ -32,38 +56,35 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
   const Table = CardTableComponent[tableLayout]
 
   function getCards () {
-    const setRegExp = new RegExp(/set:\w+/gi)
-    const setsInSearch = search.current.match(setRegExp) || []
+    const searchString = getSearchString(
+      search.current,
+      Object.values(filter.current),
+      order.current
+    )
+    console.log(searchString)
 
-    const colorRegExp = new RegExp(/c:\w+/gi)
-    const colorsInSearch = search.current.match(colorRegExp) || []
-
-    const setParams = [...selectedSets.current, ...setsInSearch].join(' OR ')
-    const colorParams = [...selectedColors.current, ...colorsInSearch].join(' OR ')
-
-    const searchPhrase = search.current
-      .replace(setRegExp, '')
-      .replace(colorRegExp, '')
-      .trim()
-
-    const completeSearch = [
-      (setParams !== '') ? `(${setParams})` : '',
-      (colorParams !== '') ? `(${colorParams})` : '',
-      `order:${order.current}`,
-      searchPhrase
-    ].join(' ')
-
-    const options = {
-      onSuccess: () => backToTop('table-container')
-    }
-
-    // searchCards(completeSearch)
-    searchCards(`set:homelands order:${order.current}`, options)
-    // searchCards(`jedit ojanen order:${order.current}`)
+    searchCards(searchString)
   }
 
   function onSearch () {
     getCards()
+  }
+
+  function onFilterChange (values) {
+    const result = Object.entries(values).reduce((result, [key, value]) => {
+      const params = Object.entries(value).reduce((result, [key, value]) => {
+        if (value) {
+          result.push(key)
+        }
+
+        return result
+      }, [])
+
+      result[key] = params
+      return result
+    }, {})
+
+    filter.current = result
   }
 
   function sortCards (newOrder) {
@@ -74,14 +95,22 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
   return (
     <>
       <SearchBar.InputBar onSubmit={onSearch}>
-        <CardSetSelect onChange={(value) => selectedSets.current = value} />
-        <ColorSelect onChange={(value) => selectedColors.current = value} />
-        <Search
-          spellCheck={false}
-          placeholder={'Search...'}
-          onChange={(e) => search.current = e.target.value}
-        />
-        <Button size={'large'} type={'submit'}>Get cards!</Button>
+        <InputBar>
+          <CardSetSelect onChange={(value) => selectedSets.current = value} />
+          <SearchContainer>
+            <Search
+              spellCheck={false}
+              placeholder={'Search...'}
+              onChange={(e) => search.current = e.target.value}
+            />
+            <SearchButton type={'submit'}>
+              <Icons.ArrowRight />
+            </SearchButton>
+          </SearchContainer>
+        </InputBar>
+        <InputBar>
+          <CardFilterBar onChange={onFilterChange} />
+        </InputBar>
       </SearchBar.InputBar>
       <Table
         cards={cards.toArray()}
@@ -180,9 +209,159 @@ function CardTableFull (props) {
   )
 }
 
-const Search = styled(TextInput)({
-  flex: 1,
-  maxWidth: 500
+function CardFilterBar ({ disabled, onChange }) {
+  const values = React.useRef({})
+
+  function handleChange (filter, filterValues) {
+    values.current[filter] = {
+      ...values.current[filter],
+      ...filterValues
+    }
+
+    onChange && onChange(values.current)
+  }
+
+  return (
+    <>
+      <FilterSection disabled={disabled} rows={2} columns={3} label={'Color'} onChange={(values) => handleChange('color', values)}>
+        <FilterItem value={'c:white'}><CardSymbols.Plains />White</FilterItem>
+        <FilterItem value={'c:blue'}><CardSymbols.Island />Blue</FilterItem>
+        <FilterItem value={'c:red'}><CardSymbols.Mountain />Red</FilterItem>
+        <FilterItem value={'c:green'}><CardSymbols.Forest />Green</FilterItem>
+        <FilterItem value={'c:black'}><CardSymbols.Swamp />Black</FilterItem>
+        <FilterItem value={'c:colorless'}><CardSymbols.Colorless />Colorless</FilterItem>
+      </FilterSection>
+      <FilterSection disabled={disabled} rows={2} columns={2} label={'Type'} onChange={(values) => handleChange('color', values)}>
+        <FilterItem value={'c:multicolor'}><CardSymbols.Multicolor />Multicolor</FilterItem>
+        <FilterItem value={'t:land'}><CardSymbols.Land />Land</FilterItem>
+        <FilterItem value={'t:artifact'}><CardSymbols.Artifact />Artifact</FilterItem>
+      </FilterSection>
+      <FilterSection disabled={disabled} rows={2} columns={2} label={'Rarity'} onChange={(values) => handleChange('rarity', values)}>
+        <FilterItem value={'r:mythic'}><span style={{ color: Colors.mythic }}>Mythic</span></FilterItem>
+        <FilterItem value={'r:rare'}><span style={{ color: Colors.rare }}>Rare</span></FilterItem>
+        <FilterItem value={'r:uncommon'}><span style={{ color: Colors.uncommon }}>Uncommon</span></FilterItem>
+        <FilterItem value={'r:common'}><span style={{ color: Colors.common }}>Common</span></FilterItem>
+      </FilterSection>
+      <FilterSection disabled={disabled} rows={2} columns={1} onChange={(values) => handleChange('reserved', values)}>
+        <FilterItem  value={'is:reserved'}>Reserved</FilterItem>
+      </FilterSection>
+    </>
+  )
+}
+
+function FilterSection ({ onChange, children, ...rest }) {
+  const values = React.useRef({})
+
+  function handleChange (checked, value) {
+    values.current[value] = checked
+    onChange && onChange(values.current)
+  }
+
+  return (
+    <FilterSectionContainer {...rest}>
+      {Children.map(children, (child) => (
+        React.cloneElement(child, {
+          onChange: (checked) => handleChange(checked, child.props.value)
+        })
+      ))}
+    </FilterSectionContainer>
+  )
+}
+
+function FilterItem ({ value, children, ...rest }) {
+  return (
+    <Checkbox value={value} {...rest}>
+      {children}
+    </Checkbox>
+  )
+}
+
+const InputBar = styled('div')({
+  display: 'flex',
+  gap: 24,
+  marginBottom: 24
+})
+
+const FilterSectionContainer = styled('div')({
+  display: 'grid',
+  rowGap: 8,
+  columnGap: 12,
+  position: 'relative',
+  ':before': {
+    content: '""',
+    position: 'absolute',
+    bottom: -16,
+    width: '100%',
+    height: 4,
+    borderLeftWidth: 1,
+    borderRightWidth: 1,
+    borderBottomWidth: 1,
+    borderTopWidth: 0,
+    borderStyle: 'solid',
+    borderColor: Colors.foregroundDark
+  }
+}, ({ disabled, rows, columns, label }) => ({
+  gridTemplateRows: `repeat(${rows}, 1fr)`,
+  gridTemplateColumns: `repeat(${columns}, 1fr)`,
+  ':after': {
+    content: `"${label}"`,
+    display: label ? 'block' : 'none',
+    fontSize: 14,
+    lineHeight: '16px',
+    position: 'absolute',
+    left: '50%',
+    bottom: -22,
+    transform: 'translateX(-50%)',
+    height: 16,
+    padding: '0 8px',
+    color: Colors.foregroundDark,
+    backgroundColor: Colors.backgroundLight
+  },
+  div: {
+    pointerEvents: disabled ? 'none' : 'auto'
+  },
+  'div div i': {
+    filter: `brightness(${disabled ? 0.55 : 1}) grayscale(${disabled ? 1 : 0})`
+  },
+  'div label': {
+    filter: `brightness(${disabled ? 0.55 : 1})`
+  },
+  'div label i': {
+    filter: `grayscale(${disabled ? 1 : 0})`
+  }
+}))
+
+const SearchContainer = styled('div')({
+  display: 'flex',
+  flex: 2,
+  justifyContent: 'center',
+  position: 'relative',
+  // maxWidth: 818,
+  margin: '0 auto',
+  // marginBottom: 48,
+  borderBottom: `2px solid ${Colors.foregroundDark}`
+})
+
+const Search = styled('input')({
+  fontSize: 31,
+  outline: 'none',
+  width: '100%',
+  border: 'none',
+  color: Colors.control,
+  // backgroundColor: 'transparent',
+  // borderBottom: `2px solid white`,
+  backgroundColor: Colors.backgroundLight,
+  '::placeholder': {
+    color: Colors.foregroundDark
+  }
+})
+
+const SearchButton = styled(LinkButton)({
+  fontSize: 31,
+  lineHeight: '38px',
+  height: 38,
+  padding: 0,
+  backgroundColor: Colors.backgroundLight
 })
 
 const CardTableComponent = {

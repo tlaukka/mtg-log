@@ -165,9 +165,16 @@ DataTable.Header = styled('th')(({ textAlign = 'center', width = 'auto', fitToCo
 
 DataTable.SortingHeader = SortingHeader
 
-DataTable.Data = styled('td')(({ verticalAlign = 'middle', textAlign = 'left', noPadding, color = Colors.foregroundLight }) => ({
+DataTable.Data = styled('td')(({
+  verticalAlign = 'middle',
+  textAlign = 'left',
+  noPadding,
+  noWrap,
+  color = Colors.foregroundLight
+}) => ({
   verticalAlign,
   textAlign,
+  whiteSpace: noWrap ? 'nowrap' : 'normal',
   padding: noPadding ? 0 : '8px 12px',
   color
 }))

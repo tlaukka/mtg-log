@@ -56,7 +56,7 @@ function Compact ({ cards, sortCards, openCardInfo, renderHeader = () => null, r
           <DataTable.Data>
             <CardSet set={sets[card.set]} rarity={card.rarity} />
           </DataTable.Data>
-          <DataTable.Data textAlign={'right'} color={Colors.control}>{card.collector_number}</DataTable.Data>
+          <DataTable.Data textAlign={'right'} noWrap color={Colors.control}>{card.collector_number}</DataTable.Data>
           <DataTable.Data textAlign={'center'}><ReservedStatus reserved={card.reserved} /></DataTable.Data>
           <DataTable.Data><ManaCost cost={card.mana_cost} /></DataTable.Data>
           <DataTable.Data noPadding><CardPreviewPopup card={card} /></DataTable.Data>
@@ -133,7 +133,7 @@ function ReservedStatus ({ reserved }) {
 
 function CardPreviewPopup ({ card }) {
   return (
-    <Popup content={<CardPreviewImage src={card.image_uris.small} alt={card.name} set={card.set} />}>
+    <Popup content={<CardPreviewImage src={card.image_uris?.small} alt={card.name} set={card.set} />}>
       <CardPreviewButton><Icons.Camera /></CardPreviewButton>
     </Popup>
   )

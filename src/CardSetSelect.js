@@ -1,6 +1,7 @@
 import styled from '@emotion/styled'
 import React from 'react'
 import { useCardSets } from './CardSetProvider'
+import Colors from './Colors'
 import Select, { selectStyles } from './Select'
 
 const CardSetSelect = React.forwardRef(({ onChange, ...rest }, ref) => {
@@ -8,13 +9,28 @@ const CardSetSelect = React.forwardRef(({ onChange, ...rest }, ref) => {
 
   const options = React.useMemo(
     () => {
-      return Object.values(sets).map((set) => {
-        return {
+      const values = Object.values(sets)
+      const result = []
+
+      for (let i = values.length - 1; i >= 0; i--) {
+        const set = values[i]
+
+        result.push({
           value: `set:${set.code}`,
           label: set.name,
           code: set.code
-        }
-      })
+        })
+      }
+
+      return result
+
+      // return Object.values(sets).map((set) => {
+      //   return {
+      //     value: `set:${set.code}`,
+      //     label: set.name,
+      //     code: set.code
+      //   }
+      // })
     },
     [sets]
   )
@@ -63,13 +79,106 @@ function CardSetMultiValue (props) {
   )
 }
 
-const styles = {
-  ...selectStyles,
+// const styles = {
+//   ...selectStyles,
+//   container: (provided) => ({
+//     ...provided,
+//     flex: 1,
+//     minWidth: 360,
+//     maxWidth: 600
+//   })
+// }
+
+export const styles = {
   container: (provided) => ({
     ...provided,
+    // fontFamily: `'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif`,
     flex: 1,
     minWidth: 360,
-    maxWidth: 600
+    maxWidth: 600,
+    borderBottom: `2px solid ${Colors.foregroundDark}`
+  }),
+  control: (provided) => ({
+    ...provided,
+    boxShadow: 'none',
+    borderRadius: 0,
+    border: 'none',
+    backgroundColor: Colors.backgroundLight
+    // backgroundColor: Colors.backgroundDark
+  }),
+  input: (provided) => ({
+    ...provided,
+    cursor: 'text',
+    fontSize: 31,
+    margin: 0,
+    padding: 0,
+    color: Colors.control
+  }),
+  valueContainer: (provided) => ({
+    ...provided,
+    flexWrap: 'nowrap',
+    padding: 0,
+  }),
+  placeholder: (provided) => ({
+    ...provided,
+    fontSize: 31,
+    color: Colors.foregroundDark
+  }),
+  multiValue: (provided) => ({
+    ...provided,
+    padding: 4,
+    // borderRadius: 3,
+    backgroundColor: Colors.backgroundLight
+  }),
+  multiValueLabel: (provided) => ({
+    ...provided,
+    fontSize: 12,
+    color: Colors.control
+  }),
+  multiValueRemove: (provided) => ({
+    ...provided,
+    cursor: 'pointer',
+    color: Colors.control,
+    ':hover': {
+      color: Colors.decline
+    }
+  }),
+  clearIndicator: (provided) => ({
+    ...provided,
+    cursor: 'pointer',
+    color: Colors.control,
+    ':hover': {
+      color: Colors.decline
+    }
+  }),
+  dropdownIndicator: (provided) => ({
+    ...provided,
+    cursor: 'pointer',
+    color: Colors.control,
+    ':hover': {
+      color: Colors.accept
+    }
+  }),
+  indicatorSeparator: (provided) => ({
+    ...provided,
+    backgroundColor: Colors.borderLight
+  }),
+  menu: (provided) => ({
+    ...provided,
+    zIndex: 10,
+    backgroundColor: Colors.backgroundDark
+  }),
+  option: () => ({
+    cursor: 'pointer',
+    padding: '4px 8px',
+    color: Colors.control,
+    ':hover': {
+      color: Colors.foregroundLight
+    }
+  }),
+  noOptionsMessage: (provided) => ({
+    ...provided,
+    color: Colors.foregroundDark
   })
 }
 
