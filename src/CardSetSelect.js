@@ -161,7 +161,7 @@ export const styles = {
   }),
   indicatorSeparator: (provided) => ({
     ...provided,
-    backgroundColor: Colors.borderLight
+    backgroundColor: Colors.foregroundDark
   }),
   menu: (provided) => ({
     ...provided,

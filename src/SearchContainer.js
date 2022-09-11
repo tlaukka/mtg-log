@@ -63,9 +63,6 @@ function SearchContainer () {
         <MenuBar.Button onClick={toggleDrawer}>
           {`Card drawer [${cardDrawer.size()}]`}
         </MenuBar.Button>
-        {/* <FooterLoaderContainer>
-          {fetching && <Loader />}
-        </FooterLoaderContainer> */}
       </MenuBar>
       <CardDrawer
         open={drawerOpen}
@@ -93,12 +90,14 @@ const NavBar = styled('div')({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'stretch',
-  // padding: '0 12px',
-  // backgroundColor: Colors.backgroundDark
+  backgroundColor: Colors.backgroundDark
 })
 
 const NavBarTabContainer = styled('div')({
-  display: 'flex'
+  display: 'flex',
+  flex: 1,
+  gap: 12,
+  overflow: 'hidden'
 })
 
 const TableContainer = styled('div')({
@@ -109,40 +108,56 @@ const TableContainer = styled('div')({
     marginTop: 35
   }
 }, ({ drawerOpen }) => ({
-  // marginRight: drawerOpen ? 360 : 0
+  marginRight: drawerOpen ? constants.DRAWER_WIDTH : 0
 }))
 
 
 const MenuButton = styled(LinkButton)({
   fontSize: 20,
-  // lineHeight: `${constants.FOOTER_HEIGHT}px`,
   lineHeight: '48px',
   height: 48,
   padding: '0 6px'
 })
 
 const NavMenuItem = styled(MenuButton)({
+  flex: 1,
   position: 'relative',
   padding: '0 12px',
   color: '#6B7986',
+  ':before': {
+    content: '""',
+    position: 'absolute',
+    left: -10,
+    zIndex: -1,
+    width: 32,
+    height: '100%',
+    transform: 'skewX(-15deg)',
+    backgroundColor: 'inherit'
+  },
+  ':after': {
+    content: '""',
+    position: 'absolute',
+    right: -10,
+    zIndex: -1,
+    width: 32,
+    height: '100%',
+    transform: 'skewX(15deg)',
+    backgroundColor: 'inherit'
+  },
   i: {
     marginRight: 2
   },
   ':disabled': {
+    zIndex: 2,
     color: Colors.control,
-    backgroundColor: Colors.backgroundLight
+    backgroundColor: Colors.backgroundLight,
   },
   ':not(:disabled)': {
+    zIndex: 1,
     ':hover': {
       color: Colors.control
     }
   }
 })
-
-// const FooterLoaderContainer = styled('div')({
-//   display: 'flex',
-//   alignItems: 'center'
-//   width: 22
-// })
 
 export default SearchContainer

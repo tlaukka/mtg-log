@@ -23,6 +23,7 @@ import Colors from './Colors'
 import Checkbox from './Checkbox'
 import CardSymbols from './CardSymbols'
 import Rarity from './Rarity'
+import Spinner from './Spinner'
 
 const SearchKeyword = {
   set: new RegExp(/set:\w+/gi),
@@ -77,8 +78,8 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
     getCards()
   }
 
-  function onSearchChange (e) {
-    search.current = e.target.value
+  function onSearchChange (value) {
+    search.current = value
 
     if (search.current.length === 1) {
       if (search.current.startsWith('/')) {
@@ -88,6 +89,17 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
 
     if (scryfallMode && !search.current.startsWith('/')) {
       setScryfallMode(false)
+    }
+  }
+
+  function onSearchClear () {
+    search.current = ''
+    setScryfallMode(false)
+  }
+
+  function onSearchPaste (e) {
+    if (e.clipboardData.getData('text').startsWith('/')) {
+      setScryfallMode(true)
     }
   }
 
@@ -118,16 +130,12 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
       <SearchBar.InputBar onSubmit={onSearch}>
         <InputBar>
           <CardSetSelect isDisabled={scryfallMode} onChange={(value) => selectedSets.current = value} />
-          <SearchContainer>
-            <Search
-              spellCheck={false}
-              placeholder={'Search...'}
-              onChange={onSearchChange}
-            />
-            <SearchButton type={'submit'}>
-              <Icons.ArrowRight />
-            </SearchButton>
-          </SearchContainer>
+          <SearchInput
+            fetching={fetching}
+            onSearchChange={onSearchChange}
+            onClear={onSearchClear}
+            onPaste={onSearchPaste}
+          />
         </InputBar>
         <InputBar>
           <CardFilterBar disabled={scryfallMode} onChange={onFilterChange} />
@@ -297,6 +305,50 @@ function FilterItem ({ value, children, ...rest }) {
   )
 }
 
+function SearchInput ({ fetching, onSearchChange, onClear, ...rest }) {
+  const input = React.useRef()
+
+  const [search, setSearch] = React.useState('')
+
+  function handleSearchChange (e) {
+    setSearch(e.target.value)
+    onSearchChange && onSearchChange(e.target.value)
+  }
+
+  function handleClear () {
+    setSearch('')
+    input.current.value = ''
+    onClear && onClear()
+  }
+
+  return (
+    <SearchContainer>
+      <Search
+        ref={input}
+        spellCheck={false}
+        placeholder={'Search...'}
+        onChange={handleSearchChange}
+        {...rest}
+      />
+      {search && (
+        <SearchClear onClick={handleClear}>
+          <Icons.Cross />
+        </SearchClear>
+      )}
+      <SearchButtonSeparator />
+      {fetching ? (
+        <SearchSpinnerContainer>
+          <Spinner size={16} />
+        </SearchSpinnerContainer>
+      ) : (
+        <SearchButton type={'submit'}>
+          <Icons.ArrowRight />
+        </SearchButton>
+      )}
+    </SearchContainer>
+  )
+}
+
 const InputBar = styled('div')({
   display: 'flex',
   gap: 24,
@@ -357,32 +409,50 @@ const SearchContainer = styled('div')({
   flex: 2,
   justifyContent: 'center',
   position: 'relative',
-  // maxWidth: 818,
-  margin: '0 auto',
-  // marginBottom: 48,
   borderBottom: `2px solid ${Colors.foregroundDark}`
 })
 
 const Search = styled('input')({
+  flex: 1,
   fontSize: 31,
   outline: 'none',
-  width: '100%',
   border: 'none',
   color: Colors.control,
-  // backgroundColor: 'transparent',
-  // borderBottom: `2px solid white`,
   backgroundColor: Colors.backgroundLight,
   '::placeholder': {
     color: Colors.foregroundDark
   }
 })
 
-const SearchButton = styled(LinkButton)({
-  fontSize: 31,
+const SearchButtonSeparator = styled('span')({
+  width: 1,
+  margin: '8px 0',
+  backgroundColor: Colors.foregroundDark
+})
+
+const searchButtonStyles = {
+  fontSize: 22,
   lineHeight: '38px',
+  width: 38,
   height: 38,
   padding: 0,
   backgroundColor: Colors.backgroundLight
+}
+
+const SearchButton = styled(LinkButton)({
+  ...searchButtonStyles
+})
+
+const SearchClear = styled(LinkButton.Decline)({
+  ...searchButtonStyles
+})
+
+const SearchSpinnerContainer = styled('div')({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  width: 38,
+  height: 38
 })
 
 const CardTableComponent = {
