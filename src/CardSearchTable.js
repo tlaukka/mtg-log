@@ -50,12 +50,19 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
   const selectedSets = React.useRef([])
   const filter = React.useRef({})
 
+  const [scryfallMode, setScryfallMode] = React.useState(false)
+
   const { visible, selectedCard, openCardDetails, closeCardDetails } = useCardModalControls()
   const { cards, meta, fetching, searchCards, next, previous } = useCardSearch()
 
   const Table = CardTableComponent[tableLayout]
 
   function getCards () {
+    if (scryfallMode) {
+      searchCards(search.current.slice(1))
+      return
+    }
+
     const searchString = getSearchString(
       search.current,
       Object.values(filter.current),
@@ -68,6 +75,20 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
 
   function onSearch () {
     getCards()
+  }
+
+  function onSearchChange (e) {
+    search.current = e.target.value
+
+    if (search.current.length === 1) {
+      if (search.current.startsWith('/')) {
+        setScryfallMode(true)
+      }
+    }
+
+    if (scryfallMode && !search.current.startsWith('/')) {
+      setScryfallMode(false)
+    }
   }
 
   function onFilterChange (values) {
@@ -96,12 +117,12 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
     <>
       <SearchBar.InputBar onSubmit={onSearch}>
         <InputBar>
-          <CardSetSelect onChange={(value) => selectedSets.current = value} />
+          <CardSetSelect isDisabled={scryfallMode} onChange={(value) => selectedSets.current = value} />
           <SearchContainer>
             <Search
               spellCheck={false}
               placeholder={'Search...'}
-              onChange={(e) => search.current = e.target.value}
+              onChange={onSearchChange}
             />
             <SearchButton type={'submit'}>
               <Icons.ArrowRight />
@@ -109,7 +130,7 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
           </SearchContainer>
         </InputBar>
         <InputBar>
-          <CardFilterBar onChange={onFilterChange} />
+          <CardFilterBar disabled={scryfallMode} onChange={onFilterChange} />
         </InputBar>
       </SearchBar.InputBar>
       <Table
