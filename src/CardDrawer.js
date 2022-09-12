@@ -51,7 +51,7 @@ function CardDrawer ({ open, onClose }) {
             <thead><tr><th /><th /><th /><th /></tr></thead>
             <tbody>
               {cardDrawer.toArray().map(({ card, meta }) => (
-                <tr>
+                <tr key={card.id}>
                   <td>
                     <CardDrawerRemove onClick={() => cardDrawer.remove(card)}>
                       <Icons.Cross />

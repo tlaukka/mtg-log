@@ -60,7 +60,7 @@ function Compact ({ cards, sortCards, openCardInfo, renderHeader = () => null, r
           <DataTable.Data textAlign={'center'}><ReservedStatus reserved={card.reserved} /></DataTable.Data>
           <DataTable.Data><ManaCost cost={card.mana_cost} /></DataTable.Data>
           <DataTable.Data noPadding><CardPreviewPopup card={card} /></DataTable.Data>
-          <DataTable.Data>
+          <DataTable.Data truncate>
             <CardName onClick={() => openCardInfo(card)}>{card.name}</CardName>
           </DataTable.Data>
           {renderRow({ card, meta })}
@@ -185,6 +185,7 @@ const CardDataTableFull = styled(CardDataTable)({
 const CardName = styled('div')({
   cursor: 'pointer',
   display: 'inline-block',
+  verticalAlign: 'bottom',
   ':hover': {
     color: Colors.link
   }

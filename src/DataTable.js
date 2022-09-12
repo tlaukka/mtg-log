@@ -170,13 +170,31 @@ DataTable.Data = styled('td')(({
   textAlign = 'left',
   noPadding,
   noWrap,
+  truncate,
   color = Colors.foregroundLight
-}) => ({
-  verticalAlign,
-  textAlign,
-  whiteSpace: noWrap ? 'nowrap' : 'normal',
-  padding: noPadding ? 0 : '8px 12px',
-  color
-}))
+}) => {
+  const style = {
+    verticalAlign,
+    textAlign,
+    whiteSpace: noWrap ? 'nowrap' : 'normal',
+    padding: noPadding ? 0 : '8px 12px',
+    color
+  }
+
+  if (truncate) {
+    style.maxWidth = 1
+    style.overflow = 'hidden'
+    style.textOverflow = 'ellipsis'
+    style.whiteSpace = 'nowrap'
+    style.div = {
+      overflow: 'hidden',
+      textOverflow: 'ellipsis',
+      whiteSpace: 'nowrap',
+      maxWidth: '100%'
+    }
+  }
+
+  return style
+})
 
 export default DataTable
