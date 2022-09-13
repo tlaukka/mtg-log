@@ -20,6 +20,8 @@ import Button from './Button'
 import CardSetSelect from './CardSetSelect'
 import ColorSelect from './ColorSelect'
 import TextInput from './TextInput'
+import SearchInput from './SearchInput'
+import CardFilterBar from './CardFilterBar'
 
 const COLORS = {
   'c:black': 'B',
@@ -148,9 +150,8 @@ function filterReducer (state, action) {
 }
 
 function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
-  const cardSetSelect = React.useRef()
-  const colorSelect = React.useRef()
-  const searchInput = React.useRef()
+  // const cardSetSelect = React.useRef()
+  // const searchInput = React.useRef()
 
   const [filter, dispatch] = React.useReducer(filterReducer, initialState)
 
@@ -163,12 +164,11 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
 
   const Table = CardTableComponent[tableLayout]
 
-  function onClearFilters () {
-    cardSetSelect.current.clear()
-    colorSelect.current.clear()
-    searchInput.current.value = ''
-    dispatch({ type: 'clear' })
-  }
+  // function onClearFilters () {
+  //   cardSetSelect.current.clear()
+  //   searchInput.current.value = ''
+  //   dispatch({ type: 'clear' })
+  // }
 
   function sortCards (field, order) {
     dispatch({ type: 'sort', field, order })
@@ -176,8 +176,8 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
 
   return (
     <>
-      <SearchBar.InputBar onSubmit={onClearFilters}>
-        <CardSetSelect ref={cardSetSelect} onChange={(value) => dispatch({ type: 'set', value })} />
+      <SearchBar.InputBar>
+        {/* <CardSetSelect ref={cardSetSelect} onChange={(value) => dispatch({ type: 'set', value })} />
         <ColorSelect ref={colorSelect} onChange={(value) => dispatch({ type: 'color', value })} />
         <TextInput
           ref={searchInput}
@@ -185,7 +185,19 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
           placeholder={'Search...'}
           onChange={(e) => dispatch({ type: 'search', value: e.target.value })}
         />
-        <Button size={'large'} type={'submit'}>Clear filters</Button>
+        <Button size={'large'} type={'submit'}>Clear filters</Button> */}
+        <InputBar>
+          <CardSetSelect />
+          <SearchInput
+            // fetching={fetching}
+            // onSearchChange={onSearchChange}
+            // onClear={onSearchClear}
+            // onPaste={onSearchPaste}
+          />
+        </InputBar>
+        <InputBar>
+          <CardFilterBar />
+        </InputBar>
       </SearchBar.InputBar>
       <Table
         cards={cards}
@@ -290,6 +302,12 @@ function CardTableFull (props) {
     />
   )
 }
+
+const InputBar = styled('div')({
+  display: 'flex',
+  gap: 24,
+  marginBottom: 24
+})
 
 const InfoText = styled('span')({
   color: Colors.control

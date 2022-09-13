@@ -38,7 +38,7 @@ const CardSetSelect = React.forwardRef(({ onChange, ...rest }, ref) => {
   const onSelectChange = React.useCallback(
     (data) => {
       const value = data.map((entry) => entry.value)
-      onChange(value)
+      onChange && onChange(value)
     },
     [onChange]
   )
