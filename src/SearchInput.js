@@ -5,14 +5,14 @@ import Icons from './Icon'
 import LinkButton from './LinkButton'
 import Spinner from './Spinner'
 
-function SearchInput ({ fetching, onSearchChange, onClear, ...rest }) {
+function SearchInput ({ fetching, onChange, onClear, ...rest }) {
   const input = React.useRef()
 
   const [search, setSearch] = React.useState('')
 
-  function handleSearchChange (e) {
+  function handleChange (e) {
     setSearch(e.target.value)
-    onSearchChange && onSearchChange(e.target.value)
+    onChange && onChange(e.target.value)
   }
 
   function handleClear () {
@@ -27,7 +27,7 @@ function SearchInput ({ fetching, onSearchChange, onClear, ...rest }) {
         ref={input}
         spellCheck={false}
         placeholder={'Search...'}
-        onChange={handleSearchChange}
+        onChange={handleChange}
         {...rest}
       />
       {search && (

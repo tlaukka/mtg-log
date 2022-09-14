@@ -127,7 +127,7 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
           <CardSetSelect isDisabled={scryfallMode} onChange={(value) => selectedSets.current = value} />
           <SearchInput
             fetching={fetching}
-            onSearchChange={onSearchChange}
+            onChange={onSearchChange}
             onClear={onSearchClear}
             onPaste={onSearchPaste}
           />

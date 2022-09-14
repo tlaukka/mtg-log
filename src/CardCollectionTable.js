@@ -164,11 +164,29 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
 
   const Table = CardTableComponent[tableLayout]
 
+  function onFilterChange (values) {
+    console.log(values)
+
+    const colorFilter = Object.entries(values.color).reduce((result, [key, value]) => {
+      if (value) {
+        result.push(key)
+      }
+
+      return result
+    }, [])
+
+    dispatch({ type: 'color', value: colorFilter })
+  }
+
   // function onClearFilters () {
   //   cardSetSelect.current.clear()
   //   searchInput.current.value = ''
   //   dispatch({ type: 'clear' })
   // }
+
+  function onSearchClear () {
+    dispatch({ type: 'search', value: '' })
+  }
 
   function sortCards (field, order) {
     dispatch({ type: 'sort', field, order })
@@ -187,16 +205,14 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
         />
         <Button size={'large'} type={'submit'}>Clear filters</Button> */}
         <InputBar>
-          <CardSetSelect />
+          <CardSetSelect onChange={(value) => dispatch({ type: 'set', value })} />
           <SearchInput
-            // fetching={fetching}
-            // onSearchChange={onSearchChange}
-            // onClear={onSearchClear}
-            // onPaste={onSearchPaste}
+            onChange={(value) => dispatch({ type: 'search', value })}
+            onClear={onSearchClear}
           />
         </InputBar>
         <InputBar>
-          <CardFilterBar />
+          <CardFilterBar onChange={onFilterChange} />
         </InputBar>
       </SearchBar.InputBar>
       <Table

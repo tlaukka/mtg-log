@@ -127,7 +127,7 @@ const NavMenuItem = styled(MenuButton)({
   ':before': {
     content: '""',
     position: 'absolute',
-    left: -10,
+    left: -8,
     zIndex: -1,
     width: 32,
     height: '100%',
@@ -137,7 +137,7 @@ const NavMenuItem = styled(MenuButton)({
   ':after': {
     content: '""',
     position: 'absolute',
-    right: -10,
+    right: -8,
     zIndex: -1,
     width: 32,
     height: '100%',

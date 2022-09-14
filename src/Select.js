@@ -1,8 +1,9 @@
 import React from 'react'
 import ReactSelect, { components, createFilter } from 'react-select'
 import Colors from './Colors'
+import Icons from './Icon'
 
-const Select = React.forwardRef(({ isReadOnly, styles = selectStyles, ...rest }, ref) => {
+const Select = React.forwardRef(({ isReadOnly, styles = selectStyles, components, ...rest }, ref) => {
   const select = React.useRef()
 
   React.useImperativeHandle(ref, () => ({
@@ -15,12 +16,34 @@ const Select = React.forwardRef(({ isReadOnly, styles = selectStyles, ...rest },
       isReadOnly={isReadOnly}
       openMenuOnClick={!isReadOnly}
       styles={styles}
-      components={{ Option, MultiValue }}
+      components={{
+        DropdownIndicator,
+        ClearIndicator,
+        Option,
+        MultiValue,
+        ...components
+      }}
       filterOption={createFilter({ ignoreAccents: false })}
       {...rest}
     />
   )
 })
+
+function DropdownIndicator({ children, ...props }) {
+  return (
+    <components.DropdownIndicator {...props}>
+      <Icons.ChevronDown />
+    </components.DropdownIndicator>
+  )
+}
+
+function ClearIndicator({ children, ...props }) {
+  return (
+    <components.ClearIndicator {...props}>
+      <Icons.Cross />
+    </components.ClearIndicator>
+  )
+}
 
 function Option({ children, ...props }) {
   const { onMouseMove, onMouseOver, ...rest } = props.innerProps
@@ -91,6 +114,15 @@ export const selectStyles = {
       color: Colors.decline
     }
   }),
+  dropdownIndicator: (provided) => ({
+    ...provided,
+    cursor: 'pointer',
+    fontSize: 22,
+    color: Colors.control,
+    ':hover': {
+      color: Colors.accept
+    }
+  }),
   clearIndicator: (provided) => ({
     ...provided,
     cursor: 'pointer',
@@ -99,17 +131,9 @@ export const selectStyles = {
       color: Colors.decline
     }
   }),
-  dropdownIndicator: (provided) => ({
-    ...provided,
-    cursor: 'pointer',
-    color: Colors.control,
-    ':hover': {
-      color: Colors.accept
-    }
-  }),
   indicatorSeparator: (provided) => ({
     ...provided,
-    backgroundColor: Colors.borderLight
+    backgroundColor: Colors.foregroundDark
   }),
   menu: (provided) => ({
     ...provided,

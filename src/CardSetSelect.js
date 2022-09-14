@@ -143,20 +143,34 @@ export const styles = {
       color: Colors.decline
     }
   }),
-  clearIndicator: (provided) => ({
-    ...provided,
-    cursor: 'pointer',
-    color: Colors.control,
-    ':hover': {
-      color: Colors.decline
-    }
-  }),
   dropdownIndicator: (provided) => ({
     ...provided,
     cursor: 'pointer',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: 28,
+    width: 38,
+    height: 38,
+    padding: 0,
     color: Colors.control,
     ':hover': {
       color: Colors.accept
+    }
+  }),
+  clearIndicator: (provided) => ({
+    ...provided,
+    cursor: 'pointer',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    fontSize: 22,
+    width: 38,
+    height: 38,
+    padding: 0,
+    color: Colors.control,
+    ':hover': {
+      color: Colors.decline
     }
   }),
   indicatorSeparator: (provided) => ({
