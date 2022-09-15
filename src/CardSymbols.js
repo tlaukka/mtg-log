@@ -17,12 +17,22 @@ function Land (props) {
   )
 }
 
+function Planeswalker (props) {
+  return (
+    <CardSymbol {...props} symbol={'ms-planeswalker'} style={planeswalkerStyles} />
+  )
+}
+
 const artifactStyles = {
   backgroundColor: '#946D63'
 }
 
 const landStyles = {
   backgroundColor: '#948163'
+}
+
+const planeswalkerStyles = {
+  backgroundColor: '#C4554C'
 }
 
 const MultiColor = styled('i')({
@@ -63,7 +73,8 @@ const CardSymbols = {
   Multicolor: () => <MultiColor />,
   Colorless: withSymbolData('ms-c')(CardSymbol),
   Artifact: () => <Artifact />,
-  Land: () => <Land />
+  Land: () => <Land />,
+  Planeswalker: () => <Planeswalker />
 }
 
 export default CardSymbols

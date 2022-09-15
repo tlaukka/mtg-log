@@ -22,13 +22,18 @@ function CardFilterBar ({ disabled, onChange }) {
         <FilterItem value={'c:white'}><CardSymbols.Plains />White</FilterItem>
         <FilterItem value={'c:blue'}><CardSymbols.Island />Blue</FilterItem>
         <FilterItem value={'c:red'}><CardSymbols.Mountain />Red</FilterItem>
+        {/* <FilterItem value={'c:multicolor'}><CardSymbols.Multicolor />Multicolor</FilterItem> */}
         <FilterItem value={'c:green'}><CardSymbols.Forest />Green</FilterItem>
         <FilterItem value={'c:black'}><CardSymbols.Swamp />Black</FilterItem>
+        {/* <FilterItem value={'c:colorless'}><CardSymbols.Colorless />Colorless</FilterItem> */}
+      </FilterSection>
+      <FilterSection disabled={disabled} rows={2} columns={1} label={'Color'} onChange={(values) => handleChange('color', values)}>
+        <FilterItem value={'c:multicolor'}><CardSymbols.Multicolor />Multicolor</FilterItem>
         <FilterItem value={'c:colorless'}><CardSymbols.Colorless />Colorless</FilterItem>
       </FilterSection>
       <FilterSection disabled={disabled} rows={2} columns={2} label={'Type'} onChange={(values) => handleChange('color', values)}>
-        <FilterItem value={'c:multicolor'}><CardSymbols.Multicolor />Multicolor</FilterItem>
         <FilterItem value={'t:land'}><CardSymbols.Land />Land</FilterItem>
+        <FilterItem value={'t:planeswalker'}><CardSymbols.Planeswalker />Planeswalker</FilterItem>
         <FilterItem value={'t:artifact'}><CardSymbols.Artifact />Artifact</FilterItem>
       </FilterSection>
       <FilterSection disabled={disabled} rows={2} columns={2} label={'Rarity'} onChange={(values) => handleChange('rarity', values)}>

@@ -88,8 +88,16 @@ const SearchButton = styled(LinkButton)({
   ...searchButtonStyles
 })
 
-const SearchClear = styled(LinkButton.Decline)({
-  ...searchButtonStyles
+const SearchClear = styled('span')({
+  ...searchButtonStyles,
+  cursor: 'pointer',
+  display: 'inline-flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  color: Colors.control,
+  ':hover': {
+    color: Colors.decline
+  }
 })
 
 const SearchSpinnerContainer = styled('div')({

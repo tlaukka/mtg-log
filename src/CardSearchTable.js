@@ -61,7 +61,7 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
 
     const searchString = getSearchString(
       search.current,
-      Object.values(filter.current),
+      Object.values(filter.current).concat([selectedSets.current]),
       order.current
     )
     console.log(searchString)
