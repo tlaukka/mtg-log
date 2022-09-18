@@ -154,6 +154,7 @@ export const styles = {
     height: 38,
     padding: 0,
     color: Colors.control,
+    transition: 'none',
     ':hover': {
       color: Colors.accept
     }
@@ -169,6 +170,7 @@ export const styles = {
     height: 38,
     padding: 0,
     color: Colors.control,
+    transition: 'none',
     ':hover': {
       color: Colors.decline
     }

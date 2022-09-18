@@ -29,9 +29,9 @@ function getSearchKeywords (search, keyword) {
   return search.match(keyword) || []
 }
 
-function getSearchString (search, params, order) {
-  const searchParams = params.reduce((result, entry) => {
-    result += `(${entry.join(' OR ')})`
+function getSearchString (search, filters, order) {
+  const searchParams = filters.reduce((result, entry) => {
+    result += `${entry.operator}(${entry.params.join(' OR ')})`
     return result
   }, '')
 
@@ -43,7 +43,7 @@ function getSearchString (search, params, order) {
 function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
   const order = React.useRef('name')
   const search = React.useRef('')
-  const selectedSets = React.useRef([])
+  const selectedSets = React.useRef({ operator: 'AND', params: [] })
   const filter = React.useRef({})
 
   const [scryfallMode, setScryfallMode] = React.useState(false)
@@ -59,11 +59,9 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
       return
     }
 
-    const searchString = getSearchString(
-      search.current,
-      Object.values(filter.current).concat([selectedSets.current]),
-      order.current
-    )
+    const filters = Object.values({ ...filter.current, set: selectedSets.current })
+
+    const searchString = getSearchString(search.current, filters, order.current)
     console.log(searchString)
 
     searchCards(searchString)
@@ -76,10 +74,8 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
   function onSearchChange (value) {
     search.current = value
 
-    if (search.current.length === 1) {
-      if (search.current.startsWith('/')) {
-        setScryfallMode(true)
-      }
+    if (!scryfallMode && search.current.startsWith('/')) {
+      setScryfallMode(true)
     }
 
     if (scryfallMode && !search.current.startsWith('/')) {
@@ -99,19 +95,15 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
   }
 
   function onFilterChange (values) {
-    const result = Object.entries(values).reduce((result, [key, value]) => {
-      const params = Object.entries(value).reduce((result, [key, value]) => {
-        if (value) {
-          result.push(key)
-        }
+    const result = {
+      ...values,
+      color: {
+        ...values.color,
+        params: [...values.color?.params || [], ...values.type?.params || []]
+      }
+    }
 
-        return result
-      }, [])
-
-      result[key] = params
-      return result
-    }, {})
-
+    delete result.type
     filter.current = result
   }
 
@@ -124,7 +116,8 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
     <>
       <SearchBar.InputBar onSubmit={onSearch}>
         <InputBar>
-          <CardSetSelect isDisabled={scryfallMode} onChange={(value) => selectedSets.current = value} />
+          {/* <CardSetSelect isDisabled={scryfallMode} onChange={(value) => selectedSets.current = value} /> */}
+          <CardSetSelect isDisabled={scryfallMode} onChange={(value) => selectedSets.current.params = value} />
           <SearchInput
             fetching={fetching}
             onChange={onSearchChange}
@@ -237,6 +230,8 @@ const InputBar = styled('div')({
   display: 'flex',
   gap: 24,
   marginBottom: 24
+  // overflowX: 'auto',
+  // overflowY: 'hidden',
 })
 
 const CardTableComponent = {

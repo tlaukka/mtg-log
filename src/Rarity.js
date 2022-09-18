@@ -28,6 +28,22 @@ export const rarityBackground = {
 }
 
 // export const rarityBackground = {
+//   // common: 'rgba(90,90,90,1)',
+//   common: 'rgba(10,10,10,1)',
+//   uncommon: 'rgba(245,253,255,1)',
+//   rare: 'rgba(255,244,146,1)',
+//   mythic: 'rgba(255,192,53,1)',
+//   bonus: 'rgba(156,181,214,1)'
+// }
+// export const rarityBackground = {
+//   common: '#101010',
+//   uncommon: '#E0E0E0',
+//   rare: '#F4E087',
+//   mythic: '#FF9730',
+//   bonus: '9CB5D6'
+// }
+
+// export const rarityBackground = {
 //   common: 'black',
 //   uncommon: 'rgba(245,253,255,1)',
 //   rare: 'rgba(255,244,146,1)',
@@ -35,16 +51,9 @@ export const rarityBackground = {
 //   bonus: 'rgba(156,181,214,1)'
 // }
 
-// export const rarityBorderColor = {
-//   common: 'rgba(90,90,90,1)',
-//   uncommon: 'rgba(94,104,107,1)',
-//   rare: 'rgba(102,84,56,1)',
-//   mythic: 'rgba(210,87,29,1)',
-//   bonus: 'rgba(69,88,112,1)'
-// }
-
 export const rarityBorderColor = {
-  common: 'rgba(90,90,90,1)',
+  // common: 'rgba(10,10,10,1)',
+  common: '#5A5A5A',
   uncommon: 'rgba(245,253,255,1)',
   rare: 'rgba(255,244,146,1)',
   mythic: 'rgba(255,192,53,1)',
@@ -54,6 +63,7 @@ export const rarityBorderColor = {
 function Rarity ({ rarity }) {
   return (
     <RarityTag rarity={rarity} background={rarityBackground[rarity]}>
+    {/* <RarityTag rarity={rarity} background={'transparent'}> */}
       {rarityLabel[rarity] || '-'}
     </RarityTag>
   )
@@ -61,7 +71,9 @@ function Rarity ({ rarity }) {
 
 const RarityTag = styled(Tag)(({ rarity }) => ({
   border: `1px solid ${rarityBorderColor[rarity]}`,
-  color: (rarity === 'common') ? 'rgba(90,90,90,1)' : '#15171B'
+  // border: (rarity === 'common') ? '1px solid #5A5A5A' : 'none',
+  color: (rarity === 'common') ? '#5A5A5A' : '#101010'
+  // color: `${rarityBorderColor[rarity]}`
 }))
 
 export default Rarity
