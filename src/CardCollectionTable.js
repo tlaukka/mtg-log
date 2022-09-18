@@ -43,6 +43,15 @@ CardFilter.set = (sets, card) => {
   return sets.includes(`set:${card.set}`)
 }
 
+CardFilter.search = (search, card) => {
+  if (search === '') {
+    return true
+  }
+
+  const searchRegExp = new RegExp(`${search}`, 'i')
+  return card.name.match(searchRegExp)
+}
+
 CardFilter.color = (colors, card) => {
   if (colors.length === 0) {
     return true
@@ -56,22 +65,54 @@ CardFilter.color = (colors, card) => {
     return true
   }
 
-  return colors.some((c) => {
-    return card.colors.includes(c)
+  return colors.some((entry) => {
+    return card.colors.includes(entry)
   })
 }
 
-CardFilter.search = (search, card) => {
-  if (search === '') {
+CardFilter.type = (types, card) => {
+  if (types.length === 0) {
     return true
   }
 
-  const searchRegExp = new RegExp(`${search}`, 'i')
-  return card.name.match(searchRegExp)
+  return types.some((entry) => {
+    return card.type_line.toLowerCase().includes(entry.slice(2))
+  })
+}
+
+CardFilter.rarity = (rarities, card) => {
+  if (rarities.length === 0) {
+    return true
+  }
+
+  return rarities.some((entry) => {
+    return card.rarity === entry.slice(2)
+  })
+}
+
+CardFilter.status = (statuses, card) => {
+  if (statuses.length === 0) {
+    return true
+  }
+
+  return statuses.some((entry) => {
+    if (entry === 'is:reserved') {
+      return card.reserved
+    }
+
+    return true
+  })
 }
 
 function useCardFilter (collection, filter) {
-  if ((filter.sets.length === 0) && (filter.colors.length === 0) && (filter.search === '')) {
+  if (
+    (filter.sets.length === 0) &&
+    (filter.search === '') &&
+    (filter.colors.length === 0) &&
+    (filter.types.length === 0) &&
+    (filter.rarities.length === 0) &&
+    (filter.statuses.length === 0)
+  ) {
     return collection.toArray()
   }
 
@@ -80,8 +121,11 @@ function useCardFilter (collection, filter) {
   return collection.toArray().filter(({ card }) => {
     if (
       CardFilter.set(filter.sets, card) &&
+      CardFilter.search(filter.search, card) &&
       CardFilter.color(colors, card) &&
-      CardFilter.search(filter.search, card)
+      CardFilter.type(filter.types, card) &&
+      CardFilter.rarity(filter.rarities, card) &&
+      CardFilter.status(filter.statuses, card)
     ) {
       return true
     }
@@ -116,8 +160,11 @@ function useCardSorting (collection, sort) {
 
 const initialState = {
   sets: [],
-  colors: [],
   search: '',
+  colors: [],
+  types: [],
+  rarities: [],
+  statuses: [],
   sort: {}
 }
 
@@ -126,11 +173,20 @@ function filterReducer (state, action) {
     case 'set':
       return { ...state, sets: action.value }
 
+    case 'search':
+        return { ...state, search: action.value }
+
     case 'color':
       return { ...state, colors: action.value }
 
-    case 'search':
-      return { ...state, search: action.value }
+    case 'type':
+      return { ...state, types: action.value }
+
+    case 'rarity':
+      return { ...state, rarities: action.value }
+
+    case 'status':
+      return { ...state, statuses: action.value }
 
     case 'clear':
       return initialState
@@ -165,17 +221,10 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
   const Table = CardTableComponent[tableLayout]
 
   function onFilterChange (values) {
-    console.log(values)
-
-    const colorFilter = Object.entries(values.color).reduce((result, [key, value]) => {
-      if (value) {
-        result.push(key)
-      }
-
-      return result
-    }, [])
-
-    dispatch({ type: 'color', value: colorFilter })
+    values.color && dispatch({ type: 'color', value: values.color.params })
+    values.type && dispatch({ type: 'type', value: values.type.params })
+    values.rarity && dispatch({ type: 'rarity', value: values.rarity.params })
+    values.status && dispatch({ type: 'status', value: values.status.params })
   }
 
   // function onClearFilters () {

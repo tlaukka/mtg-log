@@ -12,7 +12,8 @@ export function useRoute () {
 }
 
 function RouteProvider ({ children }) {
-  const [route, setRoute] = React.useState(Route.search)
+  // const [route, setRoute] = React.useState(Route.search)
+  const [route, setRoute] = React.useState(Route.list)
 
   return (
     <RouteContext.Provider value={{ route, setRoute }}>

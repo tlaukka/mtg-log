@@ -56,7 +56,7 @@ function CardFilterBar ({ disabled, onChange }) {
         <FilterItem value={'r:uncommon'}><Rarity rarity={'uncommon'} /></FilterItem>
         <FilterItem value={'r:common'}><Rarity rarity={'common'} /></FilterItem>
       </FilterSection>
-      <FilterSection disabled={disabled} rows={2} columns={1} label={'Status'} onChange={(values) => handleChange('reserved', values, 'AND')}>
+      <FilterSection disabled={disabled} rows={2} columns={1} label={'Status'} onChange={(values) => handleChange('status', values, 'AND')}>
         <FilterItem  value={'is:reserved'}>Reserved</FilterItem>
       </FilterSection>
     </>
