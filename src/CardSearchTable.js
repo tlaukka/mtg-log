@@ -19,6 +19,7 @@ import styled from '@emotion/styled'
 import { useCardSearch } from './CardSearchProvider'
 import SearchInput from './SearchInput'
 import CardFilterBar from './CardFilterBar'
+import FadeIn from './FadeIn'
 
 const SearchKeyword = {
   set: new RegExp(/set:\w+/gi),
@@ -133,6 +134,11 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
           openCardInfo={openCardDetails}
         />
       </FadeIn>
+      {/* <Table
+        cards={cards.toArray()}
+        sortCards={sortCards}
+        openCardInfo={openCardDetails}
+      /> */}
       <MenuBar.ContextMenu>
         {!cards.empty() && (
           <Pagination
@@ -223,25 +229,6 @@ function CardTableFull (props) {
       renderMenu={renderMenu}
     />
   )
-}
-
-function FadeIn ({ children }) {
-  const [visible, setVisible] = React.useState(false)
-
-  React.useEffect(
-    () => {
-      setTimeout(() => {
-        setVisible(true)
-      }, 0)
-    },
-    []
-  )
-
-  if (!visible) {
-    return null
-  }
-
-  return children
 }
 
 const InputBar = styled('div')({

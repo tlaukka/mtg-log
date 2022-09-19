@@ -15,14 +15,22 @@ function DataTable ({ data = [], keyExtractor = defaultKeyExtractor, renderHeade
           {renderHeader()}
         </tr>
       </thead>
-      <tbody>
+      {/* <tbody>
         <tr />
         {data.map((entry, index) => (
           <tr key={keyExtractor(entry)}>
             {renderRow(entry, index)}
           </tr>
         ))}
-      </tbody>
+      </tbody> */}
+      <TableBody>
+        <tr />
+        {data.map((entry, index) => (
+          <tr key={keyExtractor(entry)}>
+            {renderRow(entry, index)}
+          </tr>
+        ))}
+      </TableBody>
     </Table>
   )
 }
@@ -133,6 +141,16 @@ const Table = styled('table')({
     '> tr:first-of-type': {
       height: 12,
     }
+  }
+})
+
+const TableBody = styled('tbody')({
+  fontSize: 16,
+  '> tr:nth-of-type(odd)': {
+    backgroundColor: Colors.backgroundAccent
+  },
+  '> tr:first-of-type': {
+    height: 12,
   }
 })
 

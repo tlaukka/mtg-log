@@ -22,6 +22,7 @@ import ColorSelect from './ColorSelect'
 import TextInput from './TextInput'
 import SearchInput from './SearchInput'
 import CardFilterBar from './CardFilterBar'
+import FadeIn from './FadeIn'
 
 const COLORS = {
   'c:black': 'B',
@@ -206,9 +207,6 @@ function filterReducer (state, action) {
 }
 
 function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
-  // const cardSetSelect = React.useRef()
-  // const searchInput = React.useRef()
-
   const [filter, dispatch] = React.useReducer(filterReducer, initialState)
 
   const cardStorage = useCardStorage()
@@ -253,11 +251,13 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
         </InputBar>
         <CardFilterBar onChange={onFilterChange} />
       </SearchBar.InputBar>
-      <Table
-        cards={cards}
-        sortCards={sortCards}
-        openCardInfo={openCardDetails}
-      />
+      <FadeIn>
+        <Table
+          cards={cards}
+          sortCards={sortCards}
+          openCardInfo={openCardDetails}
+        />
+      </FadeIn>
       <MenuBar.ContextMenu>
         {!cardStorage.empty() && (
           <Pagination
