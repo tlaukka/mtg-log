@@ -40,7 +40,8 @@ const SearchBarContainer = styled('div')({
 })
 
 const InputBarContainer = styled('form')({
-  padding: 24
+  // padding: 24
+  padding: '24px 24px 0'
 })//, ({ fadeIn }) => fadeIn)
 
 SearchBar.InputBar = InputBar

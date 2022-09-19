@@ -26,7 +26,7 @@ function CardFilterBar ({ disabled, onChange }) {
   }
 
   return (
-    <>
+    <ScrollContainer>
       <FilterSection disabled={disabled} rows={2} columns={4} label={'Color'} onChange={(values) => handleChange('color', values, 'AND')}>
         <FilterItem value={'c:white'}><CardSymbols.Plains />White</FilterItem>
         <FilterItem value={'c:blue'}><CardSymbols.Island />Blue</FilterItem>
@@ -59,7 +59,7 @@ function CardFilterBar ({ disabled, onChange }) {
       <FilterSection disabled={disabled} rows={2} columns={1} label={'Status'} onChange={(values) => handleChange('status', values, 'AND')}>
         <FilterItem  value={'is:reserved'}>Reserved</FilterItem>
       </FilterSection>
-    </>
+    </ScrollContainer>
   )
 }
 
@@ -89,6 +89,14 @@ function FilterItem ({ value, children, ...rest }) {
     </Checkbox>
   )
 }
+
+const ScrollContainer = styled('div')({
+  overflowX: 'auto',
+  overflowY: 'hidden',
+  display: 'flex',
+  gap: 24,
+  paddingBottom: 30
+})
 
 const FilterSectionContainer = styled('div')({
   display: 'grid',
@@ -135,7 +143,10 @@ const FilterSectionContainer = styled('div')({
   'div label': {
     fontSize: '1.2vw',
     filter: `brightness(${disabled ? 0.55 : 1})`,
-    '@media screen and (min-width: 1186px)': {
+    '@media screen and (max-width: 1000px)': {
+      fontSize: 12
+    },
+    '@media screen and (min-width: 1210px)': {
       fontSize: 16
     }
   },

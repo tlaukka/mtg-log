@@ -116,7 +116,6 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
     <>
       <SearchBar.InputBar onSubmit={onSearch}>
         <InputBar>
-          {/* <CardSetSelect isDisabled={scryfallMode} onChange={(value) => selectedSets.current = value} /> */}
           <CardSetSelect isDisabled={scryfallMode} onChange={(value) => selectedSets.current.params = value} />
           <SearchInput
             fetching={fetching}
@@ -125,15 +124,15 @@ function CardSearchTable ({ tableLayout = layoutOptions.compact }) {
             onPaste={onSearchPaste}
           />
         </InputBar>
-        <InputBar>
-          <CardFilterBar disabled={scryfallMode} onChange={onFilterChange} />
-        </InputBar>
+        <CardFilterBar disabled={scryfallMode} onChange={onFilterChange} />
       </SearchBar.InputBar>
-      <Table
-        cards={cards.toArray()}
-        sortCards={sortCards}
-        openCardInfo={openCardDetails}
-      />
+      <FadeIn>
+        <Table
+          cards={cards.toArray()}
+          sortCards={sortCards}
+          openCardInfo={openCardDetails}
+        />
+      </FadeIn>
       <MenuBar.ContextMenu>
         {!cards.empty() && (
           <Pagination
@@ -226,10 +225,30 @@ function CardTableFull (props) {
   )
 }
 
+function FadeIn ({ children }) {
+  const [visible, setVisible] = React.useState(false)
+
+  React.useEffect(
+    () => {
+      setTimeout(() => {
+        setVisible(true)
+      }, 0)
+    },
+    []
+  )
+
+  if (!visible) {
+    return null
+  }
+
+  return children
+}
+
 const InputBar = styled('div')({
   display: 'flex',
   gap: 24,
-  marginBottom: 24
+  // marginBottom: 24
+  marginBottom: 30,
   // overflowX: 'auto',
   // overflowY: 'hidden',
 })

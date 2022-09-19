@@ -244,15 +244,6 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
   return (
     <>
       <SearchBar.InputBar>
-        {/* <CardSetSelect ref={cardSetSelect} onChange={(value) => dispatch({ type: 'set', value })} />
-        <ColorSelect ref={colorSelect} onChange={(value) => dispatch({ type: 'color', value })} />
-        <TextInput
-          ref={searchInput}
-          spellCheck={false}
-          placeholder={'Search...'}
-          onChange={(e) => dispatch({ type: 'search', value: e.target.value })}
-        />
-        <Button size={'large'} type={'submit'}>Clear filters</Button> */}
         <InputBar>
           <CardSetSelect onChange={(value) => dispatch({ type: 'set', value })} />
           <SearchInput
@@ -260,9 +251,7 @@ function CardCollectionTable ({ tableLayout = layoutOptions.compact }) {
             onClear={onSearchClear}
           />
         </InputBar>
-        <InputBar>
-          <CardFilterBar onChange={onFilterChange} />
-        </InputBar>
+        <CardFilterBar onChange={onFilterChange} />
       </SearchBar.InputBar>
       <Table
         cards={cards}
@@ -371,7 +360,7 @@ function CardTableFull (props) {
 const InputBar = styled('div')({
   display: 'flex',
   gap: 24,
-  marginBottom: 24
+  marginBottom: 30
 })
 
 const InfoText = styled('span')({

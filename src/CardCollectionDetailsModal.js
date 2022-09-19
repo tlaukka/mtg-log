@@ -9,7 +9,6 @@ import Popup from './Popup'
 
 
 function CardCollectionDetailsModal ({ initialCard, onClose, ...rest }) {
-  console.log(initialCard)
   const [editMode, setEditMode] = React.useState(false)
   const [searchedCard, setSearchedCard] = React.useState()
   const [selectedGrade, setSelectedGrade] = React.useState()
