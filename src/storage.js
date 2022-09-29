@@ -17,6 +17,7 @@ function readFile (path) {
 
 function writeFile (path, data) {
   return new Promise((resolve, reject) => {
+    console.log({path, data})
     fs.writeFile(path, JSON.stringify(data), 'utf8', (error) => {
       if (error) {
         return reject(error)
@@ -27,47 +28,108 @@ function writeFile (path, data) {
   })
 }
 
+function copyFile (src, dest) {
+  return new Promise((resolve, reject) => {
+    fs.copyFile(src, dest, (error) => {
+      if (error) {
+        return reject(error)
+      }
+
+      resolve()
+    })
+  })
+}
+
+function mkdir (path) {
+  return new Promise((resolve, reject) => {
+    fs.mkdir(path, { recursive: true },  (error) => {
+      if (error) {
+        return reject(error)
+      }
+
+      resolve(path)
+    })
+  })
+}
+
 export class StorageFile {
   constructor (fileName) {
     this.fileName = fileName
   }
 
-  async save (data, onSuccess, onError) {
-    return save(this.fileName, data, onSuccess, onError)
+  // async setSavePath (path) {
+  //   try {
+  //     const previousPath = await this.getPath()
+
+  //     this.savePath = path
+  //     const newSavePath = await this.getPath()
+
+  //     await mkdir(newSavePath)
+
+  //     console.log({
+  //       src: `${previousPath}/${this.fileName}`,
+  //       dest: `${newSavePath}/${this.fileName}`
+  //     })
+
+  //     return copyFile(`${previousPath}/${this.fileName}`, `${newSavePath}/${this.fileName}`)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+
+  save = async (path, data) => {
+    try {
+      const result = await save(`${path}/${this.fileName}`, data)
+      return result
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
   }
 
-  async load (onSuccess, onError) {
-    return load(this.fileName, onSuccess, onError)
+  load = async (path) => {
+    try {
+      console.log(`Loading: ${path}/${this.fileName}`)
+      const result = await load(`${path}/${this.fileName}`)
+      return result
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
   }
-}
 
-async function load (fileName, onSuccess, onError) {
-  try {
-    const result = await readFile(fileName)
-    onSuccess && onSuccess(result)
+  backup = async (path) => {
+    try {
+      return await copyFile(`${path}/${this.fileName}`, `${path}/backup-${this.fileName}`)
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
 
-    return result
-  } catch (error) {
-    console.log(error)
-    onError && onError(error)
-
-    if (error.code === 'ENOENT') {
-      // Create an empty storage file if it doesn't exist
-      await writeFile(fileName, {})
-      const data = await load()
-
-      return data
+  loadBackup = async (path) => {
+    try {
+      await copyFile(`${path}/backup-${this.fileName}`, `${path}/${this.fileName}`)
+      return await load(path)
+    } catch (error) {
+      throw error
     }
   }
 }
 
-async function save (fileName, data, onSuccess, onError) {
+async function load (fileName) {
   try {
-    const result = await writeFile(fileName, data)
-    onSuccess && onSuccess(result)
+    return await readFile(fileName)
   } catch (error) {
-    console.log(error)
-    onError && onError(error)
+    throw error
+  }
+}
+
+async function save (fileName, data) {
+  try {
+    return await writeFile(fileName, data)
+  } catch (error) {
+    throw error
   }
 }
 
@@ -77,45 +139,94 @@ export function useStorage () {
   return React.useContext(StorageContext)
 }
 
-export default function StorageProvider ({ children }) {
-  const [storageReady, setStorageReady] = React.useState(false)
-  const [storage, setStorage] = React.useState()
-
-  function getValue (key) {
-    return storage?.[key]
+class Storage {
+  constructor () {
+    this.data = {}
   }
 
-  function getValues () {
-    return storage
+  getValue = (key) => {
+    return this.data[key]
   }
 
-  function setValue (key, value) {
-    setStorage((prevState) => ({
-      ...prevState,
+  getValues = () => {
+    return this.data
+  }
+
+  setValue = (key, value) => {
+    this.data = {
+      ...this.data,
       [key]: value
-    }))
+    }
+
+    this.save()
   }
 
-  React.useEffect(
-    () => {
-      async function saveStorage () {
-        if (storage) {
-          save(STORAGE_FILE, storage)
-        }
-      }
+  save = async () => {
+    return save(STORAGE_FILE, this.data)
+  }
 
-      saveStorage()
-    },
-    [storage]
-  )
+  load = async () => {
+    const data = await load(STORAGE_FILE)
+    this.data = data
+  }
+}
+
+export default function StorageProvider ({ children }) {
+  // const storage = React.useRef(new Storage())
+
+  const [storageReady, setStorageReady] = React.useState(false)
+
+  const storage = React.useMemo(() => new Storage(), [])
+
+  // const [storage, setStorage] = React.useState()
+
+  // function getValue (key) {
+  //   return storage?.[key]
+  // }
+
+  // function getValues () {
+  //   return storage
+  // }
+
+  // function setValue (key, value) {
+  //   setStorage((prevState) => ({
+  //     ...prevState,
+  //     [key]: value
+  //   }))
+  // }
+
+  // React.useEffect(
+  //   () => {
+  //     async function saveStorage () {
+  //       if (storage) {
+  //         save(STORAGE_FILE, storage)
+  //       }
+  //     }
+
+  //     saveStorage()
+  //   },
+  //   [storage]
+  // )
+
+  // React.useEffect(
+  //   () => {
+  //     async function loadStorage () {
+  //       const data = await load(STORAGE_FILE)
+
+  //       setStorageReady(true)
+  //       setStorage(data)
+  //     }
+
+  //     loadStorage()
+  //   },
+  //   []
+  // )
 
   React.useEffect(
     () => {
       async function loadStorage () {
-        const data = await load(STORAGE_FILE)
-
+        await storage.load(STORAGE_FILE)
         setStorageReady(true)
-        setStorage(data)
       }
 
       loadStorage()
@@ -123,12 +234,24 @@ export default function StorageProvider ({ children }) {
     []
   )
 
+  const value = React.useMemo(
+    () => {
+      return {
+        getValue: storage.getValue,
+        getValues: storage.getValues,
+        setValue: storage.setValue
+      }
+    },
+    [storage]
+  )
+
   if (!storageReady) {
     return null
   }
 
   return (
-    <StorageContext.Provider value={{ getValue, getValues, setValue }}>
+    // <StorageContext.Provider value={{ getValue, getValues, setValue }}>
+    <StorageContext.Provider value={value}>
       {children}
     </StorageContext.Provider>
   )

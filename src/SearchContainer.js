@@ -13,10 +13,12 @@ import CardSearchTable from './CardSearchTable'
 import MenuBar from './MenuBar'
 import backToTop from './backToTop'
 import SearchBar from './SearchBar'
+import SettingsModal from './SettingsModal'
 
 function SearchContainer () {
   const [tableLayout, setTableLayout] = React.useState(layoutOptions.compact)
   const [drawerOpen, setDrawerOpen] = React.useState(false)
+  const [settingsOpen, setSettingsOpen] = React.useState(false)
 
   const { route, setRoute } = useRoute()
   const cardDrawer = useCardDrawer()
@@ -63,11 +65,15 @@ function SearchContainer () {
         <MenuBar.Button onClick={toggleDrawer}>
           {`Card drawer [${cardDrawer.size()}]`}
         </MenuBar.Button>
+        <MenuBar.Button onClick={() => setSettingsOpen(true)}>
+          <Icons.Settings />
+        </MenuBar.Button>
       </MenuBar>
       <CardDrawer
         open={drawerOpen}
         onClose={closeCardDrawer}
       />
+      <SettingsModal visible={settingsOpen} onClose={() => setSettingsOpen(false)} />
       <div
         style={{ position: 'fixed', zIndex: 100000, top: 0, right: 0 }}
         onClick={() => console.log({ w: window.innerWidth, h: window.innerHeight })}

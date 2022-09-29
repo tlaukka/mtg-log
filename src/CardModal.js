@@ -177,9 +177,7 @@ const stripes = `repeating-linear-gradient(
 )`
 
 const Wrapper = styled('div')({
-  width: '100%',
-  marginTop: '8%',
-  marginBottom: 32
+  width: '100%'
 })
 
 const CardDetailsSearchContainer = styled('div')({

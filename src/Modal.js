@@ -30,9 +30,9 @@ function Modal ({ visible, onClose, children }) {
   return ReactDOM.createPortal(
     <Backdrop ref={backdrop} opacity={opacity} onMouseDown={onBackdropClick}>
       <ModalClose onClick={onClose}><Icons.Cross /></ModalClose>
-        <ModalContainer>
-          {children}
-        </ModalContainer>
+      <ModalContainer>
+        {children}
+      </ModalContainer>
     </Backdrop>,
     document.getElementById('root')
   )
@@ -59,6 +59,8 @@ const ModalContainer = styled('div')({
   width: '60%',
   minWidth: 480,
   margin: '0 auto',
+  paddingTop: '6%',
+  paddingBottom: 32,
   color: Colors.foregroundLight
 })
 

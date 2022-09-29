@@ -1,6 +1,6 @@
 const path = require("path");
 
-const { app, BrowserWindow } = require("electron");
+const { app, BrowserWindow, ipcMain, dialog } = require("electron");
 const isDev = require("electron-is-dev");
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling
@@ -51,7 +51,10 @@ function createWindow() {
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
-app.whenReady().then(createWindow);
+// app.whenReady().then(createWindow);
+app.whenReady().then(() => {
+  createWindow()
+});
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -72,3 +75,15 @@ app.on("activate", () => {
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+
+ipcMain.handle('get-app-path', () => {
+  return app.getAppPath()
+})
+
+ipcMain.handle('get-path', (_, name) => {
+  return app.getPath(name)
+})
+
+ipcMain.handle('show-open-dialog', (_, options) => {
+  return dialog.showOpenDialog(options)
+})

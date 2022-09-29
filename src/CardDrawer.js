@@ -31,6 +31,10 @@ function CardDrawer ({ open, onClose }) {
     console.log(error)
   }
 
+  function asd () {
+    cardStorage.setSavePath('E:/Dev/mtg-log/asd')
+  }
+
   return (
     <>
       <Drawer open={open}>
@@ -81,6 +85,9 @@ function CardDrawer ({ open, onClose }) {
         <CardDrawerFooter>
           <SaveButton disabled={cardDrawer.empty()} onClick={save}>
             Save!
+          </SaveButton>
+          <SaveButton onClick={asd}>
+            Asd
           </SaveButton>
         </CardDrawerFooter>
       </Drawer>

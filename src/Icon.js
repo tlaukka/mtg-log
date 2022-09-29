@@ -44,7 +44,9 @@ const Icons = {
  HourGlass: withIconData('hourglass-alt')(Icon),
  Search: withIconData('search')(Icon),
  Case: withIconData('case')(Icon),
- Edit: withIconData('edit')(Icon)
+ Edit: withIconData('edit')(Icon),
+ Settings: withIconData('settings')(Icon),
+ Open: withIconData('open-in-new')(Icon)
 }
 
 export default Icons
