@@ -52,6 +52,30 @@ function mkdir (path) {
   })
 }
 
+function rmdir (path) {
+  return new Promise((resolve, reject) => {
+    fs.rm(path, { recursive: true },  (error) => {
+      if (error) {
+        return reject(error)
+      }
+
+      resolve(path)
+    })
+  })
+}
+
+function cpdir (src, dest) {
+  return new Promise((resolve, reject) => {
+    fs.cp(src, dest, { recursive: true }, (error) => {
+      if (error) {
+        return reject(error)
+      }
+
+      resolve()
+    })
+  })
+}
+
 export class StorageFile {
   constructor (fileName) {
     this.fileName = fileName
@@ -76,6 +100,16 @@ export class StorageFile {
   //     console.log(error)
   //   }
   // }
+
+  init = async (path) => {
+    try {
+      await mkdir(path)
+      return await this.save(path, {})
+    } catch (error) {
+      console.log(error)
+      throw error
+    }
+  }
 
   save = async (path, data) => {
     try {
@@ -111,6 +145,17 @@ export class StorageFile {
     try {
       await copyFile(`${path}/backup-${this.fileName}`, `${path}/${this.fileName}`)
       return await load(path)
+    } catch (error) {
+      throw error
+    }
+  }
+
+  changeLocation = async (prevPath, newPath) => {
+    try {
+      await cpdir(prevPath, newPath)
+      rmdir(prevPath)
+
+      return await load(`${newPath}/${this.fileName}`)
     } catch (error) {
       throw error
     }
@@ -225,13 +270,20 @@ export default function StorageProvider ({ children }) {
   React.useEffect(
     () => {
       async function loadStorage () {
-        await storage.load(STORAGE_FILE)
-        setStorageReady(true)
+        try {
+          await storage.load(STORAGE_FILE)
+          setStorageReady(true)
+        } catch (error) {
+          if (error.code === 'ENOENT') {
+            await writeFile(STORAGE_FILE, {})
+            loadStorage()
+          }
+        }
       }
 
       loadStorage()
     },
-    []
+    [storage]
   )
 
   const value = React.useMemo(

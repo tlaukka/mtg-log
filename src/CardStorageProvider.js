@@ -8,7 +8,7 @@ import Colors from './Colors'
 import Button from './Button'
 import Icons from './Icon'
 
-const storageFile = new StorageFile('card-collection.json')
+export const storageFile = new StorageFile('card-collection.json')
 
 export const CardStorageContext = React.createContext()
 
@@ -33,9 +33,14 @@ function CardStorageProvider ({ children }) {
 
         if (!cardStorageSavePath) {
           const appPath = await ipcRenderer.invoke('get-app-path')
-          savePath.current = `${appPath}/mtg-log-storage`
+          const path = `${appPath}/mtg-log-storage`
+
+          await storageFile.init(path)
+
+          storage.setValue('cardStorageSavePath', path)
+          savePath.current = path
         } else {
-          savePath.current = `${cardStorageSavePath}/mtg-log-storage`
+          savePath.current = cardStorageSavePath
         }
 
         const result = await storageFile.load(savePath.current)
@@ -120,7 +125,22 @@ function CardStorageProvider ({ children }) {
   //   [storageReady, cards, eventListeners]
   // )
 
-  async function showOpenDialog () {
+  async function showLocateStorageFileDialog () {
+    try {
+      const result = await ipcRenderer.invoke('show-open-dialog', { properties: ['openDirectory'] })
+
+      if (!result.canceled) {
+        storage.setValue('cardStorageSavePath', result.filePaths[0])
+
+        await load()
+        setSavePathPromptVisible(false)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async function showSetSaveLocation () {
     try {
       const result = await ipcRenderer.invoke('show-open-dialog', { properties: ['openDirectory'] })
 
@@ -137,6 +157,7 @@ function CardStorageProvider ({ children }) {
 
   const value = {
     storageReady,
+    load,
     save,
     removeCard,
     set,
@@ -152,7 +173,7 @@ function CardStorageProvider ({ children }) {
             <ErrorMessage>Invalid storage file path:</ErrorMessage>
             <ErrorMessage>{savePathError?.path}</ErrorMessage>
           </ErrorMessageContainer>
-          <SetPathButton onClick={showOpenDialog}>
+          <SetPathButton onClick={showLocateStorageFileDialog}>
             <Icons.Open />
             Locate storage file folder
           </SetPathButton>
