@@ -18,6 +18,10 @@ function Modal ({ visible, onClose, children }) {
   )
 
   function onBackdropClick (e) {
+    if (!onClose) {
+      return
+    }
+
     if (e.target === backdrop.current) {
       onClose()
     }
@@ -29,7 +33,9 @@ function Modal ({ visible, onClose, children }) {
 
   return ReactDOM.createPortal(
     <Backdrop ref={backdrop} opacity={opacity} onMouseDown={onBackdropClick}>
-      <ModalClose onClick={onClose}><Icons.Cross /></ModalClose>
+      {!!onClose && (
+        <ModalClose onClick={onClose}><Icons.Cross /></ModalClose>
+      )}
       <ModalContainer>
         {children}
       </ModalContainer>

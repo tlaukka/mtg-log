@@ -125,7 +125,7 @@ function CardStorageProvider ({ children }) {
   //   [storageReady, cards, eventListeners]
   // )
 
-  async function showLocateStorageFileDialog () {
+  async function showLocateStorageDialog () {
     try {
       const result = await ipcRenderer.invoke('show-open-dialog', { properties: ['openDirectory'] })
 
@@ -140,14 +140,18 @@ function CardStorageProvider ({ children }) {
     }
   }
 
-  async function showSetSaveLocation () {
+  async function showCreateStorageDialog () {
     try {
       const result = await ipcRenderer.invoke('show-open-dialog', { properties: ['openDirectory'] })
 
       if (!result.canceled) {
-        storage.setValue('cardStorageSavePath', result.filePaths[0])
+        const path = `${result.filePaths[0]}/mtg-log-storage`
 
-        await load()
+        await storageFile.init(path)
+
+        storage.setValue('cardStorageSavePath', path)
+        savePath.current = path
+
         setSavePathPromptVisible(false)
       }
     } catch (error) {
@@ -167,16 +171,20 @@ function CardStorageProvider ({ children }) {
 
   return (
     <CardStorageContext.Provider value={value}>
-      <Modal visible={savePathPromptVisible} onClose={() => setSavePathPromptVisible(false)}>
+      <Modal visible={savePathPromptVisible}>
         <Wrapper>
           <ErrorMessageContainer>
             <ErrorMessage>Invalid storage file path:</ErrorMessage>
             <ErrorMessage>{savePathError?.path}</ErrorMessage>
           </ErrorMessageContainer>
-          <SetPathButton onClick={showLocateStorageFileDialog}>
+          <ModalButton onClick={showLocateStorageDialog}>
             <Icons.Open />
-            Locate storage file folder
-          </SetPathButton>
+            Locate storage folder
+          </ModalButton>
+          <ModalButton onClick={showCreateStorageDialog}>
+            <Icons.Open />
+            Create new storage
+          </ModalButton>
         </Wrapper>
       </Modal>
       {children}
@@ -184,10 +192,59 @@ function CardStorageProvider ({ children }) {
   )
 }
 
+// function LocateStorageButton ({ onSuccess, onError }) {
+//   const storage = useStorage()
+
+//   async function showLocateStorageDialog () {
+//     try {
+//       const result = await ipcRenderer.invoke('show-open-dialog', { properties: ['openDirectory'] })
+
+//       if (!result.canceled) {
+//         storage.setValue('cardStorageSavePath', result.filePaths[0])
+//         onSuccess && onSuccess()
+//       }
+//     } catch (error) {
+//       console.log(error)
+//       onError && onError(error)
+//     }
+//   }
+
+//   return (
+//     <ModalButton onClick={showLocateStorageDialog}>
+//       <Icons.Open />
+//       Locate storage folder
+//     </ModalButton>
+//   )
+// }
+
+// function CreateStorageButton ({ storageFile, onSuccess, onError }) {
+//   async function showCreateStorageDialog () {
+//     try {
+//       const result = await ipcRenderer.invoke('show-open-dialog', { properties: ['openDirectory'] })
+
+//       if (!result.canceled) {
+//         const path = `${result.filePaths[0]}/mtg-log-storage`
+
+//         await storageFile.init(path)
+//         onSuccess && onSuccess()
+//       }
+//     } catch (error) {
+//       console.log(error)
+//       onError && onError(error)
+//     }
+//   }
+
+//   return (
+//     <ModalButton onClick={showCreateStorageDialog}>
+//       <Icons.Open />
+//       Create new storage
+//     </ModalButton>
+//   )
+// }
+
 const Wrapper = styled('div')({
   width: '100%',
-  height: '80vh',
-  border: '1px solid gray'
+  height: '80vh'
 })
 
 const ErrorMessageContainer = styled('div')({
@@ -200,11 +257,11 @@ const ErrorMessage = styled('div')({
   color: Colors.error
 })
 
-const SetPathButton = styled(Button)({
+const ModalButton = styled(Button)({
   display: 'block',
   fontSize: 24,
   height: 64,
-  margin: '0 auto',
+  margin: '0 auto 24px',
   padding: '0 48px',
   border: `2px solid ${Colors.control}`,
   backgroundColor: 'transparent'

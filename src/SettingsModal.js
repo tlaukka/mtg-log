@@ -4,6 +4,7 @@ import React from 'react'
 import Button from './Button'
 import { storageFile, useCardStorage } from './CardStorageProvider'
 import Colors from './Colors'
+import Icons from './Icon'
 import Modal from './Modal'
 import { useStorage } from './storage'
 
@@ -33,7 +34,10 @@ function SettingsModal ({ visible, onClose }) {
       <Wrapper>
         <Label>Save path:</Label>
         <CurrentPath>{storage.getValue('cardStorageSavePath')}</CurrentPath>
-        <SetPathButton onClick={setSavePath}>Set save path</SetPathButton>
+        <SetPathButton onClick={setSavePath}>
+          <Icons.Open />
+          Set save path
+        </SetPathButton>
       </Wrapper>
     </Modal>
   )
