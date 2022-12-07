@@ -1,6 +1,6 @@
 import React from 'react'
 import qs from 'qs'
-import useQueryStack from './QueryStack'
+import useQueryStack from '../QueryStack'
 
 const PAGE_SIZE = 175
 

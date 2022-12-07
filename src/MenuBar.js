@@ -4,8 +4,8 @@ import ReactDOM from 'react-dom'
 import Colors from './Colors'
 import constants from './constants'
 import LinkButton from './LinkButton'
-import useDomReady from './useDomReady'
-import useFadeIn from './useFadeIn'
+import useDomReady from './Hooks/useDomReady'
+import useFadeIn from './Hooks/useFadeIn'
 
 function MenuBar ({ children }) {
   return (

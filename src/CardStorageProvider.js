@@ -1,7 +1,7 @@
 import { ipcRenderer } from 'electron'
 import React from 'react'
 import { StorageFile, useStorage } from './storage'
-import useCardCollection from './useCardCollection'
+import useCardCollection from './Hooks/useCardCollection'
 import Modal from './Modal'
 import styled from '@emotion/styled'
 import Colors from './Colors'

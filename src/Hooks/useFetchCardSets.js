@@ -1,5 +1,5 @@
 import React from 'react'
-import debounce from './debounce'
+import debounce from '../debounce'
 
 const QUERY_CARD_SETS = 'https://api.scryfall.com/sets'
 

@@ -2,8 +2,8 @@ import styled from '@emotion/styled'
 import React from 'react'
 import ReactDOM from 'react-dom'
 import Colors from './Colors'
-import useDomReady from './useDomReady'
-import useFadeIn from './useFadeIn'
+import useDomReady from './Hooks/useDomReady'
+import useFadeIn from './Hooks/useFadeIn'
 
 function SearchBar () {
   return (

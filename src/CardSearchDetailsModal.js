@@ -3,7 +3,7 @@ import React from 'react'
 import { useCardDrawer } from './CardDrawerProvider'
 import Colors from './Colors'
 import { Grade } from './GradeTag'
-import useCardNameSearch from './useCardNameSearch'
+import useCardNameSearch from './Hooks/useCardNameSearch'
 import Button from './Button'
 import CardModal, { CardMetaDataTable } from './CardModal'
 
