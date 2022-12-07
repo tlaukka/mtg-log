@@ -1,3 +1,6 @@
+Keep track of owned MTG-cards and purchase prices.
+Uses [Scryfall api](https://scryfall.com/docs/api) under the hood.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
