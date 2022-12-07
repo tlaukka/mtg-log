@@ -6,7 +6,7 @@ import { storageFile, useCardStorage } from './Providers/CardStorageProvider'
 import Colors from './Colors'
 import Icons from './Icon'
 import Modal from './Modal'
-import { useStorage } from './storage'
+import { useStorage } from './Lib/storage'
 
 function SettingsModal ({ visible, onClose }) {
   const storage = useStorage()

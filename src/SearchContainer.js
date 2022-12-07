@@ -11,7 +11,7 @@ import TableLayoutSelect, { layoutOptions } from './TableLayoutSelect'
 import CardCollectionTable from './CardCollectionTable'
 import CardSearchTable from './CardSearchTable'
 import MenuBar from './MenuBar'
-import backToTop from './backToTop'
+import backToTop from './Lib/backToTop'
 import SearchBar from './SearchBar'
 import SettingsModal from './SettingsModal'
 
