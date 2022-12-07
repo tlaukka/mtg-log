@@ -1,6 +1,6 @@
 import React from 'react'
-import useCardSearchQuery from './Hooks/useCardSearchQuery'
-import useCollection from './Hooks/useCollection'
+import useCardSearchQuery from '../Hooks/useCardSearchQuery'
+import useCollection from '../Hooks/useCollection'
 
 export const CardSearchContext = React.createContext()
 

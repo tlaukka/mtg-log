@@ -1,12 +1,12 @@
 import { ipcRenderer } from 'electron'
 import React from 'react'
-import { StorageFile, useStorage } from './storage'
-import useCardCollection from './Hooks/useCardCollection'
-import Modal from './Modal'
+import { StorageFile, useStorage } from '../storage'
+import useCardCollection from '../Hooks/useCardCollection'
+import Modal from '../Modal'
 import styled from '@emotion/styled'
-import Colors from './Colors'
-import Button from './Button'
-import Icons from './Icon'
+import Colors from '../Colors'
+import Button from '../Button'
+import Icons from '../Icon'
 
 export const storageFile = new StorageFile('card-collection.json')
 

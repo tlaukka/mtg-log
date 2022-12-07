@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled'
 import CardTable from './CardTable'
-import { useCardStorage } from './CardStorageProvider'
+import { useCardStorage } from './Providers/CardStorageProvider'
 import DataTable from './DataTable'
 import { layoutOptions } from './TableLayoutSelect'
 import GradeSelect, { gradeOptions } from './GradeSelect'

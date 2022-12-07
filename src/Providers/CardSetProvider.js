@@ -1,8 +1,8 @@
 import styled from '@emotion/styled'
 import React from 'react'
-import Colors from './Colors'
-import constants from './constants'
-import useFetchCardSets from './Hooks/useFetchCardSets'
+import Colors from '../Colors'
+import constants from '../constants'
+import useFetchCardSets from '../Hooks/useFetchCardSets'
 
 export const CardSetContext = React.createContext()
 
